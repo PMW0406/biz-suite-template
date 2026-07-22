@@ -7,14 +7,14 @@
 const fs = require('fs');
 const https = require('https');
 
-const URL = 'https://bdkurlqmfsswgeiujyev.supabase.co';
-const SECRET_FILE = 'C:/Users/user/Documents/wt_template_secret.txt';
+const BASE = 'https://bdkurlqmfsswgeiujyev.supabase.co';
+const SECRET_FILE = process.env.WT_SECRET_FILE || 'C:/Users/user/Documents/wt_template_secret.txt';
 const KEY = fs.readFileSync(SECRET_FILE, 'utf8').trim();
 
 function api(method, path, body){
   return new Promise((res,rej)=>{
     const data = body?JSON.stringify(body):null;
-    const u = new URL(URL+path);
+    const u = new URL(BASE+path);
     const req = https.request(u,{method,headers:{
       apikey:KEY, Authorization:'Bearer '+KEY, 'Content-Type':'application/json',
       Prefer:'return=representation', ...(data?{'Content-Length':Buffer.byteLength(data)}:{})
