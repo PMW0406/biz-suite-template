@@ -43,15 +43,30 @@ alter table public.targets enable row level security;
 drop policy if exists "targets_all_auth" on public.targets;
 create policy "targets_all_auth" on public.targets for all to authenticated using (true) with check (true);
 
-create table if not exists public.sales_targets ( id text primary key, data jsonb, updated_at timestamptz default now() );
+-- sales_targets: total.html 은 select('year,month,dept,item,amount') 플랫 컬럼으로 읽음
+-- (단, 데모는 cons_cache 'sales_targets' blob 을 우선 사용하므로 이 테이블은 폴백/비어도 됨)
+create table if not exists public.sales_targets (
+  id uuid primary key default gen_random_uuid(),
+  year int, month int, dept text, item text, amount numeric,
+  updated_at timestamptz default now()
+);
 alter table public.sales_targets enable row level security;
 drop policy if exists "sales_targets_all_auth" on public.sales_targets;
 create policy "sales_targets_all_auth" on public.sales_targets for all to authenticated using (true) with check (true);
 
-create table if not exists public.pending_sales ( id text primary key, data jsonb, updated_at timestamptz default now() );
+-- pending_sales: total.html 은 select('*') 후 flat 컬럼(hospital/product/category/amount/qty/expected_date/status/channel/region)으로 읽음
+create table if not exists public.pending_sales (
+  id uuid primary key default gen_random_uuid(),
+  hospital text, product text, category text,
+  amount numeric, qty numeric, expected_date date,
+  status text, channel text, region text,
+  created_at timestamptz default now()
+);
 alter table public.pending_sales enable row level security;
 drop policy if exists "pending_sales_all_auth" on public.pending_sales;
 create policy "pending_sales_all_auth" on public.pending_sales for all to authenticated using (true) with check (true);
+drop policy if exists "pending_sales_read_all" on public.pending_sales;
+create policy "pending_sales_read_all" on public.pending_sales for select to anon, authenticated using (true);
 
 -- site_registry / dept_perms / site_feedback / site_errors 는 schema.sql 과 동일 정의 재사용
 -- (이미 만들었으면 생략 가능)
