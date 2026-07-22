@@ -213,9 +213,11 @@ function buildExport(){
   return {
     rate:RATE,
     cycles:[
+      // id 는 EXPORT_DEFAULT(c2025/c2026_70/c2026_100)와 맞춰 months 만 override. c2024 는 그 이전 차수로 추가.
       {id:'c2024', target:30000000, label:'3천만불', title:'2024년 수출의 탑', start:'2023-07', months:cycMonths('2023-07',12,1500000,3200000)},
-      {id:'c2025', target:50000000, label:'5천만불', title:'2025년 수출의 탑', start:'2024-07', months:cycMonths('2024-07',12,2600000,4800000)},
-      {id:'c2026', target:70000000, label:'7천만불', title:'2026년 수출의 탑', start:'2025-07', months:cycMonths('2025-07',9,3000000,6000000)},
+      {id:'c2025', months:cycMonths('2024-07',12,2600000,4800000)},
+      {id:'c2026_70', months:cycMonths('2025-07',12,3000000,6200000)},
+      // c2026_100(2027년 1억불, 진행 중)은 months 미지정 → 코드가 INTL.monthly_usd 로 자동 채움
     ],
     kita:[ {year:'2022',amount:28500000},{year:'2023',amount:41200000},{year:'2024',amount:57800000} ],
     yearly:{ labels:['2022년','2023년','2024년','2025년'], acc:[2850,4120,5780,6900], exp:[2600,3800,5200,6400], insight:'수출 규모가 3년 연속 성장하며 5천만불 탑을 조기 달성, 7천만불 도전 구간에 진입.' },
