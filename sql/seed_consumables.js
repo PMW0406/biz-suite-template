@@ -27,8 +27,9 @@ function buildAcc(){
     consMonthly[mo]=monthly['국내소모품'][mo];
   }
   const lines=[]; for(let i=0;i<8;i++) lines.push({date:'2026-07-22',month:7,region:'국내',div:'국내소모품',customer:rand(HOSP),product:rand(['Aura Tip','Cartridge','Cooling']),qty:ri(2,20),amount:ri(50,300)*10000});
+  const prevProd=ri(15,26)*100000000, prevCons=ri(6,12)*100000000;
   return {reportDate:'2026-07-22',curMonth:7,monthly,consMonthly,lines,products:{국내:{},해외:{}},updatedAt:'2026-07-22',
-    prev:{date:'2026-07-21',tot:ri(80,120)*100000000,cons:ri(6,12)*100000000,prod:ri(15,26)*100000000}};
+    prev:{date:'2026-07-21',tot:prevProd+prevCons,cons:prevCons,prod:prevProd}};
 }
 // ── cons_cache: ilbo_pending (리치; total.html도 이 키 읽음) ──
 function buildPending(){
