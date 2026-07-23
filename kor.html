@@ -5709,7 +5709,7 @@ function runGlobalSearch(kw) {
   DB.d.customers.filter(c => [c.name,c.doctor,c.region,c.contact].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(c =>
     results.push({group:'고객사', icon:'bi-hospital', label:c.name, sub:`${c.region||''} ${c.doctor||''}`, action:`showPage('customers');document.getElementById('cust-search').value='${c.name.replace(/'/g,"\\'")}';filterCust();closeSearch()`}));
   // 장비
-  DB.d.equipments.filter(e => [e.custName,e.model,e.serial].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(e =>
+  _allEquip().filter(e => [e.custName,e.model,e.serial].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(e =>
     results.push({group:'장비', icon:'bi-device-ssd', label:`${e.custName} — ${e.model}`, sub:e.serial||'', action:`showPage('equipments');document.getElementById('search-equip').value='${(e.model||'').replace(/'/g,"\\'")}';filterEquip();closeSearch()`}));
   // 파이프라인
   DB.d.pipeline.filter(d => [d.custName,d.model,d.sales].join(' ').toLowerCase().includes(q)).slice(0,4).forEach(d =>
@@ -8199,7 +8199,7 @@ function gradeBadge(g){if(g==='VIP')return'<span class="badge" style="background
 
 // ── 장비 ──────────────────────────────────────────────────────
 function initEquip(){
-  document.getElementById('equip-load-status').textContent=`총 ${DB.d.equipments.length.toLocaleString()}건 로드됨`;
+  document.getElementById('equip-load-status').textContent=`총 ${_allEquip().length.toLocaleString()}건 로드됨`;
   filterEquip();
 }
 
