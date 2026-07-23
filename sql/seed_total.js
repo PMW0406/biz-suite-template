@@ -36,6 +36,7 @@ async function putCache(key,data){                    // cons_cache upsert (PK=k
 // ── 랜덤 유틸 ────────────────────────────────────────────
 const rand = a => a[Math.floor(Math.random()*a.length)];
 const ri = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pad = n => String(n).padStart(2,'0');
 const man = v => Math.round(v/10000)*10000;           // 만원 단위 반올림
 const add = (o,k,v)=>{ o[k]=(o[k]||0)+v; };
 
@@ -115,41 +116,54 @@ function buildDomestic(isDevice){
   return B;
 }
 
+// 해외 국가 → 버킷(법인 or 지역). 법인 3종은 corps 뷰, 지역은 지역별/리포트 뷰가 읽음.
+const OVERSEAS = [
+  {cc:'TH', name:'태국',       bucket:'태국법인'},
+  {cc:'US', name:'미국',       bucket:'미국법인'},
+  {cc:'JP', name:'일본',       bucket:'일본법인'},
+  {cc:'VN', name:'베트남',     bucket:'동남아'},
+  {cc:'CN', name:'중국',       bucket:'중화'},
+  {cc:'AE', name:'아랍에미리트', bucket:'중동'},
+  {cc:'DE', name:'독일',       bucket:'유럽'},
+  {cc:'BR', name:'브라질',     bucket:'미주'},
+];
+const _rnorm = s => String(s||'').replace(/[\s,.\-_()\/]/g,'').toLowerCase();
+
 // ── 해외(INTL) 생성 ──────────────────────────────────────
 function buildIntlYear(mos){
+  const yr = mos.length>7?2025:2026;
   const Y = {
     monthly:{}, monthly_usd:{}, products:{}, prods_cons:{}, prods_dev:{},
     prodMo:{}, prodMoQty:{}, countries:{}, reps:{}
   };
-  const countryDef = [
-    ['TH','태국',['비전레이저 100','팁카트리지 A']],
-    ['US','미국',['펄스RF 200','소닉HIFU 300']],
-    ['VN','베트남',['비전레이저 100','팁카트리지 B']],
-    ['CN','중국',['소닉HIFU 300','젤패드 C']],
-    ['AE','아랍에미리트',['펄스RF 200']],
-    ['DE','독일',['비전레이저 100','소닉HIFU 300']],
-  ];
   const isDev = p => DEV_PRODUCTS.includes(p);
   INTL_REPS.forEach(r=>{ Y.reps[r]={m:{},total:0,clients:0,countries:0,prods:{}}; });
-  countryDef.forEach(([cc,cnBase,prods],idx)=>{
+  OVERSEAS.forEach((ov,idx)=>{
+    const cc=ov.cc, cnBase=ov.name;
     const rep = INTL_REPS[idx % INTL_REPS.length];
+    const prods = [rand(DEV_PRODUCTS), rand(DEV_PRODUCTS), rand(CONS_PRODUCTS)];
     const nClient = ri(2,4);
     const C = Y.countries[cc] = {clients:nClient, prods:{}, clientData:{}};
     Y.reps[rep].countries += 1;
     for(let c=0;c<nClient;c++){
-      const client = cnBase+' Client '+(c+1);
-      const cd = C.clientData[client] = {m:{}};
+      const client = cnBase+(ov.bucket.endsWith('법인')?' 법인': ' 딜러')+(c+1);
+      const cd = C.clientData[client] = {m:{}, total:0, cnt:0, last:'', txns:[], prods:{}};
       Y.reps[rep].clients += 1;
+      let usdCum=0;
       mos.forEach(mo=>{
-        if(Math.random()<0.55){
+        if(Math.random()<0.6){
           const prod = rand(prods);
           const qty  = isDev(prod)?ri(1,4):ri(5,40);
-          const unit = isDev(prod)?ri(25,55)*1000000:ri(5,20)*10000;  // 장비 단가≥100만원 유지
+          const unit = isDev(prod)?ri(25,55)*1000000:ri(5,20)*10000;  // 장비 단가≥100만원
           const amt  = man(qty*unit);
+          const usd  = Math.round(amt/RATE);
           const mkey = String(mo);
-          add(cd.m, mkey, amt);
+          const dstr = yr+'-'+pad(mo)+'-'+pad(ri(3,26));
+          usdCum += usd;
+          add(cd.m, mkey, amt); cd.total+=amt; cd.cnt++; cd.last=dstr;
+          cd.txns.push([dstr, prod, qty, amt, usdCum]); add(cd.prods, prod, amt);
           add(Y.monthly, mkey, amt);
-          add(Y.monthly_usd, mkey, Math.round(amt/RATE));
+          add(Y.monthly_usd, mkey, usd);
           add(Y.products, prod, amt);
           add(isDev(prod)?Y.prods_dev:Y.prods_cons, prod, amt);
           (Y.prodMo[prod]=Y.prodMo[prod]||{}); add(Y.prodMo[prod], mkey, amt);
@@ -163,22 +177,28 @@ function buildIntlYear(mos){
   return Y;
 }
 
-// ── sales_targets(blob) : 목표치 ─────────────────────────
+// ── region_map : 거래처(국가)→버킷(법인/지역) 매핑 ──────
+function buildRegionMap(){
+  const country={}; OVERSEAS.forEach(o=>{ country[o.cc]=o.bucket; });
+  return { pair:{}, name:{}, country };
+}
+
+// ── sales_targets(blob) : 목표치 (국내 제품/소모품 + 해외 지역/법인, 연간 12개월) ──
 function buildSalesTargets(cons, dev, intl){
   const rows=[];
-  const yrs=[[2026,MO26],[2025,MO25]];
-  yrs.forEach(([yr,mos])=>{
-    mos.forEach(mo=>{
+  const buckets=[...new Set(OVERSEAS.map(o=>o.bucket))];   // 지역5 + 법인3
+  [2026,2025].forEach(yr=>{
+    for(let mo=1;mo<=12;mo++){
       const mkey=String(mo);
-      // 국내영업: 제품/소모품 (실적의 ~92~105%를 목표로)
-      const devA=(dev['monthly'+yr]||{})[mkey]||0, consA=(cons['monthly'+yr]||{})[mkey]||0;
-      rows.push({year:yr,month:mo,dept:'국내영업',item:'제품',  amount:man(devA*(0.9+Math.random()*0.2)) });
-      rows.push({year:yr,month:mo,dept:'국내영업',item:'소모품',amount:man(consA*(0.9+Math.random()*0.2)) });
-      // 해외영업: 지역별 (지역 실적 대략치)
-      REGIONS.forEach(rg=>{
-        rows.push({year:yr,month:mo,dept:'해외영업',item:rg, amount:man(ri(20,120)*1000000) });
+      const devA=(dev['monthly'+yr]||{})[mkey]||man(ri(15,26)*100000000);
+      const consA=(cons['monthly'+yr]||{})[mkey]||man(ri(6,12)*100000000);
+      rows.push({year:yr,month:mo,dept:'국내영업',item:'제품',  amount:man((devA||man(ri(15,26)*1e8))*(0.9+Math.random()*0.2)) });
+      rows.push({year:yr,month:mo,dept:'국내영업',item:'소모품',amount:man((consA||man(ri(6,12)*1e8))*(0.9+Math.random()*0.2)) });
+      buckets.forEach(b=>{
+        const base = b.endsWith('법인')? ri(30,90) : ri(20,70);
+        rows.push({year:yr,month:mo,dept:'해외영업',item:b, amount:man(base*1000000) });
       });
-    });
+    }
   });
   return {rows};
 }
@@ -194,14 +214,6 @@ function buildTargets(cons,dev,intl){
   return rows;
 }
 
-// ── region_map ───────────────────────────────────────────
-function buildRegionMap(){
-  return {
-    pair:{},
-    name:{},
-    country:{ 'TH':'동남아','VN':'동남아','US':'미주','CN':'중화','AE':'중동','DE':'유럽' }
-  };
-}
 
 // ── export_tower ─────────────────────────────────────────
 function cycMonths(start, n, lo, hi){
