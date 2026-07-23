@@ -1718,7 +1718,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
       <div class="d-flex align-items-center mb-2"><i class="bi bi-pencil-square me-1" style="color:#2563eb"></i><b style="font-size:13px">병원 정보 (담당자 직접 수정)</b><span class="text-muted ms-2" style="font-size:11px">실제와 다르면 고쳐 주세요 · 저장 시 모든 담당자에게 공유됩니다</span></div>
       <input type="hidden" id="hi-name">
       <div class="row g-2" style="max-width:760px">
-        <div class="col-6"><label class="form-label" style="font-size:12px"><i class="bi bi-person-badge me-1" style="color:#2563eb"></i>영업 담당자<span id="hi-mgr-lock" style="display:none;color:#64748b;font-weight:400"> · <i class="bi bi-lock-fill"></i> 파트장만 변경</span> <button type="button" class="btn btn-link btn-sm p-0" style="font-size:11px" onclick="showMgrHist()"><i class="bi bi-clock-history"></i> 변경 이력</button></label><input type="text" id="hi-mgr" class="form-control form-control-sm" placeholder="예: 조만식 / 공동" list="_mgr-list"></div>
+        <div class="col-6"><label class="form-label" style="font-size:12px"><i class="bi bi-person-badge me-1" style="color:#2563eb"></i>영업 담당자<span id="hi-mgr-lock" style="display:none;color:#64748b;font-weight:400"> · <i class="bi bi-lock-fill"></i> 파트장만 변경</span> <button type="button" class="btn btn-link btn-sm p-0" style="font-size:11px" onclick="showMgrHist()"><i class="bi bi-clock-history"></i> 변경 이력</button></label><input type="text" id="hi-mgr" class="form-control form-control-sm" placeholder="예: 이준호 / 공동" list="_mgr-list"></div>
         <div class="col-6"><label class="form-label" style="font-size:12px">지역 (시도 구군)</label><input type="text" id="hi-region" class="form-control form-control-sm" placeholder="예: 서울 강남구" list="_region-list" onfocus="_ensureRegionList()" autocomplete="off"></div>
         <div class="col-6"><label class="form-label" style="font-size:12px">원장명</label><input type="text" id="hi-doctor" class="form-control form-control-sm"></div>
         <div class="col-6"><label class="form-label" style="font-size:12px">전화</label><input type="text" id="hi-tel" class="form-control form-control-sm"></div>
@@ -2221,7 +2221,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     <div class="d-flex align-items-center mb-2"><i class="bi bi-pencil-square me-1" style="color:#2563eb"></i><b style="font-size:13px">병원 정보 (담당자 직접 수정)</b><span class="text-muted ms-2" style="font-size:11px">실제와 다르면 고쳐 주세요 · 모든 담당자에게 공유됩니다</span></div>
     <input type="hidden" id="cd-name">
     <div class="row g-2">
-      <div class="col-6"><label class="form-label" style="font-size:12px"><i class="bi bi-person-badge me-1" style="color:#2563eb"></i>영업 담당자 <button type="button" class="btn btn-link btn-sm p-0" style="font-size:11px" onclick="showMgrHist((document.getElementById('cd-name')||{}).value)"><i class="bi bi-clock-history"></i> 변경 이력</button></label><input type="text" id="cd-mgr" class="form-control form-control-sm" placeholder="예: 조만식 / 공동"></div>
+      <div class="col-6"><label class="form-label" style="font-size:12px"><i class="bi bi-person-badge me-1" style="color:#2563eb"></i>영업 담당자 <button type="button" class="btn btn-link btn-sm p-0" style="font-size:11px" onclick="showMgrHist((document.getElementById('cd-name')||{}).value)"><i class="bi bi-clock-history"></i> 변경 이력</button></label><input type="text" id="cd-mgr" class="form-control form-control-sm" placeholder="예: 이준호 / 공동"></div>
       <div class="col-6"><label class="form-label" style="font-size:12px">거래 담당·대리점 <span class="text-muted">(거래내역 기준)</span></label><input type="text" id="cd-txnsales" class="form-control form-control-sm" disabled style="background:#f8fafc"></div>
       <div class="col-6"><label class="form-label" style="font-size:12px">원장명</label><input type="text" id="cd-doctor" class="form-control form-control-sm"></div>
       <div class="col-6"><label class="form-label" style="font-size:12px">전화</label><input type="text" id="cd-tel" class="form-control form-control-sm"></div>
@@ -2408,12 +2408,12 @@ function purgeForeignHospitals() {
 function _sN(s){ return String(s==null?'':s).replace(/^\s*\d+\s*[\.\-]\s*/,''); }
 // 한국영업 1·2파트 담당자 명단 — crm_profiles(dept)에서 자동 로드. 실패 시 아래 기본값.
 // 입사/퇴사/부서이동이 생기면 crm_profiles만 갱신하면 담당자별 분석에 자동 반영됨.
-let KOR_SALES_TEAM=['조만식','김세현','양준욱','구주영','강지형','김정국','송재원','최준수','김량현'];
+let KOR_SALES_TEAM=['이준호','최지우','박도윤','정하은','강민재','김서연','윤채원','한소율','임태양'];
 // 담당자 소속(파트)·직급 — crm_profiles에서 자동 로드. 실패 시 기본값.
 let KOR_TEAM_INFO={
-  조만식:{dept:'1파트',pos:'부장'}, 김정국:{dept:'1파트',pos:'차장'}, 양준욱:{dept:'1파트',pos:'차장'},
-  김세현:{dept:'1파트',pos:'과장'}, 구주영:{dept:'1파트',pos:'과장'}, 강지형:{dept:'1파트',pos:'대리'},
-  송재원:{dept:'2파트',pos:'차장'}, 최준수:{dept:'2파트',pos:'과장'}, 김량현:{dept:'2파트',pos:'과장'}
+  이준호:{dept:'1파트',pos:'부장'}, 김서연:{dept:'1파트',pos:'차장'}, 박도윤:{dept:'1파트',pos:'차장'},
+  최지우:{dept:'1파트',pos:'과장'}, 정하은:{dept:'1파트',pos:'과장'}, 강민재:{dept:'1파트',pos:'대리'},
+  윤채원:{dept:'2파트',pos:'차장'}, 한소율:{dept:'2파트',pos:'과장'}, 임태양:{dept:'2파트',pos:'과장'}
 };
 let KOR_TEAM=[];   // 팀원 명단(파트장 관리) — [{name,dept,pos,bday:'MM-DD',phone}] · cons_cache key='kor_team'
 async function _loadSalesTeam(){
@@ -2540,7 +2540,7 @@ function _repsByMgr(hmap){
   });
   return out;
 }
-// 장비 담당영업 표기 정리: 회계 원본 '조만식(영건)'='담당(대리점)', '17.조만식'=번호접두사.
+// 장비 담당영업 표기 정리: 회계 원본 '이준호(영건)'='담당(대리점)', '17.이준호'=번호접두사.
 //  → 한국영업 담당자면 이름 진하게 + 대리점은 회색 꼬리표. 팀원 아니면(순수 대리점) 회색으로.
 function _eqSalesDisp(raw){
   const s=_sN(String(raw||'').trim()); if(!s) return '<span style="color:#cbd5e1">-</span>';
@@ -2597,7 +2597,7 @@ function _mergeRep(a,b){
 }
 function _stripSalesPrefixes(){
   [CONS.hospitals, DEVICE.hospitals].forEach(hm=>{ if(hm) Object.values(hm).forEach(h=>{ if(h&&h.sales) h.sales=_sN(h.sales); }); });
-  // 번호접두사 정리('17.조만식'→'조만식') + 변형 병합. 전 담당자 유지 — 팀 필터는 표시(렌더) 시점에.
+  // 번호접두사 정리('17.이준호'→'이준호') + 변형 병합. 전 담당자 유지 — 팀 필터는 표시(렌더) 시점에.
   if(DEVICE.reps){ const nr={}; Object.keys(DEVICE.reps).forEach(k=>{ const nk=_sN(k); nr[nk]=_mergeRep(nr[nk], DEVICE.reps[k]); }); DEVICE.reps=nr; }
 }
 // 이탈위험 '내 거래처' — 로그인 담당자명으로 필터 자동선택
@@ -7417,7 +7417,7 @@ function _qedTermsVal(){
 }
 function _qedValidSync(){ var v=(document.getElementById('qed-valid')||{}).value; var t=document.getElementById('qed-t1'); if(t&&v) t.value=fmtDate(v)+' 까지'; }
 // 담당자별 기본 연락처 — 담당자명 입력 시 자동 채움(수기 수정 가능)
-const WT_SALES_PHONE={'김정국':'010-9870-2838','조만식':'010-9981-1236','양준욱':'010-2827-0488','김세현':'010-7928-8792','구주영':'010-9950-9916','강지형':'010-5480-1823','송재원':'010-8935-8482','최준수':'010-3830-4292','김량현':'010-9034-4145'};
+const WT_SALES_PHONE={'김서연':'010-1006-6666','이준호':'010-1008-8888','박도윤':'010-1000-0000','최지우':'010-1003-3333','정하은':'010-1007-7777','강민재':'010-1002-2222','윤채원':'010-1004-4444','한소율':'010-1001-1111','임태양':'010-1005-5555'};
 function _qedSalesPhoneSync(){
   var nm=((document.getElementById('qed-sales')||{}).value||'').trim(); if(!nm) return;
   var mem=(typeof KOR_TEAM!=='undefined'?(KOR_TEAM||[]):[]).find(m=>(m.name||'').trim()===nm)||null;
@@ -8809,7 +8809,7 @@ function _schBdayCard(m){ return '<div style="background:#fdf4ff;border:1px dash
 function _schRepColor(name){
   name=String(name||'').trim(); if(!name) return '#64748b';
   // 영업팀 9명은 각자 '고정 색' 직접 지정 → DB 순서와 무관하게 서로 확실히 구분(빨강·분홍·주황 제외)
-  var fixed={'조만식':'#2563eb','김세현':'#ca8a04','양준욱':'#16a34a','구주영':'#9333ea','강지형':'#0d9488','김정국':'#65a30d','송재원':'#0891b2','최준수':'#475569','김량현':'#7c3aed'};
+  var fixed={'이준호':'#2563eb','최지우':'#ca8a04','박도윤':'#16a34a','정하은':'#9333ea','강민재':'#0d9488','김서연':'#65a30d','윤채원':'#0891b2','한소율':'#475569','임태양':'#7c3aed'};
   if(fixed[name]) return fixed[name];
   var pal=['#2563eb','#ca8a04','#16a34a','#9333ea','#0891b2','#65a30d','#4f46e5','#0d9488','#7c3aed','#15803d','#0369a1','#475569'];  // 대리점 등은 해시
   var h=0; for(var k=0;k<name.length;k++){ h=(h*31+name.charCodeAt(k))>>>0; }
