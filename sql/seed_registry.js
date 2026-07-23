@@ -9,7 +9,7 @@ function api(m,p,b){return new Promise((res,rej)=>{const data=b!=null?JSON.strin
 const D='https://pmw0406.github.io/biz-suite-template/';
 const SITES=[
   {key:'total',       badge:'종합', short_label:'전사종합', title:'전사 종합 경영현황', body_html:'국내+해외 통합 경영 현황', icon:'📊', grad_from:'#4f46e5', grad_to:'#6366f1', accent_color:'#4f46e5', matrix_color:'#4f46e5', url:D+'total.html',        sort_order:1},
-  {key:'korea',       badge:'KR',   short_label:'한국영업', title:'한국 영업',          body_html:'영업관리 · 소모품 · 고객사', icon:'🇰🇷', grad_from:'#0891b2', grad_to:'#06b6d4', accent_color:'#0891b2', matrix_color:'#0891b2', url:D+'kor.html',          sort_order:2},
+  {key:'korea',       badge:'KR',   short_label:'한국영업', title:'한국 영업',          body_html:'영업관리 · 소모품 · 고객사', icon:'🇰🇷', grad_from:'#0891b2', grad_to:'#06b6d4', accent_color:'#0891b2', matrix_color:'#0891b2', url:'LOCAL',               sort_order:2},
   {key:'us',          badge:'US',   short_label:'미국법인', title:'미국법인 ERP',       body_html:'매출인식 · 수금 · 미수 · CRM', icon:'🇺🇸', grad_from:'#2563eb', grad_to:'#3b82f6', accent_color:'#2563eb', matrix_color:'#2563eb', url:D+'us.html',           sort_order:3},
   {key:'th',          badge:'TH',   short_label:'태국법인', title:'태국법인 ERP',       body_html:'매출인식 · 수금 · 미수 · 비용', icon:'🇹🇭', grad_from:'#f59e0b', grad_to:'#fbbf24', accent_color:'#f59e0b', matrix_color:'#f59e0b', url:D+'th.html',           sort_order:4},
   {key:'ar',          badge:'AR',   short_label:'미수금',   title:'국내 미수금 관리',   body_html:'채권 · 관리대상 · 임원보고', icon:'💳', grad_from:'#dc2626', grad_to:'#ef4444', accent_color:'#dc2626', matrix_color:'#dc2626', url:D+'receivables.html',  sort_order:5},

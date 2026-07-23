@@ -1,106 +1,24 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Biz Suite</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>샘플메디 · Biz Suite 데모</title>
+<meta http-equiv="refresh" content="0; url=total.html">
 <style>
-  *{box-sizing:border-box} body{margin:0;font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#0f172a;color:#e2e8f0}
-  .hidden{display:none!important}
-  .btn{border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer}
-  .btn-p{background:#0d9488;color:#fff} .btn-g{background:rgba(255,255,255,.08);color:#cbd5e1;border:1px solid #334155}
-  input,select{background:rgba(255,255,255,.06);border:1px solid #334155;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;width:100%}
-  /* 로그인 */
-  #login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#1e2140)}
-  #login .card{background:#fff;color:#111827;border-radius:20px;padding:36px 32px;width:340px;box-shadow:0 25px 60px rgba(0,0,0,.4)}
-  #login input{background:#f9fafb;border:1px solid #e5e7eb;color:#111827;margin-bottom:12px}
-  #login .btn-p{width:100%;padding:11px}
-  .link{font-size:12px;color:#6b7280;cursor:pointer;text-decoration:none}
-  /* 런처 */
-  #launcher{min-height:100vh;padding:48px 24px;display:none;flex-direction:column;align-items:center}
-  .lc-grid{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:900px}
-  .lc-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;width:220px;cursor:pointer;overflow:hidden;transition:transform .18s,box-shadow .18s}
-  .lc-card:hover{transform:translateY(-6px);box-shadow:0 24px 48px rgba(0,0,0,.5)}
-  /* 앱 셸 */
-  #app{display:none;min-height:100vh}
-  .topbar{display:flex;align-items:center;gap:14px;padding:12px 20px;background:#0b1220;border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:50}
-  .page{padding:24px 28px;max-width:1200px;margin:0 auto}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;color:#64748b;font-size:11px;font-weight:600;padding:10px 12px;border-bottom:1px solid #1e293b}
-  td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
-  .chip{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:600}
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200}
-  .modal{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:22px;width:min(440px,92vw)}
+  html,body{height:100%;margin:0;font-family:'Pretendard','Noto Sans KR',sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b);color:#e2e8f0;display:flex;align-items:center;justify-content:center}
+  .box{text-align:center}
+  .lg{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#0f766e,#0891b2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;margin:0 auto 16px}
+  a{color:#5eead4}
 </style>
 </head>
 <body>
-
-<!-- 로그인 -->
-<div id="login">
-  <div class="card">
-    <div style="text-align:center;margin-bottom:20px">
-      <div style="font-size:22px;font-weight:800" id="login-title">Biz Suite</div>
-      <div style="font-size:12px;color:#9ca3af;margin-top:4px">사내 통합 관리 시스템 (데모)</div>
-    </div>
-    <div id="login-form">
-      <input id="li-email" type="email" placeholder="이메일" autocomplete="username">
-      <input id="li-pw" type="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-      <div id="li-msg" style="font-size:12px;color:#dc2626;margin-bottom:10px;display:none"></div>
-      <button class="btn btn-p" onclick="doLogin()">로그인</button>
-      <div style="text-align:center;margin-top:14px"><span class="link" onclick="showForgot()">비밀번호를 잊으셨나요?</span></div>
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid #eee;font-size:11px;color:#9ca3af;text-align:center">
-        데모 계정: admin@demo.local · manager@demo.local · user@demo.local
-      </div>
-    </div>
-    <div id="forgot-form" class="hidden">
-      <input id="fo-email" type="email" placeholder="가입 이메일">
-      <div id="fo-msg" style="font-size:12px;margin-bottom:10px;display:none"></div>
-      <button class="btn btn-p" onclick="doForgot()">재설정 링크 받기</button>
-      <div style="text-align:center;margin-top:14px"><span class="link" onclick="hideForgot()">← 로그인으로</span></div>
-    </div>
-    <div id="reset-form" class="hidden">
-      <div style="font-size:14px;font-weight:700;margin-bottom:12px">새 비밀번호 설정</div>
-      <input id="rs-pw" type="password" placeholder="새 비밀번호 (6자 이상)">
-      <div id="rs-msg" style="font-size:12px;margin-bottom:10px;display:none"></div>
-      <button class="btn btn-p" onclick="doReset()">변경</button>
-    </div>
+  <div class="box">
+    <div class="lg">SM</div>
+    <div style="font-size:18px;font-weight:800">샘플메디 Biz Suite 데모</div>
+    <div style="font-size:13px;color:#94a3b8;margin-top:8px">전사 종합 대시보드로 이동 중…</div>
+    <div style="font-size:12px;margin-top:14px"><a href="total.html">바로 이동하기 →</a></div>
   </div>
-</div>
-
-<!-- 런처 -->
-<div id="launcher">
-  <div style="font-size:26px;font-weight:800;margin-bottom:6px">Biz Suite</div>
-  <div style="font-size:13px;color:#64748b;margin-bottom:32px" id="launcher-hi"></div>
-  <div class="lc-grid" id="lc-grid"></div>
-  <div style="margin-top:28px;display:flex;gap:10px">
-    <button class="btn btn-g hidden" id="btn-admin" onclick="enterAdmin()"><i class="bi bi-shield-lock"></i> 관리자</button>
-    <button class="btn btn-g" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i> 로그아웃</button>
-  </div>
-</div>
-
-<!-- 앱 셸 (CRM 데모 + 관리자) -->
-<div id="app">
-  <div class="topbar">
-    <button class="btn btn-g" onclick="backToLauncher()"><i class="bi bi-grid"></i></button>
-    <div style="font-weight:700" id="app-title">영업 관리</div>
-    <div style="margin-left:auto;font-size:12px;color:#94a3b8" id="app-user"></div>
-  </div>
-  <div class="page" id="page-crm">
-    <div style="display:flex;align-items:center;margin-bottom:16px">
-      <h3 style="margin:0;font-size:16px">거래처 파이프라인</h3>
-      <button class="btn btn-p" style="margin-left:auto" onclick="addCustomer()"><i class="bi bi-plus"></i> 거래처 추가</button>
-    </div>
-    <div style="background:rgba(255,255,255,.03);border:1px solid #1e293b;border-radius:14px;overflow:auto">
-      <table><thead><tr><th>거래처</th><th>담당자</th><th>지역</th><th>단계</th><th>금액</th><th>메모</th></tr></thead>
-      <tbody id="crm-rows"><tr><td colspan="6" style="text-align:center;color:#64748b;padding:24px">불러오는 중...</td></tr></tbody></table>
-    </div>
-  </div>
-  <div class="page hidden" id="page-admin"></div>
-</div>
-
-<script src="config.js"></script>
-<script src="app.js"></script>
+  <script>location.replace('total.html');</script>
 </body>
 </html>
