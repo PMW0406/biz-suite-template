@@ -1059,7 +1059,7 @@ function _renderPicker(){
   var cr=document.getElementById('out-cli');if(cr)cr.style.display=(type==='출고')?'':'none';
   var pk=document.getElementById('ser-pick');if(!pk)return;
   if(type==='입고'){
-    pk.innerHTML='<div class="fld"><label>'+jt('시리얼 / 로트번호 (장비 입고 시, 쉼표 구분)','Serial / Lot (equipment, comma-sep)')+'</label><input id="f-serial" placeholder="'+jt('예: WT-OX-24001, WT-OX-24002','e.g. WT-OX-24001, ...')+'"><div class="muted" style="font-size:10.5px;margin-top:3px">'+jt('입력한 시리얼은 장비 이력에 개별 등록됩니다','Each serial is auto-registered in Equipment Registry')+'</div></div>';
+    pk.innerHTML='<div class="fld"><label>'+jt('시리얼 / 로트번호 (장비 입고 시, 쉼표 구분)','Serial / Lot (equipment, comma-sep)')+'</label><input id="f-serial" placeholder="'+jt('예: WT-IF-24001, WT-IF-24002','e.g. WT-IF-24001, ...')+'"><div class="muted" style="font-size:10.5px;margin-top:3px">'+jt('입력한 시리얼은 장비 이력에 개별 등록됩니다','Each serial is auto-registered in Equipment Registry')+'</div></div>';
   } else {
     if(!item){pk.innerHTML='';return;}
     var units=(D.equipment||[]).filter(function(e){return e.item===item&&e.status==='재고';});
@@ -1171,7 +1171,7 @@ function receiveShip(id){
     '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:10px 12px;margin-bottom:12px"><div style="font-weight:700;color:var(--ink)">'+esc(s.shipRef||'-')+'</div><div style="font-size:12px;color:var(--body);margin-top:2px">'+trUser(s.item)+' · '+jt('발송','sent')+' <b>'+(+s.qty||0)+'</b> · '+jt('출고','shipped')+' '+(s.date||'-')+'</div></div>'
     +(known?'':'<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;font-size:11.5px;color:#b45309;margin-bottom:10px">⚠️ '+jt('품목 “','Item “')+esc(s.item)+jt('”이(가) 품목 목록에 없습니다. 입고 시 자동 등록됩니다.','” isn\'t in the item list — it will be auto-created.')+'</div>')
     +'<div class="fr"><div class="fld"><label>'+jt('입고일','Receipt date')+'</label><input id="f-rdate" type="date" value="'+today()+'"></div><div class="fld"><label>'+jt('실제 입고수량','Received qty')+'</label><input id="f-rqty" type="number" value="'+(+s.qty||0)+'"></div></div>'
-    +'<div class="fld"><label>'+jt('시리얼 / 로트번호 (선택, 쉼표로 구분)','Serial / Lot no. (optional, comma-separated)')+'</label><textarea id="f-serial" rows="2" placeholder="'+jt('예: WT-OX-24001, WT-OX-24002','e.g. WT-OX-24001, WT-OX-24002')+'">'+esc(s.serials||'')+'</textarea><div id="ser-hint" class="muted" style="font-size:10.5px;margin-top:3px"></div></div>',
+    +'<div class="fld"><label>'+jt('시리얼 / 로트번호 (선택, 쉼표로 구분)','Serial / Lot no. (optional, comma-separated)')+'</label><textarea id="f-serial" rows="2" placeholder="'+jt('예: WT-IF-24001, WT-IF-24002','e.g. WT-IF-24001, WT-IF-24002')+'">'+esc(s.serials||'')+'</textarea><div id="ser-hint" class="muted" style="font-size:10.5px;margin-top:3px"></div></div>',
     async function(){var g=function(x){return document.getElementById(x).value;};
       var rqty=Number(g('f-rqty'))||0,rdate=g('f-rdate'),ser=g('f-serial').trim();
       if(!rqty){toast(jt('입고수량을 입력하세요','Enter received qty'));return false;}
@@ -2084,30 +2084,30 @@ async function seedSample(save){
   D.sales=[
     {id:cid(),date:dt(-4),client:C1,product:'AniGen IF-100',qty:2,amt:A1,memo:'',collections:[]},
     {id:cid(),date:dt(-12),client:C2,product:'Parvo Antigen Kit',qty:200,amt:A2,memo:'',collections:[{id:cid(),date:dt(-2),amt:A2,ref:'전액'}]},
-    {id:cid(),date:dt(-40),client:C3,product:'BioPCR',qty:1,amt:A3,memo:'',collections:[{id:cid(),date:dt(-20),amt:Math.round(A3/2),ref:'선금 50%'}]},
+    {id:cid(),date:dt(-40),client:C3,product:'BioPCR P-200',qty:1,amt:A3,memo:'',collections:[{id:cid(),date:dt(-20),amt:Math.round(A3/2),ref:'선금 50%'}]},
     {id:cid(),date:mAgo(2,20),client:C1,product:'AniGen IF-100',qty:3,amt:A4,memo:'',collections:[{id:cid(),date:mAgo(1,25),amt:A4,ref:''}]},
-    {id:cid(),date:mAgo(3,10),client:C2,product:'Reagent Kit',qty:120,amt:A2,memo:'',collections:[{id:cid(),date:mAgo(3,28),amt:A2,ref:''}]},
-    {id:cid(),date:mAgo(4,15),client:C3,product:'ChemiPro',qty:1,amt:A3,memo:'',collections:[]},
+    {id:cid(),date:mAgo(3,10),client:C2,product:'ImmunoStrip',qty:120,amt:A2,memo:'',collections:[{id:cid(),date:mAgo(3,28),amt:A2,ref:''}]},
+    {id:cid(),date:mAgo(4,15),client:C3,product:'ChemiPro C-300',qty:1,amt:A3,memo:'',collections:[]},
     {id:cid(),date:mAgo(1,8),client:C1,product:'Heartworm Kit',qty:1,amt:A3,memo:'',collections:[{id:cid(),date:dt(-6),amt:Math.round(A3*0.6),ref:'부분'}]},
     {id:cid(),date:mAgo(5,12),client:C1,product:'AniGen IF-100',qty:2,amt:A1,memo:'',collections:[{id:cid(),date:mAgo(4,5),amt:A1,ref:''}]},
   ];
   D.orders=[
     {id:cid(),date:dt(-6),client:C1,product:'AniGen IF-100',qty:5,amt:A4,status:'생산중',eta:dt(18),memo:''},
-    {id:cid(),date:dt(-14),client:C3,product:'BioPCR',qty:2,amt:A3,status:'선적중',eta:dt(5),memo:'해상운송'},
+    {id:cid(),date:dt(-14),client:C3,product:'BioPCR P-200',qty:2,amt:A3,status:'선적중',eta:dt(5),memo:'해상운송'},
     {id:cid(),date:dt(-3),client:C2,product:'Parvo Antigen Kit',qty:300,amt:A2,status:'수주',eta:dt(24),memo:''},
-    {id:cid(),date:dt(-25),client:C2,product:'Reagent Kit',qty:100,amt:A2,status:'수주',eta:dt(-4),memo:'납기 확인 필요'},
+    {id:cid(),date:dt(-25),client:C2,product:'ImmunoStrip',qty:100,amt:A2,status:'수주',eta:dt(-4),memo:'납기 확인 필요'},
   ];
   D.items=[
     {id:cid(),name:'AniGen IF-100',qty0:6,unit:'대',safety:3,loc:'창고 A-1'},
     {id:cid(),name:'Parvo Antigen Kit',qty0:420,unit:'개',safety:200,loc:'창고 B-2'},
-    {id:cid(),name:'BioPCR',qty0:2,unit:'대',safety:2,loc:'창고 A-2'},
-    {id:cid(),name:'Reagent Kit',qty0:80,unit:'개',safety:150,loc:'창고 B-1'},
+    {id:cid(),name:'BioPCR P-200',qty0:2,unit:'대',safety:2,loc:'창고 A-2'},
+    {id:cid(),name:'ImmunoStrip',qty0:80,unit:'개',safety:150,loc:'창고 B-1'},
   ];
   D.moves=[
     {id:cid(),date:dt(-5),type:'입고',item:'AniGen IF-100',qty:3,ref:'선적 SH-2607'},
     {id:cid(),date:dt(-4),type:'출고',item:'AniGen IF-100',qty:2,ref:C1},
     {id:cid(),date:dt(-12),type:'출고',item:'Parvo Antigen Kit',qty:200,ref:C2},
-    {id:cid(),date:dt(-16),type:'입고',item:'Reagent Kit',qty:50,ref:'선적 SH-2606'},
+    {id:cid(),date:dt(-16),type:'입고',item:'ImmunoStrip',qty:50,ref:'선적 SH-2606'},
   ];
   D.accounts=[{name:'주거래계좌',opening:120000},{name:'급여계좌',opening:30000}];
   D.funds=[
@@ -2129,7 +2129,7 @@ async function seedSample(save){
     {id:cid(),client:'Miami Animal Health Center',product:'AniGen IF-100',qty:2,amt:66000,stage:'리드',prob:20,expected:dt(45),owner:'James Park',memo:'MEDLAB 전시회 문의',created:dt(-6),stageAt:dt(-6)},
     {id:cid(),client:C3,product:'ChemiPro C-300',qty:1,amt:58000,stage:'상담중',prob:40,expected:dt(30),owner:'James Park',next:'데모 일정 확정',nextDate:dt(4),memo:'데모 예정',created:dt(-12),stageAt:dt(-8)},
     {id:cid(),client:C1,product:'AniGen IF-100',qty:4,amt:132000,stage:'견적발송',prob:60,expected:dt(20),owner:'Kevin Lee',next:'견적 팔로업 콜',nextDate:dt(1),memo:'2차 물량',created:dt(-20),stageAt:dt(-5)},
-    {id:cid(),client:C2,product:'BioPCR',qty:2,amt:64000,stage:'협의중',prob:75,expected:dt(10),owner:'Kevin Lee',memo:'가격 협상 중',created:dt(-30),stageAt:dt(-16)},
+    {id:cid(),client:C2,product:'BioPCR P-200',qty:2,amt:64000,stage:'협의중',prob:75,expected:dt(10),owner:'Kevin Lee',memo:'가격 협상 중',created:dt(-30),stageAt:dt(-16)},
     {id:cid(),client:C1,product:'Heartworm Kit',qty:1,amt:33000,stage:'계약완료',prob:100,expected:dt(-15),owner:'James Park',memo:'',created:dt(-50),stageAt:dt(-15)},
   ];
   D.acts=[
@@ -2147,30 +2147,30 @@ async function seedSample(save){
   CADDR['Miami Animal Health Center']=['1691 Michigan Ave, Miami Beach, FL 33139',25.7907,-80.1300];
   D.clients.forEach(c=>{const a=CADDR[c.name];if(a){c.address=a[0];c.lat=a[1];c.lng=a[2];}});
   // 장비(시리얼 단위) — 선적/구매와 유기적 연결
-  const OX='AniGen IF-100',LV='BioPCR';
+  const OX='AniGen IF-100',LV='BioPCR P-200';
   const ev=(d,t,x)=>({date:d,type:t,detail:x||''});
   D.equipment=[
-    {id:cid(),serial:'WT-OX-25001',item:OX,status:'재고',client:'',inDate:dt(-40),shipRef:'SH-2607',outDate:'',outRef:'',note:'',events:[ev(dt(-40),'입고','선적 SH-2607')]},
-    {id:cid(),serial:'WT-OX-25002',item:OX,status:'재고',client:'',inDate:dt(-40),shipRef:'SH-2607',outDate:'',outRef:'',note:'',events:[ev(dt(-40),'입고','선적 SH-2607')]},
-    {id:cid(),serial:'WT-OX-25003',item:OX,status:'출고',client:C1,inDate:dt(-70),shipRef:'SH-2588',outDate:dt(-4),outRef:C1,note:'',events:[ev(dt(-70),'입고','선적 SH-2588'),ev(dt(-4),'출고',C1)]},
-    {id:cid(),serial:'WT-LV-25001',item:LV,status:'설치',client:C3,inDate:dt(-90),shipRef:'SH-2571',outDate:dt(-42),outRef:C3,note:'',events:[ev(dt(-90),'입고','선적 SH-2571'),ev(dt(-42),'출고',C3),ev(dt(-40),'설치',C3+' 설치 완료')]},
-    {id:cid(),serial:'WT-LV-25002',item:LV,status:'AS',client:C3,inDate:dt(-120),shipRef:'SH-2555',outDate:dt(-80),outRef:C3,note:'분석기 유닛 교체 이력',events:[ev(dt(-120),'입고','선적 SH-2555'),ev(dt(-80),'출고',C3),ev(dt(-2),'AS','분석기 유닛 오작동 접수')]},
+    {id:cid(),serial:'WT-IF-25001',item:OX,status:'재고',client:'',inDate:dt(-40),shipRef:'SH-2607',outDate:'',outRef:'',note:'',events:[ev(dt(-40),'입고','선적 SH-2607')]},
+    {id:cid(),serial:'WT-IF-25002',item:OX,status:'재고',client:'',inDate:dt(-40),shipRef:'SH-2607',outDate:'',outRef:'',note:'',events:[ev(dt(-40),'입고','선적 SH-2607')]},
+    {id:cid(),serial:'WT-IF-25003',item:OX,status:'출고',client:C1,inDate:dt(-70),shipRef:'SH-2588',outDate:dt(-4),outRef:C1,note:'',events:[ev(dt(-70),'입고','선적 SH-2588'),ev(dt(-4),'출고',C1)]},
+    {id:cid(),serial:'WT-BP-25001',item:LV,status:'설치',client:C3,inDate:dt(-90),shipRef:'SH-2571',outDate:dt(-42),outRef:C3,note:'',events:[ev(dt(-90),'입고','선적 SH-2571'),ev(dt(-42),'출고',C3),ev(dt(-40),'설치',C3+' 설치 완료')]},
+    {id:cid(),serial:'WT-BP-25002',item:LV,status:'AS',client:C3,inDate:dt(-120),shipRef:'SH-2555',outDate:dt(-80),outRef:C3,note:'분석기 유닛 교체 이력',events:[ev(dt(-120),'입고','선적 SH-2555'),ev(dt(-80),'출고',C3),ev(dt(-2),'AS','분석기 유닛 오작동 접수')]},
   ];
   // 본사 선적 ↔ 법인 입고 대사 (입고완료 + 운송중)
   D.shipments=[
-    {id:cid(),shipRef:'SH-2607',date:dt(-45),item:OX,qty:2,eta:dt(-40),status:'received',receivedDate:dt(-40),recvQty:2,serials:'WT-OX-25001, WT-OX-25002',moveId:''},
-    {id:cid(),shipRef:'SH-2606',date:dt(-20),item:'Reagent Kit',qty:50,eta:dt(-16),status:'received',receivedDate:dt(-16),recvQty:50,serials:'',moveId:''},
+    {id:cid(),shipRef:'SH-2607',date:dt(-45),item:OX,qty:2,eta:dt(-40),status:'received',receivedDate:dt(-40),recvQty:2,serials:'WT-IF-25001, WT-IF-25002',moveId:''},
+    {id:cid(),shipRef:'SH-2606',date:dt(-20),item:'ImmunoStrip',qty:50,eta:dt(-16),status:'received',receivedDate:dt(-16),recvQty:50,serials:'',moveId:''},
     {id:cid(),shipRef:'SH-2612',date:dt(-3),item:OX,qty:2,eta:dt(12),status:'shipped',receivedDate:'',recvQty:null,serials:'',moveId:''},
     {id:cid(),shipRef:'SH-2611',date:dt(-10),item:LV,qty:1,eta:dt(-2),status:'shipped',receivedDate:'',recvQty:null,serials:'',moveId:''},
   ];
-  // AS 활동 (장비 WT-LV-25002 연결)
-  D.acts.push({id:cid(),date:dt(-2),type:'AS',client:C3,serial:'WT-LV-25002',content:'BioPCR 분석기 유닛 오작동 접수 — 부품 교체 필요',next:'부품 재입고 후 방문 설치',nextDate:dt(6),doneNext:false});
+  // AS 활동 (장비 WT-BP-25002 연결)
+  D.acts.push({id:cid(),date:dt(-2),type:'AS',client:C3,serial:'WT-BP-25002',content:'BioPCR 분석기 유닛 오작동 접수 — 부품 교체 필요',next:'부품 재입고 후 방문 설치',nextDate:dt(6),doneNext:false});
   // 할일 / 일정
   D.tasks=[
     {id:cid(),title:'AMP Q3 견적서 발송',date:dt(2),time:'10:00',owner:'James Park',memo:'',done:false},
     {id:cid(),title:'Beverly Hills 데모 준비 (ChemiPro)',date:dt(4),time:'14:00',owner:'James Park',memo:'',done:false},
     {id:cid(),title:'US VetDxl 가격 승인 본사 확인',date:dt(-1),time:'',owner:'Kevin Lee',memo:'',done:false},
-    {id:cid(),title:'BioPCR AS 부품 발주 (WT-LV-25002)',date:dt(1),time:'',owner:'Kevin Lee',memo:'',done:false},
+    {id:cid(),title:'BioPCR AS 부품 발주 (WT-BP-25002)',date:dt(1),time:'',owner:'Kevin Lee',memo:'',done:false},
     {id:cid(),title:'월말 재고 실사',date:dt(6),time:'',owner:'',memo:'',done:false},
   ];
   // 목표: 올해 12개월 (월평균 매출 수준 ×1.1)

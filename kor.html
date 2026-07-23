@@ -885,7 +885,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
   <!-- ROI / Sales Speech 공용 디자인 -->
   <style>
-  /* ── ROI: 미니멀 부티크(피부과 럭셔리) ── */
+  /* ── ROI: 미니멀 부티크 스타일 ── */
   #page-roi{--ink:#221f1c;--mut:#8c837a;--line:#efeae3;--clay:#bf6a45;--cardbd:#ece7e1}
   #page-roi .roi-top{display:flex;justify-content:center;margin-bottom:24px}
   .roi-seg{display:inline-flex;background:#f2ede7;border-radius:999px;padding:4px;gap:2px}
@@ -996,30 +996,30 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
   }
   </style>
 
-  <!-- ROI 계산기 (네이티브 재구현: RF/HIFU · Laser) -->
+  <!-- ROI 계산기 (네이티브 재구현: 분석기+소모품 · 장비단독) -->
   <div id="page-roi" class="page">
     <div class="d-flex justify-content-center mb-2"><div class="btn-group btn-group-sm"><button class="btn btn-outline-primary" type="button" onclick="showPage('quotes')"><i class="bi bi-file-earmark-text me-1"></i>견적서</button><button class="btn btn-primary" type="button">ROI 계산기</button></div></div>
     <div id="roi-quote-banner" class="text-center mb-2" style="display:none;font-size:12px;color:#6b7280"></div>
     <div class="roi-top">
       <div class="roi-seg">
-        <button id="roitab-rf" class="active" onclick="roiTab('rf')">RF / HIFU</button>
-        <button id="roitab-laser" onclick="roiTab('laser')">Laser</button>
+        <button id="roitab-rf" class="active" onclick="roiTab('rf')">분석기 + 소모품</button>
+        <button id="roitab-laser" onclick="roiTab('laser')">장비 단독</button>
       </div>
     </div>
 
     <div id="roi-rf-panel" class="roi-split">
       <div class="roi-form">
-        <div class="rf-hd"><span class="dot"></span>RF / HIFU 입력</div>
+        <div class="rf-hd"><span class="dot"></span>분석기 + 소모품 입력</div>
         <div class="row g-3">
-          <div class="col-12"><label class="rf-lbl">병원 맞춤 추정(선택) — 병원명 입력 시 실제 팁 구매량으로 검사량 자동 추정</label><input id="rf-hosp" class="form-control" list="roi-hosp-list" placeholder="병원명 입력(선택)"><datalist id="roi-hosp-list"></datalist><div id="rf-hosp-note" style="font-size:11px;color:#bf6a45;margin-top:5px;font-weight:600"></div></div>
+          <div class="col-12"><label class="rf-lbl">병원 맞춤 추정(선택) — 병원명 입력 시 실제 키트 구매량으로 검사량 자동 추정</label><input id="rf-hosp" class="form-control" list="roi-hosp-list" placeholder="병원명 입력(선택)"><datalist id="roi-hosp-list"></datalist><div id="rf-hosp-note" style="font-size:11px;color:#bf6a45;margin-top:5px;font-weight:600"></div></div>
           <div class="col-12"><label class="rf-lbl">장비명</label><select id="rf-equipment" class="form-select"></select></div>
           <div class="col-12" id="rf-package-row"><label class="rf-lbl">패키지명</label><select id="rf-package" class="form-select"></select></div>
           <div class="col-6"><label class="rf-lbl">패키지 가격(원)</label><input id="rf-packagePrice" class="form-control" inputmode="numeric"></div>
           <div class="col-6"><label class="rf-lbl">제공 소모품수(개)</label><input id="rf-consumableCount" class="form-control" type="number" min="0"></div>
-          <div class="col-6"><label class="rf-lbl">검사샷수(샷/회)</label><input id="rf-shotsPerTreatment" class="form-control" type="number" min="1"></div>
+          <div class="col-6"><label class="rf-lbl">검사당 소모 키트(개/회)</label><input id="rf-shotsPerTreatment" class="form-control" type="number" min="1"></div>
           <div class="col-6"><label class="rf-lbl">1회 검사단가(원)</label><input id="rf-pricePerTreatment" class="form-control" inputmode="numeric"></div>
           <div class="col-6"><label class="rf-lbl">일 검사 횟수(회/일)</label><input id="rf-treatmentsPerDay" class="form-control" type="number" min="0"></div>
-          <div class="col-6"><label class="rf-lbl">팁/카트리지 샷수(총 샷)</label><input id="rf-tipShots" class="form-control" type="number" min="1"></div>
+          <div class="col-6"><label class="rf-lbl">키트당 검사수(총 테스트)</label><input id="rf-tipShots" class="form-control" type="number" min="1"></div>
         </div>
       </div>
       <div id="rf-result"></div>
@@ -1027,12 +1027,12 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
     <div id="roi-laser-panel" class="roi-split" style="display:none">
       <div class="roi-form">
-        <div class="rf-hd"><span class="dot"></span>Laser 입력</div>
+        <div class="rf-hd"><span class="dot"></span>장비 단독 입력</div>
         <div class="row g-3">
-          <div class="col-12"><label class="rf-lbl">장비 가격(원)</label><input id="laser-equipmentPrice" class="form-control" inputmode="numeric" value="150,000,000"></div>
-          <div class="col-12"><label class="rf-lbl">1회 검사단가(원)</label><input id="laser-sessionUnitPrice" class="form-control" inputmode="numeric" value="300,000"></div>
-          <div class="col-6"><label class="rf-lbl">티케팅수(회)</label><input id="laser-ticketingCount" class="form-control" type="number" min="0" value="3"></div>
-          <div class="col-6"><label class="rf-lbl">고객수(명/일)</label><input id="laser-customerCount" class="form-control" type="number" min="0" value="15"></div>
+          <div class="col-12"><label class="rf-lbl">장비 가격(원)</label><input id="laser-equipmentPrice" class="form-control" inputmode="numeric" value="30,000,000"></div>
+          <div class="col-12"><label class="rf-lbl">1회 검사단가(원)</label><input id="laser-sessionUnitPrice" class="form-control" inputmode="numeric" value="120,000"></div>
+          <div class="col-6"><label class="rf-lbl">회차수(회)</label><input id="laser-ticketingCount" class="form-control" type="number" min="0" value="3"></div>
+          <div class="col-6"><label class="rf-lbl">검사수(건/일)</label><input id="laser-customerCount" class="form-control" type="number" min="0" value="15"></div>
         </div>
       </div>
       <div id="laser-result"></div>
@@ -1090,14 +1090,14 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
         <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">검사 수가<span class="text-muted">(천원)</span></label><input type="number" id="cd-price" class="form-control form-control-sm" min="0"></div>
         <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">검사 건수</label><input type="number" id="cd-pcount" class="form-control form-control-sm" min="0"></div>
         <div class="col-12"><label class="form-label" style="font-size:12px">주력 검사 <span class="text-muted">(분류 칩 터치 또는 직접 입력, 복수는 /)</span></label><input id="cd-proc" class="form-control form-control-sm" oninput="_cduChipSync()">
-          <div><span class="cdu-chip" data-for="cd-proc" data-v="면역검사" onclick="_cduChip(this)">면역검사</span><span class="cdu-chip" data-for="cd-proc" data-v="레이저" onclick="_cduChip(this)">레이저</span><span class="cdu-chip" data-for="cd-proc" data-v="여드름" onclick="_cduChip(this)">여드름</span><span class="cdu-chip" data-for="cd-proc" data-v="비만" onclick="_cduChip(this)">비만</span><span class="cdu-chip" data-for="cd-proc" data-v="탈모" onclick="_cduChip(this)">탈모</span><span class="cdu-chip" data-for="cd-proc" data-v="색소·미백" onclick="_cduChip(this)">색소·미백</span><span class="cdu-chip" data-for="cd-proc" data-v="모공·혈액검사" onclick="_cduChip(this)">모공·혈액검사</span><span class="cdu-chip" data-for="cd-proc" data-v="스킨부스터" onclick="_cduChip(this)">스킨부스터</span><span class="cdu-chip" data-for="cd-proc" data-v="보톡스·필러" onclick="_cduChip(this)">보톡스·필러</span><span class="cdu-chip" data-for="cd-proc" data-v="질환치료" onclick="_cduChip(this)">질환치료</span><span class="cdu-chip" data-for="cd-proc" data-v="수술" onclick="_cduChip(this)">수술</span></div></div>
+          <div><span class="cdu-chip" data-for="cd-proc" data-v="면역진단" onclick="_cduChip(this)">면역진단</span><span class="cdu-chip" data-for="cd-proc" data-v="분자진단(PCR)" onclick="_cduChip(this)">분자진단(PCR)</span><span class="cdu-chip" data-for="cd-proc" data-v="생화학" onclick="_cduChip(this)">생화학</span><span class="cdu-chip" data-for="cd-proc" data-v="혈액학(CBC)" onclick="_cduChip(this)">혈액학(CBC)</span><span class="cdu-chip" data-for="cd-proc" data-v="현장검사(POCT)" onclick="_cduChip(this)">현장검사(POCT)</span><span class="cdu-chip" data-for="cd-proc" data-v="항원검사" onclick="_cduChip(this)">항원검사</span><span class="cdu-chip" data-for="cd-proc" data-v="항체검사" onclick="_cduChip(this)">항체검사</span><span class="cdu-chip" data-for="cd-proc" data-v="반려동물" onclick="_cduChip(this)">반려동물</span><span class="cdu-chip" data-for="cd-proc" data-v="산업동물" onclick="_cduChip(this)">산업동물</span><span class="cdu-chip" data-for="cd-proc" data-v="인체진단" onclick="_cduChip(this)">인체진단</span><span class="cdu-chip" data-for="cd-proc" data-v="스크리닝" onclick="_cduChip(this)">스크리닝</span></div></div>
         <div class="col-12"><label class="form-label" style="font-size:12px">경쟁사 <span class="text-muted">(보유 타사 장비)</span></label><input id="cd-comp" class="form-control form-control-sm" placeholder="직접 입력 가능" oninput="_cduChipSync()">
-          <div><span class="cdu-chip" data-for="cd-comp" data-v="볼뉴머" onclick="_cduChip(this)">볼뉴머</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 A" onclick="_cduChip(this)">경쟁사 A</span><span class="cdu-chip" data-for="cd-comp" data-v="덴서티" onclick="_cduChip(this)">덴서티</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 C" onclick="_cduChip(this)">경쟁사 C</span><span class="cdu-chip" data-for="cd-comp" data-v="세르프" onclick="_cduChip(this)">세르프</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 B" onclick="_cduChip(this)">경쟁사 B</span><span class="cdu-chip" data-for="cd-comp" data-v="티타늄" onclick="_cduChip(this)">티타늄</span><span class="cdu-chip" data-for="cd-comp" data-v="온다" onclick="_cduChip(this)">온다</span><span class="cdu-chip" data-for="cd-comp" data-v="슈링크" onclick="_cduChip(this)">슈링크</span><span class="cdu-chip" data-for="cd-comp" data-v="리프테라" onclick="_cduChip(this)">리프테라</span><span class="cdu-chip" data-for="cd-comp" data-v="쿨소닉" onclick="_cduChip(this)">쿨소닉</span><span class="cdu-chip" data-for="cd-comp" data-v="소프웨이브" onclick="_cduChip(this)">소프웨이브</span></div></div>
-        <div class="col-12"><label class="form-label" style="font-size:12px">보유 애니젠 <span class="text-muted">(라인업별 대수 — 유저 구분)</span></label>
+          <div><span class="cdu-chip" data-for="cd-comp" data-v="수입 형광분석기 A" onclick="_cduChip(this)">수입 형광분석기 A</span><span class="cdu-chip" data-for="cd-comp" data-v="수입 형광분석기 B" onclick="_cduChip(this)">수입 형광분석기 B</span><span class="cdu-chip" data-for="cd-comp" data-v="수입 PCR 장비" onclick="_cduChip(this)">수입 PCR 장비</span><span class="cdu-chip" data-for="cd-comp" data-v="벤치탑 ELISA" onclick="_cduChip(this)">벤치탑 ELISA</span><span class="cdu-chip" data-for="cd-comp" data-v="위탁검사" onclick="_cduChip(this)">위탁검사</span><span class="cdu-chip" data-for="cd-comp" data-v="육안 판독 키트" onclick="_cduChip(this)">육안 판독 키트</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 A" onclick="_cduChip(this)">경쟁사 A</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 B" onclick="_cduChip(this)">경쟁사 B</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 C" onclick="_cduChip(this)">경쟁사 C</span></div></div>
+        <div class="col-12"><label class="form-label" style="font-size:12px">보유 분석기 <span class="text-muted">(라인업별 대수 — 유저 구분)</span></label>
           <div class="d-flex gap-2">
-            <div style="flex:1"><input type="number" id="cd-oli-basic" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠</div></div>
-            <div style="flex:1"><input type="number" id="cd-oli-x" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠 X</div></div>
-            <div style="flex:1"><input type="number" id="cd-oli-kiss" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠 Kiss</div></div>
+            <div style="flex:1"><input type="number" id="cd-oli-basic" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠 IF-100</div></div>
+            <div style="flex:1"><input type="number" id="cd-oli-x" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">바이오PCR</div></div>
+            <div style="flex:1"><input type="number" id="cd-oli-kiss" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">케미프로</div></div>
           </div></div>
         <div class="col-md-6 col-6"><label class="form-label" style="font-size:12px">재고</label><input id="cd-stock" class="form-control form-control-sm"></div>
         <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">국내/해외</label><select id="cdv-region" class="form-select form-select-sm"><option>국내</option><option>국내/해외</option><option>해외</option></select></div>
@@ -1848,7 +1848,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
       <div class="col-md-4"><label class="form-label" style="font-size:12px">유형</label><select id="sch-type" class="form-select form-select-sm" onchange="_schTypeToggle()"><option>방문</option><option>콜</option><option>데모협의</option><option>A/S</option><option>견적발송</option><option>계약검토</option><option value="직접 입력">✏️ 직접 입력…</option></select><input id="sch-type-etc" class="form-control form-control-sm mt-1" placeholder="유형 직접 입력" style="display:none" autocomplete="off"></div>
       <div class="col-md-6"><label class="form-label" style="font-size:12px">날짜 *</label><input type="date" id="sch-date" class="form-control form-control-sm"></div>
       <div class="col-md-6"><label class="form-label" style="font-size:12px">담당자</label><input type="text" id="sch-sales" class="form-control form-control-sm" list="sch-sales-list" autocomplete="off"><datalist id="sch-sales-list"></datalist></div>
-      <div class="col-12"><label class="form-label" style="font-size:12px">제품 / 장비 <span class="text-muted" style="font-weight:400">(자동완성)</span></label><input type="text" id="sch-prod" class="form-control form-control-sm" list="sch-prod-list" placeholder="예: 애니젠 Kiss / Pico Andy / Tips F4.0" autocomplete="off"><datalist id="sch-prod-list"></datalist></div>
+      <div class="col-12"><label class="form-label" style="font-size:12px">제품 / 장비 <span class="text-muted" style="font-weight:400">(자동완성)</span></label><input type="text" id="sch-prod" class="form-control form-control-sm" list="sch-prod-list" placeholder="예: 애니젠 IF-100 / 파보 Ag키트 / 바이오PCR" autocomplete="off"><datalist id="sch-prod-list"></datalist></div>
       <div class="col-12"><label class="form-label" style="font-size:12px">내용 / 목적</label><textarea id="sch-note" class="form-control form-control-sm" rows="2" placeholder="예: 재구매 상담 / 데모 후 견적 협의 / 장비 정기 점검"></textarea></div>
     </div>
     <div id="sch-hosp-info" style="display:none;margin-top:12px"></div>
@@ -2889,7 +2889,7 @@ function _ilboMonthMaps(){
     var m=parseInt(d.slice(5,7),10); if(!m) return;
     var amt=Number(r.amount)||0;
     var rc=String(r.category||r.cat||r.gubun||'');
-    var isCons = rc.indexOf('소모')>=0 ? true : (rc.indexOf('제품')>=0||rc.indexOf('장비')>=0) ? false : (!!consSet[_normPname(r.product)] || /tip|팁|소모품|카트리지|cartridge|gel|젤|니들|needle|cathet/i.test(String(r.product||'')));
+    var isCons = rc.indexOf('소모')>=0 ? true : (rc.indexOf('제품')>=0||rc.indexOf('장비')>=0) ? false : (!!consSet[_normPname(r.product)] || /tip|팁|소모품|카트리지|cartridge|키트|카세트|시약|kit|strip|스트립|reagent/i.test(String(r.product||'')));
     if(isCons) consMo[m]=(consMo[m]||0)+amt; else devMo[m]=(devMo[m]||0)+amt;
   });
   return {consMo:consMo, devMo:devMo};
@@ -4468,8 +4468,8 @@ function consParseExcel(input) {
           // 애니젠 그룹별 월별 집계
           if (mo && prod) {
             let og = null;
-            if (/애니젠 Tip \[(F|E)-/.test(prod))   og = '애니젠';
-            else if (/애니젠 Tip \[(XF|XE)-/.test(prod)) og = 'X/XM';
+            if (/파보|디스템퍼|반려동물/.test(prod))   og = '애니젠';
+            else if (/구제역|돼지열병|산업동물/.test(prod)) og = 'X/XM';
             if (og) { if (!anigenMo[og]) anigenMo[og]={}; anigenMo[og][mo]=(anigenMo[og][mo]||0)+amt; }
           }
         });
@@ -4496,7 +4496,7 @@ function consParseExcel(input) {
       // 병원별 집계
       setMsg('병원별 데이터 집계 중...');
       const EXCL_PROD_JS = ['의료기기'];
-      const INTERNAL_KW_JS = ['노바진단','노바진단','노바진단'];
+      const INTERNAL_KW_JS = ['노바진단'];
       const allRows = [...r25.map(r=>({...r,_yr:2025})), ...r26.map(r=>({...r,_yr:2026}))];
       const hospMap = {};
       allRows.forEach(r => {
@@ -4569,10 +4569,10 @@ function consParseExcel(input) {
           if (qty <= 0) qty = 1;
           const mo   = monthNum(r['월']);
           let prod = (r['구분#4']||'').trim();
-          if (/hair|헤어/i.test(prod)) {
-            prod = 'HemaCount';
+          if (/hair|헤어|헤마/i.test(prod)) {
+            prod = '헤마카운트';
           } else if (amt / qty < 1_000_000) {
-            return;  // HemaCount 외 단가 100만원 미만 → 팁샷/소모품 제외
+            return;  // 헤마카운트 외 단가 100만원 미만 → 소모품 제외
           }
           const name = (r['거래처명']||'').trim();
           const sales= (r['담당자']||'').trim();
@@ -6164,9 +6164,9 @@ function renderCDUTarget(){
     due.push({n:n, gap:Math.round(avgGap), since:since, over:Math.round(since-avgGap), amt:avgAmt, mgr:_repOf(n)||''});
   });
   due.sort((a,b)=>b.amt-a.amt);
-  // B. 휴면 장비: 팁 쓰는 장비(애니젠·Tightan) 보유 병원인데 올해 팁 매출 0 또는 급감
+  // B. 휴면 장비: 소모품 쓰는 분석기(애니젠·바이오PCR 등) 보유 병원인데 올해 키트 매출 0 또는 급감
   var mm=Math.max(1,(typeof _dataMaxMonth==='function'?_dataMaxMonth():6));
-  var tipDev=/anigen|tightan/i;
+  var tipDev=/애니젠|anigen|이뮤노|파보체크|퀵스캔|바이오PCR|케미프로|헤마카운트/i;
   var dormant=[], drop=[];
   Object.keys(DVH).forEach(function(n){
     var dv=DVH[n]; if((dv.total||0)<=0) return;
@@ -6210,7 +6210,7 @@ function renderCDUTarget(){
       +tsec('재구매 도래','#16324f',due.length+'곳 · 회당 합계 '+_cduWon(dueSum),'평균 구매주기 경과 — 회당 구매액 순',(due.length?_promoBar('_cduPromoDue'):'')+dueHtml)
     +'</div>'
     +'<div class="cdud-sec">'
-      +tsec('휴면 장비 병원','#dc2626',dormant.length+'곳 · 사유 파악 '+dormant.filter(d=>_cduReasonOf(d.n)).length+'/'+dormant.length+' · 작년 '+_cduWon(dorSum),'애니젠·Tightan 보유, 올해 팁 0 — 방치·경쟁 소모품 의심(작년 매출순)',
+      +tsec('휴면 장비 병원','#dc2626',dormant.length+'곳 · 사유 파악 '+dormant.filter(d=>_cduReasonOf(d.n)).length+'/'+dormant.length+' · 작년 '+_cduWon(dorSum),'분석기 보유, 올해 키트 0 — 방치·경쟁 소모품 의심(작년 매출순)',
         (dormant.length?_promoBar('_cduPromoDor'):'')+'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));column-gap:28px">'+dorHtml+'</div>')
     +'</div>'
   +'</div>';
@@ -6538,7 +6538,7 @@ function renderCDUReport(vs){
   var dsec=(title,sub,inner)=>'<div><div class="cdud-st">'+title+(sub?'<u>· '+sub+'</u>':'')+'</div>'+inner+'</div>';
   var _noD=t=>'<div style="font-size:12px;color:#94a3b8;padding:4px 0">'+t+'</div>';
   var detailSec='<div class="cdud-grid2">'
-    +dsec('검사 수가 밴드','애니젠 300테스트 · 클릭 상세',
+    +dsec('검사 수가 밴드','병원별 검사 단가 · 클릭 상세',
         (prices.length? bands.map((b,i)=>barRow(b[0].replace('천원','')+'천원',bandCnt[i],bandCnt[i]/prices.length*100,'#2563eb','곳','_cduDrillBand('+i+')')).join('')+'<div style="font-size:11px;color:#64748b;margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9">평균 <b>'+avg+'</b> · 최고 '+mx+' · 최저 '+mn+' · '+prices.length+'곳 파악</div>'
           : _noD('수가 파악 병원 없음')))
     +dsec('경쟁사 노출 현황','클릭 상세',(compArr.length?compArr.map(([n,c])=>barRow(n,c,c/compTot*100,'#ef4444','곳',"_cduDrillComp('"+_cduEsc(n).replace(/\x27/g,"\\x27")+"')")).join(''):_noD('경쟁사 정보 없음')))
@@ -7478,7 +7478,7 @@ const WT_SUP={name:'노바진단 주식회사',reg:'496-88-01552',ceo:'김종원
 // ── 실제 CI 로고(원본 PNG) + 장비별 기본 부속품(★견적서 엑셀 기준) ──
 const _WT_SEAL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 const _WT_LOGO_URI="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-const WT_DEVICES={"애니젠 X": {"accessories": [{"name": "Handpiece", "spec": ""}, {"name": "Return Cable", "spec": ""}, {"name": "Power Cable", "spec": ""}, {"name": "Manual", "spec": ""}]}, "애니젠": {"accessories": [{"name": "Handpiece", "spec": ""}, {"name": "Return Cable", "spec": ""}, {"name": "Power Cable", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Pastelle": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Pastelle Pro": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Safety Goggles", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Operating Manual", "spec": ""}, {"name": "MLA Handpiece", "spec": ""}, {"name": "Dye Handpiece", "spec": ""}, {"name": "Collimation Handpiece", "spec": ""}, {"name": "Foot S/W", "spec": ""}]}, "Avvio": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "AVR", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Lavieen": {"accessories": [{"name": "Fiber & Handpiece", "spec": ""}, {"name": "Fiber Holder", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Pico Majesty": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Zoom Handpiece", "spec": "2-10 mm"}, {"name": "MLA Handpiece", "spec": "3-10 mm"}, {"name": "Dye Handpiece", "spec": "595, 660 nm"}, {"name": "Doe Handpiece", "spec": "1064 nm, 532 nm"}, {"name": "Collimation H/P", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggles", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Dye Goggle", "spec": ""}, {"name": "Manual", "spec": ""}]}, "V-Laser": {"accessories": [{"name": "Fiber & Handpiece", "spec": ""}, {"name": "Foot Switch", "spec": ""}, {"name": "Safety Goggles", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Handpiece Holder", "spec": ""}, {"name": "Beam Guide", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Pico Alex": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Fractional H/P", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Pico Andy": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "MLA (3-10) H/P", "spec": ""}, {"name": "Collimation H/P", "spec": ""}, {"name": "DOE 532 , 1064 H/P", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Sandro Dual": {"accessories": [{"name": "Fiber & Handpiece", "spec": ""}, {"name": "Handpiece Holder", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Cosjet ATR": {"accessories": [{"name": "Articulated Arm", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Cosjet SR": {"accessories": [{"name": "Fiber & Handpiece", "spec": ""}, {"name": "Foot S/W", "spec": ""}, {"name": "Safety Goggle", "spec": ""}, {"name": "Patient Goggle", "spec": ""}, {"name": "Manual", "spec": ""}]}, "Tightan": {"accessories": [{"name": "Handpiece", "spec": ""}, {"name": "Power Cable", "spec": ""}, {"name": "Manual", "spec": ""}, {"name": "Cartridge 3.0mm", "spec": ""}, {"name": "Cartridge 4.5mm", "spec": ""}]}};
+const WT_DEVICES={"애니젠 IF-100": {"accessories": [{"name": "형광분석기 본체", "spec": "IF-100"}, {"name": "시약 카트리지 리더", "spec": ""}, {"name": "바코드 스캐너", "spec": ""}, {"name": "전원 어댑터", "spec": "DC 12V"}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이션 키트", "spec": ""}]}, "애니젠": {"accessories": [{"name": "형광분석기 본체", "spec": "IF-100"}, {"name": "시약 카트리지 리더", "spec": ""}, {"name": "바코드 스캐너", "spec": ""}, {"name": "전원 어댑터", "spec": "DC 12V"}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이션 키트", "spec": ""}]}, "이뮤노": {"accessories": [{"name": "면역분석기 본체", "spec": ""}, {"name": "시약 트레이", "spec": ""}, {"name": "샘플 로더", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "파보체크": {"accessories": [{"name": "판독기 본체", "spec": ""}, {"name": "카세트 트레이", "spec": ""}, {"name": "희석 버퍼", "spec": "50T"}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "바이오PCR": {"accessories": [{"name": "PCR 분석기 본체", "spec": "P-200"}, {"name": "리액션 튜브 랙", "spec": "96-well"}, {"name": "추출 시약 키트", "spec": ""}, {"name": "프린터", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이션 키트", "spec": ""}]}, "퀵스캔": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "카트리지 리더", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "케미프로": {"accessories": [{"name": "생화학 분석기 본체", "spec": "C-300"}, {"name": "시약 로터", "spec": ""}, {"name": "큐벳 세트", "spec": ""}, {"name": "프린터", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이터", "spec": ""}]}, "헤마카운트": {"accessories": [{"name": "혈구분석기 본체", "spec": ""}, {"name": "희석액 팩", "spec": ""}, {"name": "세정액 팩", "spec": ""}, {"name": "폐액 용기", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "마이크로디텍트": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "카세트 트레이", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "제니Dx": {"accessories": [{"name": "분자진단기 본체", "spec": ""}, {"name": "카트리지 슬롯", "spec": ""}, {"name": "추출 시약", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "벨라체크": {"accessories": [{"name": "판독기 본체", "spec": ""}, {"name": "카세트 트레이", "spec": ""}, {"name": "희석 버퍼", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "아큐진단": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "시약 트레이", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "프리모진단": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "시약 카트리지 리더", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}};
 function _wtLogo(c,w){ return '<img src="'+_WT_LOGO_URI+'" width="'+w+'" alt="노바진단" style="height:auto;display:inline-block;vertical-align:middle">'; }
 function numKor(n){ n=Math.round(Math.abs(n||0)); if(n===0)return '영'; const D=['','일','이','삼','사','오','육','칠','팔','구'],U=['','십','백','천'],P=['','만','억','조','경']; let res='',g=0; while(n>0){ let part=n%10000,s=''; for(let i=0;i<4;i++){ const d=Math.floor(part/Math.pow(10,i))%10; if(d)s=D[d]+U[i]+s; } if(s)res=s+P[g]+res; n=Math.floor(n/10000); g++; } return res; }
 function _qEscH(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -9071,7 +9071,7 @@ function editSchedule(id){ const l=(DB.d.logs||[]).find(x=>x.id===id); if(l) ope
 // 제품 자동완성 목록
 function _schFillProdList(){ const dl=document.getElementById('sch-prod-list'); if(!dl||dl.dataset.filled)return;
   const ps=new Set(); Object.keys((typeof DEVICE!=='undefined'&&DEVICE.products2026)||{}).forEach(p=>ps.add(p)); Object.keys((typeof CONS!=='undefined'&&CONS.products2026)||{}).forEach(p=>ps.add(p));
-  ['애니젠','애니젠 Kiss','애니젠 X','애니젠 XM','Tightan','V LASER','Pico Andy','Pico Alex','Picocare Majesty','Pastelle Pro','Avvio','Lavieen','Sandro Dual'].forEach(p=>ps.add(p));
+  ['애니젠 IF-100','바이오PCR P-200','이뮤노','파보체크','케미프로 C-300','헤마카운트','퀵스캔','마이크로디텍트','제니Dx','벨라체크','아큐진단','프리모진단','파보 Ag키트','디스템퍼 Ab키트'].forEach(p=>ps.add(p));
   dl.innerHTML=[...ps].sort((a,b)=>a.localeCompare(b,'ko')).map(p=>'<option value="'+p.replace(/"/g,'&quot;')+'">').join(''); dl.dataset.filled='1';
 }
 // 일정 모달 닫고 병원 상세 열기(모달 겹침 방지)
@@ -10850,16 +10850,16 @@ window.addEventListener('pageshow', function(e){
     try{ el.setSelectionRange(pos,pos); }catch(e){}
   }
 
-  // ===== RF/HIFU 데이터 =====
+  // ===== 분석기 + 소모품 데이터 =====
   const RF_PACKAGE_DATA = {
-    "애니젠 X/Kiss": [
-      {packageName:"4,400 패키지", packagePrice:44000000, consumableCount:90,  shotsPerTreatment:600, tipShots:900, defaultPricePerTreatment:1200000, defaultTreatmentsPerDay:3},
-      {packageName:"6,600 패키지", packagePrice:66000000, consumableCount:170, shotsPerTreatment:600, tipShots:900, defaultPricePerTreatment:1200000, defaultTreatmentsPerDay:3},
-      {packageName:"8,800 패키지", packagePrice:88000000, consumableCount:250, shotsPerTreatment:600, tipShots:900, defaultPricePerTreatment:1200000, defaultTreatmentsPerDay:3}
+    "애니젠 IF-100": [
+      {packageName:"스타터 팩 (300키트)",  packagePrice:8000000,  consumableCount:300,  shotsPerTreatment:1, tipShots:1, defaultPricePerTreatment:35000, defaultTreatmentsPerDay:15},
+      {packageName:"베이직 팩 (600키트)",  packagePrice:14000000, consumableCount:600,  shotsPerTreatment:1, tipShots:1, defaultPricePerTreatment:35000, defaultTreatmentsPerDay:15},
+      {packageName:"프리미엄 팩 (1,000키트)", packagePrice:22000000, consumableCount:1000, shotsPerTreatment:1, tipShots:1, defaultPricePerTreatment:35000, defaultTreatmentsPerDay:15}
     ],
-    "Tightan": [
-      {packageName:"550 패키지",   packagePrice:5500000,  consumableCount:5,  shotsPerTreatment:300, tipShots:15000, defaultPricePerTreatment:300000, defaultTreatmentsPerDay:3},
-      {packageName:"1,100 패키지", packagePrice:11000000, consumableCount:10, shotsPerTreatment:300, tipShots:15000, defaultPricePerTreatment:300000, defaultTreatmentsPerDay:1}
+    "바이오PCR P-200": [
+      {packageName:"카트리지 200팩", packagePrice:30000000, consumableCount:200, shotsPerTreatment:1, tipShots:1, defaultPricePerTreatment:120000, defaultTreatmentsPerDay:6},
+      {packageName:"카트리지 400팩", packagePrice:55000000, consumableCount:400, shotsPerTreatment:1, tipShots:1, defaultPricePerTreatment:120000, defaultTreatmentsPerDay:6}
     ]
   };
   const _rf = id => document.getElementById('rf-'+id);
@@ -10976,7 +10976,7 @@ window.addEventListener('pageshow', function(e){
     const items=(q.items||[]).slice().sort((a,b)=>Number(b.amount||0)-Number(a.amount||0));
     const dev=(items[0]&&items[0].name)||'';
     const total=Number(q.total||0);
-    if(/anigen|tightan|애니젠|타이탄/i.test(dev)){
+    if(/anigen|애니젠|이뮤노|파보체크|바이오PCR|퀵스캔|케미프로|헤마카운트|biopcr/i.test(dev)){
       roiTab('rf');
       const eq=_rf('equipment'); let matched=false;
       for(const nm of Object.keys(RF_PACKAGE_DATA)){
@@ -11027,7 +11027,7 @@ window.addEventListener('pageshow', function(e){
     _roiBannerFor(q);
   };
   // ===== 병원 맞춤 추정(실제 팁 구매량 → 검사량) =====
-  const _ROI_TIP_PRICE=400000;   // 팁 1개 단가 가정(패키지 환산 35~49만원 범위의 중간값)
+  const _ROI_TIP_PRICE=50000;   // 키트 1개 단가 가정(패키지 환산 3.5~12만원 범위의 대푯값)
   function _roiHospList(){ const dl=document.getElementById('roi-hosp-list'); if(!dl||dl.dataset.f) return; const hs=Object.keys((typeof CONS!=='undefined'&&CONS.hospitals)||{}).sort((a,b)=>a.localeCompare(b,'ko')); dl.innerHTML=hs.slice(0,2500).map(n=>'<option value="'+n.replace(/"/g,'&quot;')+'">').join(''); dl.dataset.f='1'; }
   function _roiHospEst(){
     const inp=document.getElementById('rf-hosp'), note=document.getElementById('rf-hosp-note'); if(!inp||!note) return;
@@ -11065,72 +11065,48 @@ window.addEventListener('pageshow', function(e){
 
   // ===== Sales Speech 데이터(한국어) =====
   const SPEECH_DATA = [
-    {id:'v-laser',name:'V LASER',color:'#e8472a',tagline:'엑셀브이급 적응증, 혁신적인 ROI의 혈관레이저',competitors:['Excel V','Vbeam','Cynergy'],table:{competitor:'Excel V',rows:[
-      {label:'가격',노바진단:'약 6,000만원',rival:'1.5~2억'},{label:'소모품',노바진단:'없음',rival:'있음'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'},{label:'ROI',노바진단:'매우 우수',rival:'투자금 부담'}]},speech:[
-      {text:'V LASER는 **핸드피스 교체 없이 532nm와 1064nm 두 파장을 즉시 전환**해 사용할 수 있어, 검사 흐름을 끊지 않고 연속 진료가 가능합니다.'},
-      {text:'4단계 접촉식 쿨링 시스템으로 피부 타입과 병변 종류에 따라 검사자가 세밀하게 파라미터를 조절할 수 있으며, **화상 위험을 최소화**합니다.'},
-      {text:'**소모품이 없어 유지비가 거의 발생하지 않고**, 혈관 병변부터 생화학검사·색소·여드름까지 폭넓은 적응증을 하나의 장비로 커버합니다.'},
-      {closing:true,text:"소모품 비용 '0', 넓은 적응증 — Excel V 효과를 6,000만원으로. ROI가 가장 빠른 혈관·색소 플랫폼입니다."}]},
-    {id:'pastelle-pro',name:'PASTELLE PRO',color:'#8b5cf6',tagline:'기존 Q-Switch가 못 지우는 색소검사색상까지 커버',competitors:['Spectra XT','Revlite SI','Medlite C6'],table:{competitor:'기존 Q-Switched',rows:[
-      {label:'파장',노바진단:'1064/532/595/660',rival:'1064/532'},{label:'색소검사 색상',노바진단:'거의 전색상',rival:'제한적'},{label:'MLA',노바진단:'가능',rival:'제한'},{label:'활용성',노바진단:'매우 높음',rival:'색소 위주'}]},speech:[
-      {text:'기존 Q-Switched 장비가 1064/532nm에 한정된 것과 달리, **PASTELLE PRO는 595nm(홍조·파란 색소검사)와 660nm(초록 색소검사·고멜라닌)까지 총 4파장을 지원**합니다.'},
-      {text:'덕분에 기존에 거절할 수밖에 없었던 다양한 색상의 색소검사도 효과적으로 치료할 수 있습니다.'},
-      {text:'**HEXA MLA와 멀티 PTP 모드**는 광기계적 파괴력을 극대화해 기존 Q-Switched 대비 더 적은 횟수로 뚜렷한 개선 효과를 냅니다.'},
-      {closing:true,text:'4가지 파장으로 모든 색소검사 색상까지 전부 수용하세요. 검사 메뉴 확장과 수익성이 동시에 해결됩니다.'}]},
-    {id:'picocare-majesty',name:'PICOCARE MAJESTY',color:'#f59e0b',tagline:'250ps 초단파 펄스로 프리미엄 피코 시장 공략',competitors:['피코웨이','PicoPlus','디스커버리 피코'],table:{competitor:'PicoPlus',rows:[
-      {label:'펄스폭',노바진단:'250ps',rival:'300ps급'},{label:'피크파워',노바진단:'2GW',rival:'상대적 낮음'},{label:'유지비',노바진단:'국산 저렴',rival:'수입 고가'},{label:'가격',노바진단:'경쟁력 우수',rival:'고가'}]},speech:[
-      {text:'PICOCARE MAJESTY는 **전 세계 최초로 250ps 펄스듀레이션을 구현한 피코레이저** 장비입니다. 기존 Q스위치보다 1,000배 빠르고, 멜라노좀의 SRT인 300ps보다 짧은 펄스로 **멜라노좀만 선택적으로 파괴**합니다.'},
-      {text:'**2GW 피크 파워**는 나노 레이저로 치료가 어려웠던 완고한 색소 병변과 복잡한 색소검사 색상에서도 탁월한 효과를 발휘합니다.'},
-      {text:'국산 장비이므로 수입 피코 대비 **유지비가 저렴하고, A/S 대응이 신속**합니다.'},
-      {closing:true,text:'세계 최초 250ps · 2GW — 피코플러스보다 빠르고 강하면서 가격은 더 낮습니다. 프리미엄 검사 단가를 기술로 정당화하는 유일한 국산 플래그십입니다.'}]},
-    {id:'picoalex',name:'PICOALEX',color:'#10b981',tagline:'755nm 피코 시장 공략용 플랫폼',competitors:['PicoSure','Discovery Pico'],table:{competitor:'PicoSure',rows:[
-      {label:'출력',노바진단:'310mJ',rival:'상대적 낮음'},{label:'캘리브레이션',노바진단:'초기 1회',rival:'스팟 변경마다'},{label:'운용편의성',노바진단:'우수',rival:'보통'},{label:'가격',노바진단:'경쟁력 우수',rival:'고가'}]},speech:[
-      {text:'PICOALEX는 **755nm 알렉산드라이트 파장 특유의 높은 멜라닌 선택성**을 600ps 피코초 기술과 결합한 장비입니다.'},
-      {text:'경쟁사 E(PicoSure) 대비 **최대 출력(310mJ)이 높고**, 스팟 사이즈 변경 시 매번 캘리브레이션을 진행해야 하는 번거로움 없이 **검사 시작 시 한 번만** 진행하면 되어 검사 흐름이 훨씬 효율적입니다.'},
-      {text:'Zoom과 MLA 핸드피스로 색소검사 제거·토닝에서 생화학검사네이션·혈액검사 치료까지 폭넓게 대응하며, 동급 수입 장비 대비 **합리적인 가격으로 도입 문턱을 낮춥니다.**'},
-      {closing:true,text:'경쟁사 E 대비 출력은 높고, 캘리브레이션은 1회로 끝나고, 가격은 낮습니다. 동일 결과를 더 빠르고 효율적으로 낼 수 있습니다.'}]},
-    {id:'picoandy',name:'PICOANDY',color:'#3b82f6',tagline:'개원가에서 가장 무난하게 수익 내는 피코 장비',competitors:['PicoPlus','PicoLO','Enlighten'],table:{competitor:'피코플러스',rows:[
-      {label:'출력',노바진단:'600mJ',rival:'500mJ'},{label:'펄스폭',노바진단:'450~550ps',rival:'유사'},{label:'가격',노바진단:'우수',rival:'상대적 고가'},{label:'범용성',노바진단:'매우 높음',rival:'높음'}]},speech:[
-      {text:'PICOANDY는 **450ps의 피코초 펄스**로 기존 나노 레이저 대비 색소 파괴력을 높이면서도 주변 조직 손상을 최소화합니다.'},
-      {text:'**1064nm 기준 최대 600mJ의 출력**은 깊은 진피 색소부터 표피 잡티, 색소검사 제거까지 넓은 적응증을 한 번의 도입으로 커버합니다.'},
-      {text:'낮은 통증과 부작용 프로파일 덕분에 **환자 만족도가 높고**, 유연한 패키지 구성으로 검사 단가와 재방문율 향상에 직접 기여합니다.'},
-      {closing:true,text:'나노 레이저를 쓰고 계신다면, 동일 환자에게 피코 옵션을 추가해 검사 단가를 높일 수 있는 가장 합리적인 업그레이드입니다.'}]},
-    {id:'anigen',name:'애니젠',color:'#f97316',tagline:'경쟁사 A급 효과 + 국내 A/S + 낮은 소모품 비용',competitors:['경쟁분석기 A','볼뉴머'],table:{competitor:'경쟁분석기 A',rows:[
-      {label:'원리',노바진단:'Monopolar RF',rival:'Monopolar RF'},{label:'가격',노바진단:'약 5,500만원',rival:'1.5억 이상'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'},{label:'소모품',노바진단:'저렴',rival:'고가'}]},speech:[
-      {text:'애니젠는 **한국 최초 모노폴라 RF 장비**로, 진피 콜라겐에 열에너지를 직접 전달해 콜라겐 수축과 섬유아세포 자극을 통해 신생 콜라겐을 생성합니다.'},
-      {text:'**4중 안전장치와 GAS Cooling 시스템**이 검사 중 실시간으로 작동하여 열 손상 위험을 최소화하면서도 충분한 치료 심도를 확보합니다.'},
-      {text:'싱글·듀얼·오토 모드와 자유로운 쿨링 조절 기능으로 검사자의 임상 판단에 따른 맞춤 프로토콜이 가능하며, 경쟁사 B·경쟁사 A 대비 **합리적인 도입 비용과 우수한 국내 A/S 체계**를 갖추고 있습니다.'},
-      {closing:true,text:'경쟁사 A와 동일한 모노폴라 RF, 동등한 최대출력 400W — 도입 비용은 5분의 1 이하에 국내 즉시 A/S까지. 효과는 같고 운영 효율은 훨씬 높습니다.'}]},
-    {id:'anigen-xm',name:'애니젠 XM',color:'#f97316',tagline:'RF + HIFU 복합 전층 면역검사 — 두 장비가 하나로',competitors:['경쟁분석기 A','경쟁사 B','볼뉴머'],table:{competitor:'경쟁분석기 A',rows:[
-      {label:'RF',노바진단:'O',rival:'O'},{label:'HIFU',노바진단:'O',rival:'X'},{label:'복합검사',노바진단:'O',rival:'X'},{label:'쿨링',노바진단:'강화',rival:'기본'}]},speech:[
-      {text:'애니젠 XM은 **HIFU와 RF를 하나의 플랫폼에 통합한 세계 최초 복합 면역검사 장비**입니다.'},
-      {text:'HIFU로 SMAS층부터 끌어올리고, RF G모드로 진피 상부를 부드럽게 가열하고, RF X모드로 심부까지 강력하게 히팅하는 **3에너지 교차 검사**이 가능합니다.'},
-      {text:'경쟁사 B는 HIFU만, 경쟁사 A는 RF만 제공하는 데 반해, **애니젠 XM은 두 장비의 적응증을 단일 플랫폼으로 커버**합니다. XM Pack 소모품 패키지로 1인 1팩 프리미엄 검사 구조를 설계할 수 있습니다.'},
-      {closing:true,text:'경쟁사 B와 경쟁사 A를 따로 살 이유가 없습니다. 애니젠 XM 하나로 HIFU+RF 전층 면역검사을 완성하고, XM Pack으로 반복 매출 구조까지 만드세요.'}]},
-    {id:'tightan',name:'TIGHTAN',color:'#22c55e',tagline:'HIFU 시장 진입용 — 최고의 투자 효율',competitors:['경쟁사 B','울트라포머 MPT','슈링크 유니버스'],table:{competitor:'경쟁사 B',rows:[
-      {label:'가격',노바진단:'1천만원대',rival:'1억 이상'},{label:'검사속도',노바진단:'300테스트 6분',rival:'상대적 느림'},{label:'도입부담',노바진단:'매우 낮음',rival:'높음'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
-      {text:'TIGHTAN은 HIFU 기반 비침습 면역검사 장비로, 타깃층에만 에너지를 정밀 집속해 **주변 조직 손상 없이 즉각적인 면역검사 효과**를 제공합니다.'},
-      {text:'**1회 검사로 6개월~1년까지 효과가 지속**되며, 300테스트을 6분 이내에 완료하는 빠른 검사 속도로 회전율 높은 검사 환경에 최적화되어 있습니다.'},
-      {text:'합리적인 도입 가격으로 **HIFU 검사 메뉴를 처음 추가하려는 클리닉에도 진입 장벽이 낮고**, 얼굴 부위별 카트리지 선택으로 개인화 검사이 가능합니다.'},
-      {closing:true,text:'경쟁사 B 대비 10분의 1 가격에 HIFU 면역검사 메뉴 추가, 300테스트을 6분에 완료. 검사 단가는 유지하면서 도입 부담은 최소화됩니다.'}]},
-    {id:'avvio',name:'AVVIO',color:'#14b8a6',tagline:'CO2 대비 짧은 다운타임 — 같은 효과, 더 빠른 회복',competitors:['액션2','루트로닉 eCO2','CO2 레이저'],table:{competitor:'CO2 레이저',rows:[
-      {label:'열손상',노바진단:'적음',rival:'많음'},{label:'회복속도',노바진단:'빠름',rival:'느림'},{label:'PIH',노바진단:'적음',rival:'상대적 높음'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
-      {text:'AVVIO는 **수분 흡수율이 CO2 레이저보다 16배 높은 Er:YAG 2940nm 레이저**로, 표피 손상과 열 확산이 최소화되어 회복 기간이 훨씬 짧습니다.'},
-      {text:'다운타임에 민감한 환자가 늘어나는 추세에서, AVVIO는 **CO2 대비 환자 만족도를 높이면서 동등한 치료 효과**를 제공합니다.'},
-      {text:'Short/Long 모드 선택으로 Ablation과 Coagulation 효과를 병변에 따라 적용하고, **Fractional 핸드피스로 적응증 범위를 더욱 확장**할 수 있습니다.'},
-      {closing:true,text:'CO2보다 16배 높은 수분 흡수율로 열 확산과 피부 손상을 최소화 — 다운타임이 짧아 CO2를 꺼리던 환자도 설득되는 더 안전한 선택입니다.'}]},
-    {id:'lavieen',name:'LAVIEEN',color:'#a855f7',tagline:'BB레이저로 알려진 패키지 매출 창출 장비',competitors:['모자이크','Halo','Fraxel Dual'],table:{competitor:'프락셀',rows:[
-      {label:'다운타임',노바진단:'짧음',rival:'상대적 김'},{label:'소모품',노바진단:'없음',rival:'있음'},{label:'드럭딜리버리',노바진단:'강점',rival:'보통'},{label:'환자인지도',노바진단:'BB레이저',rival:'프락셀'}]},speech:[
-      {text:'LAVIEEN은 **1927nm Thulium 파장이 수분에 선택적으로 반응하는 BB레이저**입니다. 각질층을 보존한 채로 표피와 진피 상부에만 열에너지를 전달하기 때문에 CO2 대비 다운타임이 짧고 피부 장벽 손상이 최소화됩니다.'},
-      {text:"'**비비크림 필요 없는 올인원 레이저**'라는 컨셉으로 환자 인지도가 높아 상담 전환율이 좋은 장비입니다."},
-      {text:'핵심 강점은 **검사 후 드럭 딜리버리 효과**입니다. MTZ 형성 후 EGF·FGF·PDRN·트라넥삼산 등 앰플을 도포하면 흡수율이 현저히 높아져 **앰플 판매로 추가 수익 구조**를 만들 수 있습니다.'},
-      {closing:true,text:'경쟁 프랙셔널 장비들의 소모품 비용 없이 BB레이저 고객 유입 · 앰플 수익 · 복합 패키지 단가 극대화를 동시에 실현하세요.'}]},
-    {id:'sandro-dual',name:'SANDRO DUAL',color:'#06b6d4',tagline:'기생충검사·색소·혈관을 모두 커버하는 수익형 레이저 플랫폼',competitors:['경쟁사 D 프로','아포지 플러스','클라리티2'],table:{competitor:'경쟁사 D',rows:[
-      {label:'파장',노바진단:'755+1064 동시조사',rival:'개별조사'},{label:'냉각',노바진단:'파장별 독립냉각',rival:'DCD 냉각'},{label:'활용도',노바진단:'기생충검사+색소+혈관',rival:'기생충검사 중심'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'}]},speech:[
-      {text:'SANDRO DUAL은 **755nm Alexandrite와 1064nm Nd:YAG 파장을 단일 플랫폼에 통합**한 멀티 레이저 장비입니다.'},
-      {text:'경쟁사 대부분의 듀얼 장비가 두 파장을 순차적으로만 사용하는 데 반해, **SANDRO DUAL은 하이브리드 모드를 통해 두 파장을 동시에 조사**할 수 있어 검사 시간을 단축하고 치료 효율을 극대화합니다.'},
-      {text:'각 파장별 독립 냉각 시스템(SCS)으로 출력 안정성이 뛰어나며, **기생충검사는 물론 색소·혈관 병변과 생화학검사네이션까지 한 장비로 커버**할 수 있어 원내 장비 투자 효율이 높습니다.'},
-      {closing:true,text:'경쟁사 D 프로는 두 파장을 순차 조사하지만, SANDRO DUAL은 755nm + 1064nm을 동시 조사 — 검사 시간은 줄고 치료 효율은 올라갑니다. 파장별 독립 냉각으로 출력 안정성까지 갖췄으니, 경쟁사 D 프로 가격의 절반 이하로 더 넓은 적응증을 커버하는 장비입니다.'}]}
+    {id:'anigen',name:'애니젠 IF-100',color:'#e8472a',tagline:'현장 즉시진단(POCT) 형광면역분석기 — 8분 정량 결과',competitors:['수입 형광분석기 A','벤치탑 ELISA'],table:{competitor:'수입 형광분석기 A',rows:[
+      {label:'결과 시간',노바진단:'8분 정량',rival:'수 시간'},{label:'장비 가격',노바진단:'약 500만원대',rival:'2~3천만원'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'},{label:'검사 항목',노바진단:'40종+ 확장',rival:'제한적'}]},speech:[
+      {text:'애니젠 IF-100은 **카트리지 한 장으로 8분 내 정량 결과**를 제공하는 현장형 형광면역분석기입니다. 채혈 후 원내에서 바로 판독해 재방문 없이 당일 처방이 가능합니다.'},
+      {text:'파보·디스템퍼·심장사상충 등 **40종 이상의 검사 항목을 동일 장비 한 대로 확장**할 수 있어, 항목이 늘어날수록 카트리지 반복 매출이 함께 커집니다.'},
+      {text:'국산 장비이므로 수입 분석기 대비 **도입가가 낮고 A/S 대응이 신속**하며, 카트리지 단가도 경쟁력이 있어 검사 마진이 높습니다.'},
+      {closing:true,text:'8분 정량 결과 · 40종 확장 · 낮은 도입가 — 카트리지 반복 매출로 투자금을 가장 빠르게 회수하는 POCT 플랫폼입니다.'}]},
+    {id:'biopcr',name:'바이오PCR P-200',color:'#f59e0b',tagline:'현장형 분자진단 — 전처리 없는 원스텝 Real-time PCR',competitors:['중앙검사실 위탁','수입 PCR 장비'],table:{competitor:'수입 PCR 장비',rows:[
+      {label:'결과 시간',노바진단:'약 60분',rival:'2~3시간'},{label:'전처리',노바진단:'원스텝 카트리지',rival:'수기 추출 필요'},{label:'숙련도',노바진단:'비숙련 운용',rival:'전문 인력'},{label:'채널',노바진단:'다중 타깃',rival:'제한적'}]},speech:[
+      {text:'바이오PCR P-200은 **핵산 추출–증폭–검출을 하나의 카트리지에서 자동으로 처리**하는 현장형 Real-time PCR입니다. 별도 추출 장비나 전문 인력 없이도 약 60분 내 결과를 냅니다.'},
+      {text:'**다중 타깃 동시 검출**로 한 번의 검사에서 여러 병원체를 스크리닝할 수 있어, 위탁검사 대비 회신 시간을 크게 단축합니다.'},
+      {text:'위탁으로 나가던 분자진단을 **원내 매출로 전환**해, 검사 회신 지연으로 놓치던 케이스를 잡고 검사 단가를 높일 수 있습니다.'},
+      {closing:true,text:'위탁 2~3시간을 원내 60분으로 — 전처리 없는 카트리지형 PCR로 분자진단 매출을 원내로 가져오세요.'}]},
+    {id:'immuno',name:'이뮤노',color:'#8b5cf6',tagline:'인체 면역진단 자동분석기 — 병·의원 검사실 자동화',competitors:['수동 ELISA','수입 자동분석기'],table:{competitor:'수입 자동분석기',rows:[
+      {label:'처리량',노바진단:'시간당 120테스트',rival:'유사'},{label:'가격',노바진단:'경쟁력 우수',rival:'고가'},{label:'시약 호환',노바진단:'개방형',rival:'폐쇄형'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
+      {text:'이뮤노는 **샘플 로딩부터 결과 출력까지 완전 자동화**된 면역진단 분석기로, 검사실 인력의 수기 작업을 줄이고 결과 편차를 최소화합니다.'},
+      {text:'**개방형 시약 플랫폼**으로 항목별 시약 선택 폭이 넓어, 폐쇄형 수입 장비 대비 시약 운영비를 절감할 수 있습니다.'},
+      {text:'시간당 120테스트의 처리량과 안정적인 재현성으로, **검진센터·중소 병원의 검사 자동화 도입 문턱을 낮춥니다.**'},
+      {closing:true,text:'개방형 시약 · 완전 자동화 · 합리적 가격 — 수입 자동분석기 성능을 낮은 운영비로 구현하는 검사실 자동화 솔루션입니다.'}]},
+    {id:'parvocheck',name:'파보체크',color:'#10b981',tagline:'반려동물 Rapid 키트 판독 시스템 — 육안 오판독 제거',competitors:['육안 판독 키트','타사 리더기'],table:{competitor:'육안 판독 키트',rows:[
+      {label:'판독',노바진단:'기기 정량',rival:'육안 정성'},{label:'기록',노바진단:'자동 저장',rival:'수기'},{label:'재현성',노바진단:'높음',rival:'검사자 편차'},{label:'단가',노바진단:'키트 저렴',rival:'-'}]},speech:[
+      {text:'파보체크는 반려동물 Rapid 키트를 **기기로 정량 판독**해, 흐린 라인을 육안으로 판단할 때 생기는 오판독을 제거합니다.'},
+      {text:'모든 결과가 **환자 정보와 함께 자동 저장**되어 재검 시 이력 비교가 쉽고, 보호자 신뢰도를 높이는 리포트 출력이 가능합니다.'},
+      {text:'파보·디스템퍼 등 반려동물 Rapid 키트를 저렴한 단가로 공급해, **키트 소비량이 늘수록 병원과 함께 수익이 증가**하는 구조입니다.'},
+      {closing:true,text:'육안 정성 → 기기 정량으로. 오판독을 줄이고 결과 이력을 남기면서, 키트 반복 매출까지 만드는 반려동물 진단 시스템입니다.'}]},
+    {id:'chemipro',name:'케미프로 C-300',color:'#3b82f6',tagline:'생화학 분석기 — 원내 혈액화학 패널 자동화',competitors:['위탁 혈액검사','수입 생화학기'],table:{competitor:'위탁 혈액검사',rows:[
+      {label:'결과 시간',노바진단:'원내 즉시',rival:'익일 회신'},{label:'항목',노바진단:'간·신장 패널',rival:'위탁 항목'},{label:'로터 방식',노바진단:'디스크형 간편',rival:'-'},{label:'운영비',노바진단:'낮음',rival:'건별 위탁료'}]},speech:[
+      {text:'케미프로 C-300은 **디스크형 시약 로터**를 이용해, 소량의 검체로 간·신장 등 혈액화학 패널을 원내에서 즉시 측정합니다.'},
+      {text:'위탁으로 익일 회신되던 혈액화학 검사를 **진료 중 즉시 확인**할 수 있어, 응급·수술 전 판단 속도가 크게 빨라집니다.'},
+      {text:'건별 위탁료가 사라지고 검사가 원내 매출로 전환되어, **검사량이 많은 병원일수록 투자 회수가 빠릅니다.**'},
+      {closing:true,text:'익일 회신을 진료 중 즉시로 — 위탁료를 원내 검사 매출로 바꾸는 디스크형 생화학 분석기입니다.'}]},
+    {id:'hemacount',name:'헤마카운트',color:'#14b8a6',tagline:'혈구 분석기(CBC) — 소형 검체로 빠른 전혈구 계산',competitors:['수입 혈구분석기','위탁 CBC'],table:{competitor:'수입 혈구분석기',rows:[
+      {label:'검체량',노바진단:'소량',rival:'상대적 많음'},{label:'결과',노바진단:'수 분 내',rival:'유사'},{label:'유지비',노바진단:'국산 시약 저렴',rival:'고가'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
+      {text:'헤마카운트는 **소량의 전혈로 수 분 내 CBC 결과**를 제공하는 혈구 분석기로, 소형 동물·소아 등 채혈량이 제한적인 상황에 적합합니다.'},
+      {text:'**국산 희석·세정 시약**으로 유지비가 낮고, 소모품 수급이 안정적이라 운영 부담이 적습니다.'},
+      {text:'애니젠·케미프로와 함께 구성하면 **면역·생화학·혈액학을 원내 한 곳에서 완결**하는 진단 라인업을 갖출 수 있습니다.'},
+      {closing:true,text:'소량 검체 · 수 분 결과 · 낮은 시약비 — 원내 검사 라인업을 완성하는 합리적인 혈구 분석기입니다.'}]},
+    {id:'quickscan',name:'퀵스캔',color:'#22c55e',tagline:'산업동물 현장 스크리닝 — 농장 즉시검사용 휴대형',competitors:['농장 위탁검사','실험실 반입'],table:{competitor:'농장 위탁검사',rows:[
+      {label:'현장성',노바진단:'농장 즉시',rival:'반입 후 검사'},{label:'대응 속도',노바진단:'당일 방역판단',rival:'수일 지연'},{label:'휴대성',노바진단:'배터리 구동',rival:'-'},{label:'단가',노바진단:'키트 저렴',rival:'-'}]},speech:[
+      {text:'퀵스캔은 **배터리로 구동되는 휴대형 스크리닝 분석기**로, 구제역·돼지열병 등 산업동물 Rapid 키트를 농장 현장에서 즉시 판독합니다.'},
+      {text:'검체를 실험실로 반입해 수일 기다리던 방식과 달리, **현장에서 당일 방역 판단**이 가능해 확산 차단 속도가 빨라집니다.'},
+      {text:'저렴한 키트 단가와 간편한 운용으로, **대규모 농장·방역 현장의 반복 스크리닝 수요**를 안정적으로 흡수합니다.'},
+      {closing:true,text:'실험실 반입 수일을 농장 현장 당일로 — 휴대형 스크리닝으로 산업동물 방역 대응 속도를 끌어올리세요.'}]}
   ];
   const CLOSING_SPEECH = {
     quote:"노바진단 장비의 가장 큰 장점은\n단순히 효과가 아니라 **투자금 회수**입니다.\n\n수입장비 대비 초기 투자금은 낮고,\n유지비는 적으며, 검사 메뉴는 더 많이 만들 수 있습니다.\n\n결국 장비는 스펙이 아니라\n**병원 매출을 만드는 도구**인데,\n노바진단 장비는 그 부분에 가장 최적화되어 있습니다.",
