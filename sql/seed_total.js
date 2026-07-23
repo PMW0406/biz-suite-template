@@ -183,22 +183,40 @@ function buildRegionMap(){
   return { pair:{}, name:{}, country };
 }
 
-// ── sales_targets(blob) : 목표치 (국내 제품/소모품 + 해외 지역/법인, 연간 12개월) ──
-function buildSalesTargets(cons, dev, intl){
+// 해외 지역/법인별 월 실적(intl.countries.clientData.m 을 버킷 집계)
+function _intlRegionMonthly(I){
+  const rm={};
+  Object.entries((I&&I.countries)||{}).forEach(([cc,C])=>{
+    const bucket=(OVERSEAS.find(o=>o.cc===cc)||{}).bucket||'기타';
+    Object.values(C.clientData||{}).forEach(cd=>{
+      Object.entries(cd.m||{}).forEach(([mo,amt])=>{ (rm[bucket]=rm[bucket]||{}); rm[bucket][mo]=(rm[bucket][mo]||0)+amt; });
+    });
+  });
+  return rm;
+}
+// ── sales_targets : 항목별 달성률 다양(40~130%), 전체 가중평균 ~110% ──
+function buildSalesTargets(cons, dev, intl26, intl25){
   const rows=[];
-  const buckets=[...new Set(OVERSEAS.map(o=>o.bucket))];   // 지역5 + 법인3
-  [2026,2025].forEach(yr=>{
-    for(let mo=1;mo<=12;mo++){
-      const mkey=String(mo);
-      const devA=(dev['monthly'+yr]||{})[mkey]||man(ri(15,26)*100000000);
-      const consA=(cons['monthly'+yr]||{})[mkey]||man(ri(6,12)*100000000);
-      rows.push({year:yr,month:mo,dept:'국내영업',item:'제품',  amount:man((devA||man(ri(15,26)*1e8))*(0.9+Math.random()*0.2)) });
-      rows.push({year:yr,month:mo,dept:'국내영업',item:'소모품',amount:man((consA||man(ri(6,12)*1e8))*(0.9+Math.random()*0.2)) });
-      buckets.forEach(b=>{
-        const base = b.endsWith('법인')? ri(30,90) : ri(20,70);
-        rows.push({year:yr,month:mo,dept:'해외영업',item:b, amount:man(base*1000000) });
-      });
-    }
+  const buckets=[...new Set(OVERSEAS.map(o=>o.bucket))];
+  const reg={2026:_intlRegionMonthly(intl26), 2025:_intlRegionMonthly(intl25||intl26)};
+  const OVERALL=1.10;  // 전체 달성률 목표
+
+  [[2026,MO26],[2025,MO25]].forEach(([yr,mos])=>{
+    // (dept,item) 슬라이스 + 월별 실적
+    const items=[['국내영업','제품',dev['monthly'+yr]||{}],['국내영업','소모품',cons['monthly'+yr]||{}]];
+    buckets.forEach(b=>items.push(['해외영업',b,(reg[yr]||{})[b]||{}]));
+    // 항목별 기준 달성률(다양하게: 대부분 0.55~1.35, 일부 극단 0.4/1.4)
+    const pool=[0.42,0.55,0.68,0.8,0.9,1.0,1.05,1.15,1.28,1.4];
+    const slices=[];
+    items.forEach(([dept,item,mon])=>{
+      const ach = pool[Math.floor(Math.random()*pool.length)]*(0.92+Math.random()*0.16); // 항목 고유 달성률
+      mos.forEach(mo=>{ const a=Number((mon||{})[String(mo)]||(mon||{})[mo]||0); if(a>0) slices.push({dept,item,mo,a,ach}); });
+    });
+    // 전체 가중평균이 OVERALL 되도록 스케일 k
+    const sumA=slices.reduce((s,x)=>s+x.a,0);
+    const sumRaw=slices.reduce((s,x)=>s+x.a/x.ach,0)||1;
+    const k=(sumA/OVERALL)/sumRaw;
+    slices.forEach(x=> rows.push({year:yr,month:x.mo,dept:x.dept,item:x.item, amount:man(Math.max(1000000, x.a/x.ach*k)) }));
   });
   return {rows};
 }
@@ -295,7 +313,7 @@ if(require.main!==module) return;
   await putCache('main', CONS);
   await putCache('device', DEVICE);
   await putCache('intl', INTL_BLOB);
-  await putCache('sales_targets', buildSalesTargets(CONS,DEVICE,INTL2026));
+  await putCache('sales_targets', buildSalesTargets(CONS,DEVICE,INTL2026,INTL2025));
   await putCache('region_map', buildRegionMap());
   await putCache('export_tower', buildExport());
   await putCache('ilbo_pending', buildIlboPending());

@@ -1567,11 +1567,18 @@ function _matureMonth(){
 }
 let _ovRegMo={};
 // 국내·해외 월별 표 — 지난달=회계반영, 당월=미반영 포함. 숫자 클릭 시 내역.
+let _ovQCollapsed={};   // 분기 접힘 상태 유지
+function toggleQ(q){
+  _ovQCollapsed[q]=!_ovQCollapsed[q];
+  document.querySelectorAll('.q-row-'+q).forEach(r=>{ r.style.display=_ovQCollapsed[q]?'none':''; });
+  const ind=document.getElementById('qi-'+q); if(ind) ind.textContent=_ovQCollapsed[q]?'▸':'▾';
+}
 function renderOvMonthly(){
   const pend=_pendingAgg(2026), cur=_curMonth();
   _ovRegMo=_intlRegionMonthly(INTL);
-  let rows='', yd=0,yi=0,ye=0,yp=0;
   const _hasEtc=Object.keys(CONS.etcMonthly2026||{}).length>0;
+  // 1) 월별 데이터 수집
+  const M=[]; let yd=0,yi=0,ye=0,yp=0;
   for(let m=1;m<=cur;m++){
     const isCur=(m===cur);
     const domConf=(CONS.monthly2026&&CONS.monthly2026[m]||0)+(DEVICE.monthly2026&&DEVICE.monthly2026[m]||0);
@@ -1581,19 +1588,37 @@ function renderOvMonthly(){
     const intl=intlConf+(isCur?(pend.intlMonthly[m]||0):0);
     const tot=dom+intl+etc;
     const prev=(CONS.monthly2025&&CONS.monthly2025[m]||0)+(DEVICE.monthly2025&&DEVICE.monthly2025[m]||0)+(CONS.etcMonthly2025&&CONS.etcMonthly2025[m]||0)+((INTL.data2025&&INTL.data2025.monthly&&INTL.data2025.monthly[m])||0);
-    const y=pct(tot,prev); yd+=dom; yi+=intl; ye+=etc; yp+=prev;
-    const star=isCur?'<span title="미반영 포함" style="color:#0e7490;font-weight:700"> *</span>':'';
-    rows+='<tr><td>'+m+'월'+star+'</td>'+
-      '<td class="ov-clk" onclick="openOvDetail('+m+',\'dom\')">'+(dom?fmtW(dom):'-')+'</td>'+
-      '<td class="ov-clk" onclick="openOvDetail('+m+',\'intl\')">'+(intl?fmtW(intl):'-')+'</td>'+
-      (_hasEtc?('<td style="color:#94a3b8">'+(etc?fmtW(etc):'-')+'</td>'):'')+
-      '<td class="ov-clk" style="font-weight:700" onclick="openOvDetail('+m+',\'total\')">'+(tot?fmtW(tot):'-')+'</td>'+
-      '<td style="color:#64748b">'+(prev?fmtW(prev):'-')+'</td>'+
-      '<td>'+(y===null?'-':badge(y))+'</td></tr>';
+    M.push({m,isCur,dom,intl,etc,tot,prev}); yd+=dom; yi+=intl; ye+=etc; yp+=prev;
+  }
+  // 2) 분기별 그룹(헤더=소계 토글 + 월 행)
+  const etcTd=v=>_hasEtc?('<td style="color:#94a3b8">'+(v?fmtW(v):'-')+'</td>'):'';
+  let rows=''; const nQ=Math.ceil(cur/3);
+  for(let q=1;q<=nQ;q++){
+    const qm=M.filter(x=>Math.ceil(x.m/3)===q); if(!qm.length) continue;
+    const S=f=>qm.reduce((s,x)=>s+x[f],0);
+    const qd=S('dom'),qi=S('intl'),qe=S('etc'),qt=S('tot'),qp=S('prev'), qy=pct(qt,qp);
+    const col=_ovQCollapsed[q], ind=col?'▸':'▾';
+    rows+='<tr class="q-hdr" onclick="toggleQ('+q+')" style="cursor:pointer;background:#eef2f7">'+
+      '<td style="font-weight:800"><span id="qi-'+q+'" style="display:inline-block;width:12px;color:#0f766e">'+ind+'</span> '+q+'분기</td>'+
+      '<td style="font-weight:700">'+(qd?fmtW(qd):'-')+'</td><td style="font-weight:700">'+(qi?fmtW(qi):'-')+'</td>'+
+      (_hasEtc?('<td style="font-weight:700;color:#94a3b8">'+(qe?fmtW(qe):'-')+'</td>'):'')+
+      '<td style="font-weight:800">'+(qt?fmtW(qt):'-')+'</td><td style="color:#64748b">'+(qp?fmtW(qp):'-')+'</td><td>'+(qy===null?'-':badge(qy))+'</td></tr>';
+    qm.forEach(x=>{
+      const star=x.isCur?'<span title="미반영 포함" style="color:#0e7490;font-weight:700"> *</span>':'';
+      const y=pct(x.tot,x.prev);
+      rows+='<tr class="q-row q-row-'+q+'"'+(col?' style="display:none"':'')+'>'+
+        '<td style="padding-left:24px;color:#64748b">'+x.m+'월'+star+'</td>'+
+        '<td class="ov-clk" onclick="openOvDetail('+x.m+',\'dom\')">'+(x.dom?fmtW(x.dom):'-')+'</td>'+
+        '<td class="ov-clk" onclick="openOvDetail('+x.m+',\'intl\')">'+(x.intl?fmtW(x.intl):'-')+'</td>'+
+        etcTd(x.etc)+
+        '<td class="ov-clk" style="font-weight:700" onclick="openOvDetail('+x.m+',\'total\')">'+(x.tot?fmtW(x.tot):'-')+'</td>'+
+        '<td style="color:#64748b">'+(x.prev?fmtW(x.prev):'-')+'</td>'+
+        '<td>'+(y===null?'-':badge(y))+'</td></tr>';
+    });
   }
   const yt=pct(yd+yi+ye,yp);
   document.getElementById('ov-table').innerHTML=
-    '<thead><tr><th>월</th><th>국내</th><th>해외</th>'+(_hasEtc?'<th>기타</th>':'')+'<th>합계</th><th>전년</th><th>전년대비</th></tr></thead>'+
+    '<thead><tr><th>월 <span style="font-weight:500;color:#94a3b8">(분기 클릭 시 접기/펴기)</span></th><th>국내</th><th>해외</th>'+(_hasEtc?'<th>기타</th>':'')+'<th>합계</th><th>전년</th><th>전년대비</th></tr></thead>'+
     '<tbody>'+rows+'</tbody>'+
     '<tfoot><tr class="total-row"><td>합계</td><td>'+fmtW(yd)+'</td><td>'+fmtW(yi)+'</td>'+(_hasEtc?('<td>'+fmtW(ye)+'</td>'):'')+'<td>'+fmtW(yd+yi+ye)+'</td>'+
       '<td style="color:#64748b">'+fmtW(yp)+'</td><td>'+(yt===null?'-':badge(yt))+'</td></tr></tfoot>';
