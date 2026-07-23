@@ -61,7 +61,7 @@ function repInit(){ return {m2026:{},m2025:{},y2026:0,y2025:0,cust2026:0,cust202
 function buildDomestic(isDevice){
   const products = isDevice?DEV_PRODUCTS:CONS_PRODUCTS;
   const reps = isDevice?DOM_DEV_REPS:DOM_CONS_REPS;
-  const nHosp = isDevice?12:16;
+  const nHosp = isDevice?34:52;
   const B = {
     monthly2026:{}, monthly2025:{}, products2026:{}, products2025:{},
     reps:{}, data2025:{reps:{}}, hospitals:{}, updatedAt:UPDATED
@@ -76,10 +76,10 @@ function buildDomestic(isDevice){
     const ho = B.hospitals[name] = {txns2026:[], y2026:0, y2025:0};
     [[2026,MO26],[2025,MO25]].forEach(([yr,mos])=>{
       mos.forEach(mo=>{
-        if(Math.random()<(isDevice?0.45:0.8)){         // 매월 거래 확률
+        if(Math.random()<(isDevice?0.5:0.85)){         // 매월 거래 확률
           const prod = rand(products);
-          const qty  = isDevice?ri(1,3):ri(15,90);
-          const unit = isDevice?ri(28,62)*1000000:ri(8,24)*10000;
+          const qty  = isDevice?ri(1,6):ri(40,190);
+          const unit = isDevice?ri(38,85)*1000000:ri(28,60)*10000;
           const amt  = man(qty*unit);
           const dateStr = yr+'-'+String(mo).padStart(2,'0')+'-'+String(ri(3,26)).padStart(2,'0');
           if(yr===2026){
@@ -142,7 +142,7 @@ function buildIntlYear(mos){
     const cc=ov.cc, cnBase=ov.name;
     const rep = INTL_REPS[idx % INTL_REPS.length];
     const prods = [rand(DEV_PRODUCTS), rand(DEV_PRODUCTS), rand(CONS_PRODUCTS)];
-    const nClient = ri(2,4);
+    const nClient = ri(4,8);
     const C = Y.countries[cc] = {clients:nClient, prods:{}, clientData:{}};
     Y.reps[rep].countries += 1;
     for(let c=0;c<nClient;c++){
@@ -151,10 +151,10 @@ function buildIntlYear(mos){
       Y.reps[rep].clients += 1;
       let usdCum=0;
       mos.forEach(mo=>{
-        if(Math.random()<0.6){
+        if(Math.random()<0.65){
           const prod = rand(prods);
-          const qty  = isDev(prod)?ri(1,4):ri(5,40);
-          const unit = isDev(prod)?ri(25,55)*1000000:ri(5,20)*10000;  // 장비 단가≥100만원
+          const qty  = isDev(prod)?ri(1,6):ri(15,60);
+          const unit = isDev(prod)?ri(35,80)*1000000:ri(14,32)*10000;  // 장비 단가≥100만원
           const amt  = man(qty*unit);
           const usd  = Math.round(amt/RATE);
           const mkey = String(mo);

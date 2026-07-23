@@ -14,8 +14,8 @@ const pad=n=>String(n).padStart(2,'0');
 const dstr=(y,m,d)=>y+'-'+pad(m)+'-'+pad(d);
 const MONTHS=[[2025,[1,2,3,4,5,6,7,8,9,10,11,12]],[2026,[1,2,3,4,5,6,7]]];
 
-const US_CLIENTS=['Sunrise Dermatology','Pacific Aesthetics Center','Lakeside Skin Clinic','Summit MedSpa','Bayview Laser & Derm','Grandview Cosmetic Group','Cedar Valley Dermatology','Heritage Skin Institute'];
-const TH_CLIENTS=['Bangkok Aesthetic Group','Siam Medical Supply','Phuket Skin Center','Chiang Mai Derma','Pattaya Beauty Clinic','Nonthaburi MedSpa'];
+const US_CLIENTS=['Sunrise Veterinary Diagnostics','Pacific Animal Health','National Vet Labs','Summit Diagnostics Inc','BioVet Supply Co','Grandview Animal Lab','Cedar Valley Vet Diagnostics','Heritage BioReagents'];
+const TH_CLIENTS=['Bangkok Vet Diagnostics','Siam Animal Health','Phuket Veterinary Lab','Chiang Mai BioDiagnostics','Pattaya Animal Clinic','Nonthaburi Vet Supply'];
 const DEV_PROD=['AniGen IF-100','BioPCR P-200','ChemiPro C-300'];        // 장비(대당 고가)
 const CONS_PROD=['Parvo Antigen Kit','Heartworm Kit','ImmunoStrip']; // 소모품
 const ALL_PROD=DEV_PROD.concat(CONS_PROD);
@@ -25,11 +25,11 @@ const ORDER_ST=['수주','생산중','선적중','완료'];
 function genSales(clients, unitScale){          // unitScale: 통화별 단가 배율
   const sales=[];
   MONTHS.forEach(([y,mos])=>mos.forEach(mo=>{
-    const n=ri(1,3);
+    const n=ri(3,7);
     for(let i=0;i<n;i++){
       const prod=rand(ALL_PROD), dev=isDev(prod);
       const qty=dev?ri(1,3):ri(5,40);
-      const unit=(dev?ri(18,42)*1000:ri(60,240))*unitScale;
+      const unit=(dev?ri(35,85)*1000:ri(120,420))*unitScale;
       const amt=Math.round(qty*unit);
       const date=dstr(y,mo,ri(3,26));
       // 수금: 과거일수록 완납, 최근은 부분/미수
@@ -45,7 +45,7 @@ function genSales(clients, unitScale){          // unitScale: 통화별 단가 �
   return sales;
 }
 function genOrders(clients,unitScale){
-  const o=[]; for(let i=0;i<8;i++){const prod=rand(ALL_PROD),dev=isDev(prod);const qty=dev?ri(1,4):ri(5,30);
+  const o=[]; for(let i=0;i<16;i++){const prod=rand(ALL_PROD),dev=isDev(prod);const qty=dev?ri(1,5):ri(10,50);
     const amt=Math.round(qty*(dev?ri(18,42)*1000:ri(60,240))*unitScale);
     o.push({id:id('od'),date:dstr(2026,ri(5,7),ri(1,26)),client:rand(clients),product:prod,qty,amt,status:rand(ORDER_ST),eta:dstr(2026,ri(7,9),ri(1,26)),memo:''});}
   return o;
@@ -61,7 +61,7 @@ function genFunds(unitScale){
 }
 function genItems(){return CONS_PROD.concat(DEV_PROD).map((n,i)=>({id:id('it'),name:n,qty0:ri(5,40),unit:'EA',safety:ri(3,10),loc:'창고'+(i%2+1)}));}
 function genMoves(items){const m=[];items.forEach(it=>{for(let k=0;k<ri(1,3);k++)m.push({id:id('mv'),date:dstr(2026,ri(3,7),ri(1,26)),type:rand(['입고','출고']),item:it.name,qty:ri(1,10),ref:''});});return m;}
-function genEquip(clients,us){const e=[];for(let i=0;i<8;i++){const st=rand(['재고','출고','설치','AS']);const rec={id:id('eq'),serial:'SM-'+rand(['AX','LM','PP'])+'-'+ri(1000,9999),item:rand(DEV_PROD),status:st,client:st==='재고'?'':rand(clients),inDate:dstr(2025,ri(6,12),ri(1,26)),shipRef:'SH-'+ri(2000,2999),outDate:st==='재고'?'':dstr(2026,ri(1,6),ri(1,26)),note:'',events:[{date:dstr(2025,ri(6,12),ri(1,26)),type:'입고',detail:''}]};if(us)rec.outRef=st==='재고'?'':'OUT-'+ri(100,999);e.push(rec);}return e;}
+function genEquip(clients,us){const e=[];for(let i=0;i<8;i++){const st=rand(['재고','출고','설치','AS']);const rec={id:id('eq'),serial:'ND-'+rand(['AX','LM','PP'])+'-'+ri(1000,9999),item:rand(DEV_PROD),status:st,client:st==='재고'?'':rand(clients),inDate:dstr(2025,ri(6,12),ri(1,26)),shipRef:'SH-'+ri(2000,2999),outDate:st==='재고'?'':dstr(2026,ri(1,6),ri(1,26)),note:'',events:[{date:dstr(2025,ri(6,12),ri(1,26)),type:'입고',detail:''}]};if(us)rec.outRef=st==='재고'?'':'OUT-'+ri(100,999);e.push(rec);}return e;}
 function genTargets(unitScale){const t={};MONTHS.forEach(([y,mos])=>mos.forEach(mo=>{t[y+'-'+pad(mo)]=Math.round(ri(120,220)*1000*unitScale);}));return t;}
 
 function blankUS(){return {v:3,rate:1350,targets:{},accounts:[{name:'주거래계좌',opening:50000},{name:'급여계좌',opening:8000}],

@@ -29,7 +29,7 @@ function buildRows(n){
     const name=rand(HOSP_PRE)+rand(HOSP_SUF)+(i+1);
     const age=[ri(10,150),ri(150,360),ri(360,1000),ri(1096,2200)][Math.floor(Math.random()*4)];
     const saleDate=daysAgo(age);
-    const amt=ri(3,60)*1000000;
+    const amt=ri(8,140)*1000000;
     const collRatio=age>1000?Math.random()*0.3:age>360?0.2+Math.random()*0.5:0.5+Math.random()*0.5;
     const coll=Math.round(amt*collRatio/10000)*10000;
     const ar=amt-coll;
@@ -52,7 +52,7 @@ function snap(rows,d){const s={d,cnt:rows.length,amt:0,coll:0,bad:0,ar:0,prov:0,
   rows.forEach(r=>{s.amt+=r.amt;s.coll+=r.coll;s.ar+=r.ar;s.prov+=r.prov;if(r.ar>0){s.types[r.type].cnt++;s.types[r.type].ar+=r.ar;}});return s;}
 
 function build(){
-  const rows=buildRows(42);
+  const rows=buildRows(95);
   const asOf='2026-07-17';
   // 주간 스냅샷 3개: 과거 2주는 미수 약간 더 많게(회수 반영 추세)
   const wk=[
@@ -70,7 +70,7 @@ function build(){
     sumColl:arRows.slice(0,2).reduce((s,r)=>s+r.ar,0)+arRows.slice(2,4).reduce((s,r)=>s+Math.round(r.ar*0.3),0),
     sumNew:arRows.slice(4,6).reduce((s,r)=>s+r.ar,0), sumAdj:0}];
   // 관리대상
-  const mgmtRows=rows.filter(r=>r.ar>0&&(r.type==='장기체납채권'||r.type==='회수불가채권')).slice(0,12);
+  const mgmtRows=rows.filter(r=>r.ar>0&&(r.type==='장기체납채권'||r.type==='회수불가채권')).slice(0,24);
   const mgmt={asOf,base:asOf,
     summary:{'집중관리':{cnt:0,ar:0},'검토필요':{cnt:0,ar:0},'관리제외':{cnt:0,ar:0}},
     items:mgmtRows.map((r,i)=>{const cls=r.type==='회수불가채권'?'집중관리':(i%3===0?'검토필요':'집중관리');

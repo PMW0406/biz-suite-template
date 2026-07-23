@@ -45,7 +45,7 @@ function buildKorTeam(){return {members:TEAM.map((t,i)=>({name:t.name,dept:t.dep
 
 function buildHospInfo(hosps){
   const info={};
-  hosps.slice(0,40).forEach((nm,i)=>{
+  hosps.slice(0,80).forEach((nm,i)=>{
     const reg=REGION_OF(nm);
     info[nm]={doctor:rand(['김','이','박','최','정'])+'원장',tel:'0'+ri(2,64)+'-'+ri(200,999)+'-'+ri(1000,9999),
       address:reg[0]+' '+reg[1]+' '+ri(1,300),contact:'실장 '+rand(['김','이','박'])+rand(['지은','서연','민수']),
@@ -72,8 +72,8 @@ function buildRegions(){
 
 function buildPipeline(hosps,prods){
   const stages=['상담중','견적발송','협의중','계약완료'];
-  return Array.from({length:16},(_,i)=>{const stage=stages[i%4];const won=stage==='계약완료';
-    return {id:'pipe'+i,custName:rand(hosps),model:rand(prods),amount:ri(30,90)*1000000,stage,prob:won?100:ri(20,80),
+  return Array.from({length:44},(_,i)=>{const stage=stages[i%4];const won=stage==='계약완료';
+    return {id:'pipe'+i,custName:rand(hosps),model:rand(prods),amount:ri(80,320)*1000000,stage,prob:won?100:ri(20,80),
       expectedDate:'2026-'+pad(ri(8,11))+'-'+pad(ri(1,28)),sales:rand(REPS),note:'',nextAction:rand(['데모 방문','견적 재발송','계약 협의','설치 일정']),
       nextDate:'2026-07-'+pad(ri(24,31)),nextType:'방문',createdAt:'2026-0'+ri(3,6)+'-01T00:00:00Z',
       stageUpdatedAt:'2026-0'+ri(5,7)+'-'+pad(ri(1,28))+'T00:00:00Z',history:[],done:won&&Math.random()<0.5};});
@@ -81,13 +81,13 @@ function buildPipeline(hosps,prods){
 function buildLogs(hosps,prods){
   const out=[];
   // 일반 상담일지 + 후속
-  for(let i=0;i<12;i++) out.push({id:'log'+i,date:'2026-07-'+pad(ri(1,22)),custName:rand(hosps),type:rand(['방문','전화','이메일','데모']),
+  for(let i=0;i<30;i++) out.push({id:'log'+i,date:'2026-07-'+pad(ri(1,22)),custName:rand(hosps),type:rand(['방문','전화','이메일','데모']),
     content:'상담 진행 · '+rand(['가격 문의','데모 요청','재구매 논의','신규 관심']),product:rand(prods),
     nextAction:Math.random()<0.5?rand(['재방문','견적 발송','샘플 전달']):'',nextDate:Math.random()<0.5?'2026-07-'+pad(ri(24,31)):'',sales:rand(REPS),by:rand(REPS)});
   // CDU 방문(kind:cdu)
-  for(let i=0;i<10;i++) out.push({id:'cdu'+i,kind:'cdu',status:rand(['done','done','planned']),date:'2026-07-'+pad(ri(1,22)),custName:rand(hosps),
-    dealer:'',doctor:rand(['김','이','박'])+'원장',doctorCount:String(ri(1,4)),mainProc:rand(['리프팅','색소','제모','흉터']),
-    competitor:rand(['써마지','인모드','울쎄라','']),feedback:rand(['가격 문의','도입 검토','만족','재구매']),channels:'인스타/네이버',
+  for(let i=0;i<26;i++) out.push({id:'cdu'+i,kind:'cdu',status:rand(['done','done','planned']),date:'2026-07-'+pad(ri(1,22)),custName:rand(hosps),
+    dealer:'',doctor:rand(['김','이','박'])+'원장',doctorCount:String(ri(1,4)),mainProc:rand(['전염병 스크리닝','호흡기 진단','소화기 진단','혈액 검사','건강검진']),
+    competitor:rand(['경쟁사 A','수입 키트','경쟁사 B','']),feedback:rand(['가격 문의','정확도 검토','도입 검토','재구매','물량 협의']),channels:'인스타/네이버',
     region:'국내',sales:rand(REPS),event:rand(['O','']),reels:rand(['O','']),price:String(ri(100,500)),procCount:String(ri(1,20)),
     stock:'',churnRisk:'',noBuyReason:'',action:rand(['재방문','견적','계약추진']),contactProfile:'',oliBasic:'',oliX:'',oliKiss:'',by:rand(REPS)});
   // CDU 종합의견(주차)
@@ -98,13 +98,13 @@ function buildLogs(hosps,prods){
   out.push({id:'cduplan',kind:'cdu_plan',month:'2026-08',targetVisits:24,targets:hosps.slice(0,8).join('\n')});
   return out;
 }
-function buildCustomers(hosps){return hosps.slice(0,20).map((nm,i)=>{const reg=REGION_OF(nm);return {id:'cust'+i,name:nm,doctor:rand(['김','이','박'])+'원장',region:reg[0],address:reg[0]+' '+reg[1],tel:'0'+ri(2,64)+'-'+ri(200,999)+'-'+ri(1000,9999),contact:'실장',contactTel:'010-5'+pad(i%100)+'-'+ri(1000,9999),sales:REPS[i%REPS.length],grade:rand(['VIP','잠재','일반']),note:'',tags:rand([['VIP'],[],['신규']])};});}
-function buildQuotes(hosps,prods){return Array.from({length:6},(_,i)=>{const items=Array.from({length:ri(1,3)},()=>{const price=ri(300,900)*10000,qty=ri(1,2);return {name:rand(prods),spec:'',unit:'EA',qty,price,amount:Math.round(price*qty*1.1),note:''};});
+function buildCustomers(hosps){return hosps.slice(0,55).map((nm,i)=>{const reg=REGION_OF(nm);return {id:'cust'+i,name:nm,doctor:rand(['김','이','박'])+'원장',region:reg[0],address:reg[0]+' '+reg[1],tel:'0'+ri(2,64)+'-'+ri(200,999)+'-'+ri(1000,9999),contact:'실장',contactTel:'010-5'+pad(i%100)+'-'+ri(1000,9999),sales:REPS[i%REPS.length],grade:rand(['VIP','잠재','일반']),note:'',tags:rand([['VIP'],[],['신규']])};});}
+function buildQuotes(hosps,prods){return Array.from({length:14},(_,i)=>{const items=Array.from({length:ri(1,3)},()=>{const price=ri(1500,6000)*10000,qty=ri(1,3);return {name:rand(prods),spec:'',unit:'EA',qty,price,amount:Math.round(price*qty*1.1),note:''};});
   const total=items.reduce((s,x)=>s+x.amount,0),subtotal=Math.round(total/1.1),vat=total-subtotal;const t=TEAM[i%TEAM.length];
   return {id:'Q202607'+pad(i+10)+'-'+pad(i+1),custName:rand(hosps),quoteDate:'2026-07-'+pad(ri(1,20)),validUntil:'2026-08-'+pad(ri(1,28)),
     sales:t.name,salesRank:t.pos,salesTeam:t.dept,salesPhone:'010-1'+pad(i%100)+'-'+ri(1000,9999),status:rand(['임시','발송','수주']),note:'',termsList:[],
     items,subtotal,vat,total,by:t.name,roi:Math.random()<0.4?{payback:ri(6,18)+'개월',rev:ri(2,8)+'억'}:null};});}
-function buildPending(hosps,prods){return Array.from({length:12},(_,i)=>{const t=TEAM[i%TEAM.length];return {
+function buildPending(hosps,prods){return Array.from({length:28},(_,i)=>{const t=TEAM[i%TEAM.length];return {
   category:rand(['소모품','제품']),expected_date:'2026-0'+ri(8,9)+'-'+pad(ri(1,28)),amount:ri(10,60)*1000000,qty:ri(1,10),
   product:rand(prods),hospital:rand(hosps),memo:'예정',channel:'korea',status:'대기',owner_name:t.name,updated_at:'2026-07-01T00:00:00Z'};});}
 
