@@ -1011,14 +1011,14 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
       <div class="roi-form">
         <div class="rf-hd"><span class="dot"></span>RF / HIFU 입력</div>
         <div class="row g-3">
-          <div class="col-12"><label class="rf-lbl">병원 맞춤 추정(선택) — 병원명 입력 시 실제 팁 구매량으로 시술량 자동 추정</label><input id="rf-hosp" class="form-control" list="roi-hosp-list" placeholder="병원명 입력(선택)"><datalist id="roi-hosp-list"></datalist><div id="rf-hosp-note" style="font-size:11px;color:#bf6a45;margin-top:5px;font-weight:600"></div></div>
+          <div class="col-12"><label class="rf-lbl">병원 맞춤 추정(선택) — 병원명 입력 시 실제 팁 구매량으로 검사량 자동 추정</label><input id="rf-hosp" class="form-control" list="roi-hosp-list" placeholder="병원명 입력(선택)"><datalist id="roi-hosp-list"></datalist><div id="rf-hosp-note" style="font-size:11px;color:#bf6a45;margin-top:5px;font-weight:600"></div></div>
           <div class="col-12"><label class="rf-lbl">장비명</label><select id="rf-equipment" class="form-select"></select></div>
           <div class="col-12" id="rf-package-row"><label class="rf-lbl">패키지명</label><select id="rf-package" class="form-select"></select></div>
           <div class="col-6"><label class="rf-lbl">패키지 가격(원)</label><input id="rf-packagePrice" class="form-control" inputmode="numeric"></div>
           <div class="col-6"><label class="rf-lbl">제공 소모품수(개)</label><input id="rf-consumableCount" class="form-control" type="number" min="0"></div>
-          <div class="col-6"><label class="rf-lbl">시술샷수(샷/회)</label><input id="rf-shotsPerTreatment" class="form-control" type="number" min="1"></div>
-          <div class="col-6"><label class="rf-lbl">1회 시술단가(원)</label><input id="rf-pricePerTreatment" class="form-control" inputmode="numeric"></div>
-          <div class="col-6"><label class="rf-lbl">일 시술 횟수(회/일)</label><input id="rf-treatmentsPerDay" class="form-control" type="number" min="0"></div>
+          <div class="col-6"><label class="rf-lbl">검사샷수(샷/회)</label><input id="rf-shotsPerTreatment" class="form-control" type="number" min="1"></div>
+          <div class="col-6"><label class="rf-lbl">1회 검사단가(원)</label><input id="rf-pricePerTreatment" class="form-control" inputmode="numeric"></div>
+          <div class="col-6"><label class="rf-lbl">일 검사 횟수(회/일)</label><input id="rf-treatmentsPerDay" class="form-control" type="number" min="0"></div>
           <div class="col-6"><label class="rf-lbl">팁/카세트 샷수(총 샷)</label><input id="rf-tipShots" class="form-control" type="number" min="1"></div>
         </div>
       </div>
@@ -1030,7 +1030,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
         <div class="rf-hd"><span class="dot"></span>Laser 입력</div>
         <div class="row g-3">
           <div class="col-12"><label class="rf-lbl">장비 가격(원)</label><input id="laser-equipmentPrice" class="form-control" inputmode="numeric" value="150,000,000"></div>
-          <div class="col-12"><label class="rf-lbl">1회 시술단가(원)</label><input id="laser-sessionUnitPrice" class="form-control" inputmode="numeric" value="300,000"></div>
+          <div class="col-12"><label class="rf-lbl">1회 검사단가(원)</label><input id="laser-sessionUnitPrice" class="form-control" inputmode="numeric" value="300,000"></div>
           <div class="col-6"><label class="rf-lbl">티케팅수(회)</label><input id="laser-ticketingCount" class="form-control" type="number" min="0" value="3"></div>
           <div class="col-6"><label class="rf-lbl">고객수(명/일)</label><input id="laser-customerCount" class="form-control" type="number" min="0" value="15"></div>
         </div>
@@ -1087,17 +1087,17 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
         <div class="col-12 cdu-sec">병원 현황</div>
         <div class="col-md-4 col-6"><label class="form-label" style="font-size:12px">대표원장</label><input id="cdv-doctor" class="form-control form-control-sm"></div>
         <div class="col-md-2 col-6"><label class="form-label" style="font-size:12px">원장수</label><input type="number" id="cd-dcount" class="form-control form-control-sm" min="0"></div>
-        <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">시술 수가<span class="text-muted">(천원)</span></label><input type="number" id="cd-price" class="form-control form-control-sm" min="0"></div>
-        <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">시술 건수</label><input type="number" id="cd-pcount" class="form-control form-control-sm" min="0"></div>
-        <div class="col-12"><label class="form-label" style="font-size:12px">주력 시술 <span class="text-muted">(분류 칩 터치 또는 직접 입력, 복수는 /)</span></label><input id="cd-proc" class="form-control form-control-sm" oninput="_cduChipSync()">
-          <div><span class="cdu-chip" data-for="cd-proc" data-v="리프팅" onclick="_cduChip(this)">리프팅</span><span class="cdu-chip" data-for="cd-proc" data-v="레이저" onclick="_cduChip(this)">레이저</span><span class="cdu-chip" data-for="cd-proc" data-v="여드름" onclick="_cduChip(this)">여드름</span><span class="cdu-chip" data-for="cd-proc" data-v="비만" onclick="_cduChip(this)">비만</span><span class="cdu-chip" data-for="cd-proc" data-v="탈모" onclick="_cduChip(this)">탈모</span><span class="cdu-chip" data-for="cd-proc" data-v="색소·미백" onclick="_cduChip(this)">색소·미백</span><span class="cdu-chip" data-for="cd-proc" data-v="모공·흉터" onclick="_cduChip(this)">모공·흉터</span><span class="cdu-chip" data-for="cd-proc" data-v="스킨부스터" onclick="_cduChip(this)">스킨부스터</span><span class="cdu-chip" data-for="cd-proc" data-v="보톡스·필러" onclick="_cduChip(this)">보톡스·필러</span><span class="cdu-chip" data-for="cd-proc" data-v="질환치료" onclick="_cduChip(this)">질환치료</span><span class="cdu-chip" data-for="cd-proc" data-v="수술" onclick="_cduChip(this)">수술</span></div></div>
+        <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">검사 수가<span class="text-muted">(천원)</span></label><input type="number" id="cd-price" class="form-control form-control-sm" min="0"></div>
+        <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">검사 건수</label><input type="number" id="cd-pcount" class="form-control form-control-sm" min="0"></div>
+        <div class="col-12"><label class="form-label" style="font-size:12px">주력 검사 <span class="text-muted">(분류 칩 터치 또는 직접 입력, 복수는 /)</span></label><input id="cd-proc" class="form-control form-control-sm" oninput="_cduChipSync()">
+          <div><span class="cdu-chip" data-for="cd-proc" data-v="면역검사" onclick="_cduChip(this)">면역검사</span><span class="cdu-chip" data-for="cd-proc" data-v="레이저" onclick="_cduChip(this)">레이저</span><span class="cdu-chip" data-for="cd-proc" data-v="여드름" onclick="_cduChip(this)">여드름</span><span class="cdu-chip" data-for="cd-proc" data-v="비만" onclick="_cduChip(this)">비만</span><span class="cdu-chip" data-for="cd-proc" data-v="탈모" onclick="_cduChip(this)">탈모</span><span class="cdu-chip" data-for="cd-proc" data-v="색소·미백" onclick="_cduChip(this)">색소·미백</span><span class="cdu-chip" data-for="cd-proc" data-v="모공·혈액검사" onclick="_cduChip(this)">모공·혈액검사</span><span class="cdu-chip" data-for="cd-proc" data-v="스킨부스터" onclick="_cduChip(this)">스킨부스터</span><span class="cdu-chip" data-for="cd-proc" data-v="보톡스·필러" onclick="_cduChip(this)">보톡스·필러</span><span class="cdu-chip" data-for="cd-proc" data-v="질환치료" onclick="_cduChip(this)">질환치료</span><span class="cdu-chip" data-for="cd-proc" data-v="수술" onclick="_cduChip(this)">수술</span></div></div>
         <div class="col-12"><label class="form-label" style="font-size:12px">경쟁사 <span class="text-muted">(보유 타사 장비)</span></label><input id="cd-comp" class="form-control form-control-sm" placeholder="직접 입력 가능" oninput="_cduChipSync()">
-          <div><span class="cdu-chip" data-for="cd-comp" data-v="볼뉴머" onclick="_cduChip(this)">볼뉴머</span><span class="cdu-chip" data-for="cd-comp" data-v="써마지" onclick="_cduChip(this)">써마지</span><span class="cdu-chip" data-for="cd-comp" data-v="덴서티" onclick="_cduChip(this)">덴서티</span><span class="cdu-chip" data-for="cd-comp" data-v="인모드" onclick="_cduChip(this)">인모드</span><span class="cdu-chip" data-for="cd-comp" data-v="세르프" onclick="_cduChip(this)">세르프</span><span class="cdu-chip" data-for="cd-comp" data-v="울쎄라" onclick="_cduChip(this)">울쎄라</span><span class="cdu-chip" data-for="cd-comp" data-v="티타늄" onclick="_cduChip(this)">티타늄</span><span class="cdu-chip" data-for="cd-comp" data-v="온다" onclick="_cduChip(this)">온다</span><span class="cdu-chip" data-for="cd-comp" data-v="슈링크" onclick="_cduChip(this)">슈링크</span><span class="cdu-chip" data-for="cd-comp" data-v="리프테라" onclick="_cduChip(this)">리프테라</span><span class="cdu-chip" data-for="cd-comp" data-v="쿨소닉" onclick="_cduChip(this)">쿨소닉</span><span class="cdu-chip" data-for="cd-comp" data-v="소프웨이브" onclick="_cduChip(this)">소프웨이브</span></div></div>
-        <div class="col-12"><label class="form-label" style="font-size:12px">보유 올리지오 <span class="text-muted">(라인업별 대수 — 유저 구분)</span></label>
+          <div><span class="cdu-chip" data-for="cd-comp" data-v="볼뉴머" onclick="_cduChip(this)">볼뉴머</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 A" onclick="_cduChip(this)">경쟁사 A</span><span class="cdu-chip" data-for="cd-comp" data-v="덴서티" onclick="_cduChip(this)">덴서티</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 C" onclick="_cduChip(this)">경쟁사 C</span><span class="cdu-chip" data-for="cd-comp" data-v="세르프" onclick="_cduChip(this)">세르프</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 B" onclick="_cduChip(this)">경쟁사 B</span><span class="cdu-chip" data-for="cd-comp" data-v="티타늄" onclick="_cduChip(this)">티타늄</span><span class="cdu-chip" data-for="cd-comp" data-v="온다" onclick="_cduChip(this)">온다</span><span class="cdu-chip" data-for="cd-comp" data-v="경쟁사 F" onclick="_cduChip(this)">경쟁사 F</span><span class="cdu-chip" data-for="cd-comp" data-v="리프테라" onclick="_cduChip(this)">리프테라</span><span class="cdu-chip" data-for="cd-comp" data-v="쿨소닉" onclick="_cduChip(this)">쿨소닉</span><span class="cdu-chip" data-for="cd-comp" data-v="소프웨이브" onclick="_cduChip(this)">소프웨이브</span></div></div>
+        <div class="col-12"><label class="form-label" style="font-size:12px">보유 애니젠 <span class="text-muted">(라인업별 대수 — 유저 구분)</span></label>
           <div class="d-flex gap-2">
-            <div style="flex:1"><input type="number" id="cd-oli-basic" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">올리지오</div></div>
-            <div style="flex:1"><input type="number" id="cd-oli-x" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">올리지오 X</div></div>
-            <div style="flex:1"><input type="number" id="cd-oli-kiss" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">올리지오 Strip</div></div>
+            <div style="flex:1"><input type="number" id="cd-oli-basic" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠</div></div>
+            <div style="flex:1"><input type="number" id="cd-oli-x" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠 X</div></div>
+            <div style="flex:1"><input type="number" id="cd-oli-kiss" class="form-control form-control-sm" min="0" placeholder="0"><div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:2px">애니젠 Strip</div></div>
           </div></div>
         <div class="col-md-6 col-6"><label class="form-label" style="font-size:12px">재고</label><input id="cd-stock" class="form-control form-control-sm"></div>
         <div class="col-md-3 col-6"><label class="form-label" style="font-size:12px">국내/해외</label><select id="cdv-region" class="form-select form-select-sm"><option>국내</option><option>국내/해외</option><option>해외</option></select></div>
@@ -1111,7 +1111,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
         <div class="col-12 cdu-sec">영업 코멘트</div>
         <div class="col-12"><label class="form-label" style="font-size:12px">병원 피드백</label><textarea id="cd-fb" class="form-control form-control-sm" rows="2"></textarea></div>
-        <div class="col-12"><label class="form-label" style="font-size:12px">병원 담당자 프로필 <span class="text-muted">(실장·구매담당 등 이력·성향 참고)</span></label><textarea id="cd-contact-profile" class="form-control form-control-sm" rows="2" placeholder="예: 김실장 — 결정권 큼, 가격 민감. 전 병원서 써마지 운영. 원장 신뢰 두터움"></textarea></div>
+        <div class="col-12"><label class="form-label" style="font-size:12px">병원 담당자 프로필 <span class="text-muted">(실장·구매담당 등 이력·성향 참고)</span></label><textarea id="cd-contact-profile" class="form-control form-control-sm" rows="2" placeholder="예: 김실장 — 결정권 큼, 가격 민감. 전 병원서 경쟁사 A 운영. 원장 신뢰 두터움"></textarea></div>
         <div class="col-12"><label class="form-label" style="font-size:12px">이탈 가능성</label><input id="cd-churn" class="form-control form-control-sm" placeholder="예: 볼뉴머로 이탈 우려"></div>
         <div class="col-12" style="border-top:1px dashed #d8b4fe;padding-top:10px;margin-top:6px"><label class="form-label" style="font-size:12px;color:#7c3aed;font-weight:700">소모품 미구매 사유 <span class="text-muted" style="font-weight:400">(장비는 있는데 왜 안 사는가 — 집중관리 핵심)</span></label>
           <select id="cd-reason" class="form-select form-select-sm">
@@ -1120,7 +1120,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
             <option>장비 사용 안 함(방치)</option>
             <option>재고 보유(소진 전)</option>
             <option>가격 불만</option>
-            <option>시술 수요 감소</option>
+            <option>검사 수요 감소</option>
             <option>원장 교체·휴업·이전</option>
             <option>딜러 경유 구매</option>
             <option>기타(피드백에 기재)</option>
@@ -1128,7 +1128,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
         <div class="col-12"><label class="form-label" style="font-size:12px;color:#7c3aed;font-weight:700">대응 방안 <span class="text-muted" style="font-weight:400">(어떻게 매출로 연결할지)</span></label><select id="cd-action" class="form-select form-select-sm">
             <option value="">미정 · 다음 방문 때 결정</option>
             <option>번들·패키지 견적 제안</option>
-            <option>시술 교육·데모 지원</option>
+            <option>검사 교육·데모 지원</option>
             <option>정품 팁 전환 설득(경쟁품 대체)</option>
             <option>수가·마진 개선 컨설팅</option>
             <option>이벤트·릴스 마케팅 지원</option>
@@ -1875,7 +1875,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     <label class="form-label" style="font-size:12px">결정권자 반응 <span class="text-muted">(일일보고 반응 칸에 그대로 들어갑니다)</span></label>
     <textarea id="schd-memo" class="form-control form-control-sm mb-2" rows="6" style="font-size:13px;line-height:1.6" placeholder="예: 원장님 관심 있음, 다음달 예산 편성 후 재문의 예정&#10;&#10;장비 반응, 경쟁사 대비 의견, 정책 관련 이야기 등 현장에서 들은 그대로 구체적으로"></textarea>
     <label class="form-label" style="font-size:12px">경쟁품 현황 <span class="text-muted">(선택 · 일일보고 경쟁품 칸)</span></label>
-    <input id="schd-comp" class="form-control form-control-sm mb-2" placeholder="예: RF: 써마지 / HIFU: 울쎄라">
+    <input id="schd-comp" class="form-control form-control-sm mb-2" placeholder="예: RF: 경쟁사 A / HIFU: 경쟁사 B">
     <label class="form-label" style="font-size:12px">다음 일정이 있을까요?</label>
     <div class="d-flex gap-2 mb-2" id="schd-next-btns">
       <select id="schd-next-type" class="form-select form-select-sm" style="width:auto;flex-shrink:0"><option>방문</option><option>콜</option><option>데모</option><option>A/S</option><option>기타</option></select>
@@ -2379,7 +2379,7 @@ const DB = {
       showToast('저장 완료!', true);
     } catch(e) { showToast('저장 실패: '+e.message, true, true); }
   },
-  // 다음 save 때 이 행을 강제로 업로드하게 표시(스냅샷 무효화). 내용이 같아도 다시 밀어올려야 할 때 사용.
+  // 다음 save 때 이 행을 강제로 업로드하게 표시(스냅테스트 무효화). 내용이 같아도 다시 밀어올려야 할 때 사용.
   touch(name, id) { if(this._orig[name] && id!=null) delete this._orig[name][id]; },
   // 단건 삭제(전체 덮어쓰기 없이) — 삭제는 반드시 이걸로. 다른 행은 절대 건드리지 않음.
   del(name, id) {
@@ -4468,7 +4468,7 @@ function consParseExcel(input) {
           // 애니젠 그룹별 월별 집계
           if (mo && prod) {
             let og = null;
-            if (/애니젠 키트 \[(F|E)-/.test(prod))   og = '올리지오';
+            if (/애니젠 키트 \[(F|E)-/.test(prod))   og = '애니젠';
             else if (/애니젠 키트 \[(XF|XE)-/.test(prod)) og = 'X/XM';
             if (og) { if (!auraMo[og]) auraMo[og]={}; auraMo[og][mo]=(auraMo[og][mo]||0)+amt; }
           }
@@ -4496,7 +4496,7 @@ function consParseExcel(input) {
       // 병원별 집계
       setMsg('병원별 데이터 집계 중...');
       const EXCL_PROD_JS = ['의료기기'];
-      const INTERNAL_KW_JS = ['노바진단','노바진단','노바진단'];
+      const INTERNAL_KW_JS = ['노바진단'];
       const allRows = [...r25.map(r=>({...r,_yr:2025})), ...r26.map(r=>({...r,_yr:2026}))];
       const hospMap = {};
       allRows.forEach(r => {
@@ -4570,9 +4570,9 @@ function consParseExcel(input) {
           const mo   = monthNum(r['월']);
           let prod = (r['구분#4']||'').trim();
           if (/hair|헤어/i.test(prod)) {
-            prod = 'Hair Beam';
+            prod = 'HemaCount';
           } else if (amt / qty < 1_000_000) {
-            return;  // Hair Beam 외 단가 100만원 미만 → 팁샷/소모품 제외
+            return;  // HemaCount 외 단가 100만원 미만 → 팁샷/소모품 제외
           }
           const name = (r['거래처명']||'').trim();
           const sales= (r['담당자']||'').trim();
@@ -4789,8 +4789,8 @@ function renderConsumables() {
   // 그룹별 YTD 합계 — 트랜잭션(txns) 기준으로 계산 (auraMo/products 캐시가 비어도 정확, 아래 당월/누계와 동일 소스)
   const grpSum=(yr,grp,months)=>OLIG.filter(p=>p.grp===grp).reduce((s,p)=>s+prodSum(yr,p.key,months),0);
   const spanGrp=(grp,rng)=>rng.reduce((s,x)=>s+((x.y===2025||x.y===2026)?grpSum(x.y,grp,[x.m]):0),0);
-  const oligFe26 = spanGrp('애니젠',spanMs);
-  const oligFe25 = spanGrp('애니젠',prevMs);
+  const oligFe26 = spanGrp('반려동물 Rapid',spanMs);
+  const oligFe25 = spanGrp('반려동물 Rapid',prevMs);
   const oligXm26 = spanGrp('산업동물 Rapid',spanMs);
   const oligXm25 = spanGrp('산업동물 Rapid',prevMs);
   const oligTotal26 = oligFe26 + oligXm26;
@@ -4821,7 +4821,7 @@ function renderConsumables() {
   const P2c=_ongoingEnd(P)?_prevEndP(P):null;
   if(P2c){
     const s2=_spanMonths(P2c), pv2=_spanMonths(_yoyShift(P2c));
-    const fe2=spanGrp('애니젠',s2), fe2p=spanGrp('애니젠',pv2);
+    const fe2=spanGrp('반려동물 Rapid',s2), fe2p=spanGrp('반려동물 Rapid',pv2);
     const xm2=spanGrp('산업동물 Rapid',s2), xm2p=spanGrp('산업동물 Rapid',pv2);
     const t2=fe2+xm2, t2p=fe2p+xm2p;
     const ty2=spanMonthlySum(pv2);
@@ -4847,10 +4847,10 @@ function renderConsumables() {
     // 트랜잭션(txns) 기준 월별 집계 — KPI·당월/누계와 동일 소스라 항상 일치
     const mo25={'애니젠':{},'산업동물 Rapid':{}}, mo26={'애니젠':{},'산업동물 Rapid':{}};
     let maxM26=0;
-    for(let m=1;m<=12;m++){ if(grpSum(2026,'애니젠',[m])+grpSum(2026,'산업동물 Rapid',[m])>0) maxM26=m; }
+    for(let m=1;m<=12;m++){ if(grpSum(2026,'반려동물 Rapid',[m])+grpSum(2026,'산업동물 Rapid',[m])>0) maxM26=m; }
     for(let m=1;m<=12;m++){
-      mo25['애니젠'][m]=grpSum(2025,'애니젠',[m]); mo25['산업동물 Rapid'][m]=grpSum(2025,'산업동물 Rapid',[m]);
-      if(m<=maxM26){ mo26['애니젠'][m]=grpSum(2026,'애니젠',[m]); mo26['산업동물 Rapid'][m]=grpSum(2026,'산업동물 Rapid',[m]); }
+      mo25['애니젠'][m]=grpSum(2025,'반려동물 Rapid',[m]); mo25['산업동물 Rapid'][m]=grpSum(2025,'산업동물 Rapid',[m]);
+      if(m<=maxM26){ mo26['애니젠'][m]=grpSum(2026,'반려동물 Rapid',[m]); mo26['산업동물 Rapid'][m]=grpSum(2026,'산업동물 Rapid',[m]); }
     }
     return {mo25, mo26};
   }
@@ -4926,7 +4926,7 @@ function renderConsumables() {
     const data=OLIG.map(p=>({...p, v26:spanProdSum(p.key,rng), v25:spanProdSum(p.key,prevRng)}));
     const maxV=Math.max(...data.map(p=>p.v26))||1;
     const groups=[
-      {name:'반려동물 Rapid',      col:'#2563eb', items:data.filter(p=>p.grp==='애니젠')},
+      {name:'반려동물 Rapid',      col:'#2563eb', items:data.filter(p=>p.grp==='반려동물 Rapid')},
       {name:'산업동물 Rapid', col:'#16324f', items:data.filter(p=>p.grp==='산업동물 Rapid')},
     ];
     return groups.map(g=>{
@@ -6146,7 +6146,7 @@ function renderCDUTarget(){
   var H=(typeof CONS!=='undefined'&&CONS.hospitals)||{};
   var DVH=(typeof DEVICE!=='undefined'&&DEVICE.hospitals)||{};
   var todayMs=Date.now();
-  var tipOnly=t=>String(t[2]||'').indexOf('애니젠 키트')===0;
+  var tipOnly=t=>/키트|카세트/.test(String(t[2]||''));
   // A. 재구매 도래: 팁 구매 3회 이상 병원의 평균 구매 주기 vs 마지막 구매 경과일
   var due=[];
   Object.keys(H).forEach(function(n){
@@ -6166,7 +6166,7 @@ function renderCDUTarget(){
   due.sort((a,b)=>b.amt-a.amt);
   // B. 휴면 장비: 팁 쓰는 장비(애니젠·Tightan) 보유 병원인데 올해 팁 매출 0 또는 급감
   var mm=Math.max(1,(typeof _dataMaxMonth==='function'?_dataMaxMonth():6));
-  var tipDev=/aura|tightan/i;
+  var tipDev=/애니젠|aura|tightan/i;
   var dormant=[], drop=[];
   Object.keys(DVH).forEach(function(n){
     var dv=DVH[n]; if((dv.total||0)<=0) return;
@@ -6266,7 +6266,7 @@ var _cduRepVs=[];
 function _cduDrillComp(c){ _cduDrill('경쟁사 노출: '+c, _cduRepVs.filter(v=>(v.competitor||'').trim()===c)); }
 function _cduDrillChan(c){ _cduDrill('마케팅 채널: '+c, _cduRepVs.filter(v=>(v.channels||'').split(/[\/,·]/).map(s=>s.trim()).indexOf(c)>=0)); }
 function _cduDrillSales(s){ _cduDrill('담당자 방문: '+s, _cduRepVs.filter(v=>((v.sales||'').trim()||'미지정')===s)); }
-function _cduDrillBand(i){ var b=_CDU_BANDS[i]; if(!b)return; _cduDrill('시술 수가 '+b[0], _cduRepVs.filter(v=>{var p=Number(v.price)||0; return p>0&&b[1](p);}), 'price'); }
+function _cduDrillBand(i){ var b=_CDU_BANDS[i]; if(!b)return; _cduDrill('검사 수가 '+b[0], _cduRepVs.filter(v=>{var p=Number(v.price)||0; return p>0&&b[1](p);}), 'price'); }
 function _cduDrillEvent(){ _cduDrill('이벤트 진행 병원', _cduRepVs.filter(v=>String(v.event||'').toUpperCase()==='O')); }
 function _cduDrillReels(){ _cduDrill('릴스 촬영 병원', _cduRepVs.filter(v=>String(v.reels||'').toUpperCase()==='O')); }
 function _cduDrillAll(){ _cduDrill('전체 방문 병원', _cduRepVs.slice()); }
@@ -6274,7 +6274,7 @@ function _cduDrillWeek(w){ _cduDrill(w+' 방문 상세', _cduRepVs.filter(functi
 function _cduDrillChurn(){ _cduDrill('선제 감지 · 집중 대응 병원', _cduRepVs.filter(v=>(v.churnRisk||'').trim())); }
 var _cduNewSet={};
 function _cduDrillNew(){ _cduDrill('신규 개척 방문 (기간 내 첫 방문)', _cduRepVs.filter(v=>_cduNewSet[(v.custName||'').trim()])); }
-function _cduDrillPrice(){ _cduDrill('시술 수가 파악 병원', _cduRepVs.filter(v=>(Number(v.price)||0)>0), 'price'); }
+function _cduDrillPrice(){ _cduDrill('검사 수가 파악 병원', _cduRepVs.filter(v=>(Number(v.price)||0)>0), 'price'); }
 function _cduDrillVip(){ var m={}; _cduRepVs.forEach(v=>{var n=(v.custName||'').trim(); if(n)m[n]=1;}); var arr=Object.keys(m).map(n=>({n:n,r:_cduRev(n).y2026||0})).sort((a,b)=>b.r-a.r); _cduDrill('매출 상위 방문 병원', _cduRepVs.filter(v=>{ var top=arr.slice(0,15).map(x=>x.n); return top.indexOf((v.custName||'').trim())>=0; })); }
 function _cduDrill(title, arr, kind){
   var t=document.getElementById('cduDrillTitle'); if(t) t.innerHTML=_cduEsc(title)+' <span style="font-size:12px;font-weight:400;color:#94a3b8">· '+arr.length+'건</span>';
@@ -6308,7 +6308,7 @@ function _cduDrill(title, arr, kind){
     var mxB=Math.max.apply(null,bands.map(b=>b[1]).concat([1]));
     mini='<div class="row g-2 mb-2">'
       +'<div class="col-md-6">'+box('수가 분포 <span style="font-weight:400;color:#94a3b8">최저 '+Math.min.apply(null,prices)+' · 평균 '+avg+' · 최고 '+Math.max.apply(null,prices)+'천</span>',bands.map(b=>barLine(b[0],b[1],mxB,'#7c3aed')).join(''))+'</div>'
-      +'<div class="col-md-6">'+box('보는 법','<div style="font-size:11.5px;color:#64748b;line-height:1.7">평균('+avg+'천)보다 <b style="color:#dc2626">낮은 병원</b> = 저가 경쟁 압박·수가 인상 제안 여지, <b style="color:#16a34a">높은 병원</b> = 프리미엄 포지션·시술량 확대 여지. 아래 목록은 <b>수가 높은 순</b>이며 평균 대비 편차를 표시합니다.</div>')+'</div>'
+      +'<div class="col-md-6">'+box('보는 법','<div style="font-size:11.5px;color:#64748b;line-height:1.7">평균('+avg+'천)보다 <b style="color:#dc2626">낮은 병원</b> = 저가 경쟁 압박·수가 인상 제안 여지, <b style="color:#16a34a">높은 병원</b> = 프리미엄 포지션·검사량 확대 여지. 아래 목록은 <b>수가 높은 순</b>이며 평균 대비 편차를 표시합니다.</div>')+'</div>'
       +'</div>';
   } else {
     var sArr=Object.entries(bySales).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -6317,7 +6317,7 @@ function _cduDrill(title, arr, kind){
     var mxP=Math.max.apply(null,pArr.map(x=>x[1]).concat([1]));
     var cells=[];
     if(sArr.length>1) cells.push('<div class="col-md-6">'+box('담당자별 방문',sArr.map(x=>barLine(x[0],x[1],mxS,'#2563eb')).join(''))+'</div>');
-    if(pArr.length)   cells.push('<div class="col-md-6">'+box('주력 시술 TOP5',pArr.map(x=>barLine(x[0],x[1],mxP,'#0d9488')).join(''))+'</div>');
+    if(pArr.length)   cells.push('<div class="col-md-6">'+box('주력 검사 TOP5',pArr.map(x=>barLine(x[0],x[1],mxP,'#0d9488')).join(''))+'</div>');
     if(cells.length) mini='<div class="row g-2 mb-2">'+cells.join('')+'</div>';
   }
   // ── 목록(수가 드릴=수가순+평균편차, 그 외=매출순) ──
@@ -6444,10 +6444,10 @@ function renderCDUReport(vs){
   var maxWkN=Math.max.apply(null,weeks.map(w=>wk[w].n).concat([1]));
   var focusW=(weeks.length?weeks[weeks.length-1]:''); var fi=weeks.indexOf(focusW); var prevW=fi>0?weeks[fi-1]:'';
   var wow=(focusW&&prevW&&wk[prevW])?(wk[focusW].n-wk[prevW].n):null;
-  // 시술 수가 밴드
+  // 검사 수가 밴드
   var bands=_CDU_BANDS;
   var bandCnt=bands.map(b=>prices.filter(b[1]).length);
-  // 데이터 분포(입력 기준): 주력 시술 / 원장 규모 / 국내·해외
+  // 데이터 분포(입력 기준): 주력 검사 / 원장 규모 / 국내·해외
   var proc={}, reg={}, docB={'원장 1명':0,'2~3명':0,'4명 이상':0,'미기재':0};
   vs.forEach(function(v){
     (v.mainProc||'').split(/[\/,·]/).map(s=>s.trim()).filter(Boolean).forEach(p=>proc[p]=(proc[p]||0)+1);
@@ -6478,7 +6478,7 @@ function renderCDUReport(vs){
     ? _rsArr.map(([r2,c2])=>barRow(r2,c2,c2/(_rsTot||1)*100,'#2563eb','곳',"_cduDrill('미구매 사유: "+_cduEsc(r2).replace(/\x27/g,"\\x27")+"',_cduReasonVisits('"+_cduEsc(r2).replace(/\x27/g,"\\x27")+"'))")).join('')
       +'<div style="font-size:10.5px;color:#64748b;margin-top:6px">※ 방문 결과 입력의 [소모품 미구매 사유] 누적 — 사유 분포가 대응 전략(가격·교육·번들·딜러 정리)의 근거가 됩니다</div>'
     : '<div style="font-size:12px;color:#64748b">아직 기록된 미구매 사유가 없습니다 — 방문 결과 입력에서 <b>[소모품 미구매 사유]</b>를 남기면 여기에 누적됩니다.</div>';
-  var _tipOnly2=t=>String(t[2]||'').indexOf('애니젠 키트')===0;
+  var _tipOnly2=t=>/키트|카세트/.test(String(t[2]||''));
   var _convN=0,_convAmt=0,_convHosp={};
   Object.keys(firstDate).forEach(function(n){
     var f=firstDate[n]; if(!f) return;
@@ -6522,7 +6522,7 @@ function renderCDUReport(vs){
     +'<div class="cdud-hero" onclick="_cduDrillAll()"><span class="l">방문 관리 병원</span><b>'+nHosp+'개처</b><span class="s">방문 '+nVisit+'건 · 영업일수 '+days.size+'일</span></div>'
     +fact('올해 팁매출',_cduWon(visitedRev),(visitedRevPrev>0?'전년 동기 '+_cduWon(visitedRevPrev):'관리처 팁매출'),'','_cduDrillVip()')
     +fact('리스크 감지',churn.length+'개처',(churn.length?'선제 대응 진행 중':'감지 리스크 없음'),(churn.length?'rd':''),'_cduDrillChurn()')
-    +fact('평균 시술수가',(avg?avg+'천':'-'),(prices.length?mn+'~'+mx+' · '+prices.length+'개처 파악':'미파악'),'',prices.length?'_cduDrillBand(0)':'')
+    +fact('평균 검사수가',(avg?avg+'천':'-'),(prices.length?mn+'~'+mx+' · '+prices.length+'개처 파악':'미파악'),'',prices.length?'_cduDrillBand(0)':'')
   +'</div>';
   var focusBand='<div class="cdud-bt">집중관리 분석 <u>· 이 기간 방문이 휴면·급감 공략으로 이어졌는가 · 클릭 상세</u></div>'
     +'<div class="cdud-band">'
@@ -6531,19 +6531,19 @@ function renderCDUReport(vs){
     +fact('미구매 사유 파악',_rsKnownN+'/'+nHosp,'왜 안 사는지 확인된 방문처','',_rsKnownN?'_cduDrillRsKnown()':'')
     +fact('방문 후 재구매 전환',_convN+'개처','전환 매출 '+_cduWon(_convAmt),(_convN?'gr':''),_convN?'_cduDrillConv()':'')
     +fact('경쟁 노출 수집',compTot+'건',(compArr[0]?'최다 '+_cduEsc(compArr[0][0])+' '+compArr[0][1]+'건':'수집 없음'),'',compArr[0]?"_cduDrillComp('"+_cduEsc(compArr[0][0]).replace(/\x27/g,"\\x27")+"')":'')
-    +fact('평균 시술수가',(avg?avg+'천':'-'),'저가(350↓) '+lowP+'개처 — 인상 여지','',prices.length?'_cduDrillPrice()':'')
+    +fact('평균 검사수가',(avg?avg+'천':'-'),'저가(350↓) '+lowP+'개처 — 인상 여지','',prices.length?'_cduDrillPrice()':'')
   +'</div>';
   var sec=(title,sub,inner)=>'<div class="cdud-sec"><div class="cdud-st">'+title+(sub?'<u>· '+sub+'</u>':'')+'</div>'+inner+'</div>';
   var dsec=(title,sub,inner)=>'<div><div class="cdud-st">'+title+(sub?'<u>· '+sub+'</u>':'')+'</div>'+inner+'</div>';
   var _noD=t=>'<div style="font-size:12px;color:#94a3b8;padding:4px 0">'+t+'</div>';
   var detailSec='<div class="cdud-grid2">'
-    +dsec('시술 수가 밴드','올리지오 300샷 · 클릭 상세',
+    +dsec('검사 수가 밴드','애니젠 300테스트 · 클릭 상세',
         (prices.length? bands.map((b,i)=>barRow(b[0].replace('천원','')+'천원',bandCnt[i],bandCnt[i]/prices.length*100,'#2563eb','곳','_cduDrillBand('+i+')')).join('')+'<div style="font-size:11px;color:#64748b;margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9">평균 <b>'+avg+'</b> · 최고 '+mx+' · 최저 '+mn+' · '+prices.length+'곳 파악</div>'
           : _noD('수가 파악 병원 없음')))
     +dsec('경쟁사 노출 현황','클릭 상세',(compArr.length?compArr.map(([n,c])=>barRow(n,c,c/compTot*100,'#ef4444','곳',"_cduDrillComp('"+_cduEsc(n).replace(/\x27/g,"\\x27")+"')")).join(''):_noD('경쟁사 정보 없음')))
     +dsec('주요 마케팅 채널 활용','클릭 상세',(chanArr.length?chanArr.map(([n,c])=>barRow(n,c,c/nHosp*100,'#2563eb','곳',"_cduDrillChan('"+_cduEsc(n).replace(/\x27/g,"\\x27")+"')")).join(''):_noD('채널 정보 없음'))+'<div style="font-size:10.5px;color:#64748b;margin-top:6px">※ 방문 병원 대비 활용률(복수 선택)</div>')
     +dsec('담당자별 방문 커버리지','클릭 상세',salesArr.map(([n,c])=>barRow(n,c,c/nHosp*100,'#2563eb','곳',"_cduDrillSales('"+_cduEsc(n).replace(/\x27/g,"\\x27")+"')")).join(''))
-    +dsec('주력 시술','방문처가 미는 시술',(procArr.length?procArr.map(([n,c])=>barRow(n,c,c/procTot*100,'#2563eb','건')).join(''):_noD('시술 정보 입력 없음')))
+    +dsec('주력 검사','방문처가 미는 검사',(procArr.length?procArr.map(([n,c])=>barRow(n,c,c/procTot*100,'#2563eb','건')).join(''):_noD('검사 정보 입력 없음')))
     +dsec('병원 규모','원장 수 기준',(docArr.length?docArr.map(([n,c])=>barRow(n,c,c/nHosp*100,'#2563eb','곳')).join(''):_noD('규모 정보 없음')))
     +dsec('국내 / 해외 마케팅','',(regArr.length?regArr.map(([n,c])=>barRow(n,c,c/nHosp*100,'#2563eb','곳')).join(''):_noD('구분 정보 없음')))
     +dsec('매출 상위 방문 병원','올해 팁매출 기준 · 클릭 이력',
@@ -6562,7 +6562,7 @@ function renderCDUReport(vs){
       +sec('선제 감지 · 집중 대응 병원','담당자가 현장에서 조기 감지해 대응 중 · 클릭하면 이력',churnHtml)
     +'</div>'
     +sec('기간 내 활동 추이','주 단위 · 개처=방문 병원 수 · 수가=주 평균 · 이벤트=진행 병원 수 · 클릭 상세',trendHtml)
-    +'<button class="cdud-tgl" onclick="_cduToggleDetail()"><i class="bi bi-chevron-'+(_cduDetailOpen?'up':'down')+' me-1"></i>상세 분석 '+(_cduDetailOpen?'접기':'펼치기')+' <u>수가 밴드 · 경쟁사 · 마케팅 채널 · 시술/규모 분포 · 담당자 · 매출 상위</u></button>'
+    +'<button class="cdud-tgl" onclick="_cduToggleDetail()"><i class="bi bi-chevron-'+(_cduDetailOpen?'up':'down')+' me-1"></i>상세 분석 '+(_cduDetailOpen?'접기':'펼치기')+' <u>수가 밴드 · 경쟁사 · 마케팅 채널 · 검사/규모 분포 · 담당자 · 매출 상위</u></button>'
     +(_cduDetailOpen?detailSec:'')
     +_cduNoteCard()
   +'</div>';
@@ -7159,7 +7159,7 @@ function renderCDUWeekly(){
     +anaBox
     +(vs.length?'<table class="wkr-tb">'
       +'<colgroup><col style="width:176px"><col style="width:104px"><col style="width:92px"><col style="width:58px"><col style="width:120px"><col><col style="width:52px"></colgroup>'
-      +'<thead><tr><th>병원명</th><th>팁매출<br>(작년 동기比)</th><th>주력 시술</th><th>수가</th><th>경쟁사</th><th>피드백·결과</th><th class="cduwk-np">수정</th></tr></thead>'
+      +'<thead><tr><th>병원명</th><th>팁매출<br>(작년 동기比)</th><th>주력 검사</th><th>수가</th><th>경쟁사</th><th>피드백·결과</th><th class="cduwk-np">수정</th></tr></thead>'
       +'<tbody>'+rows+'</tbody></table>'
       :'<div style="text-align:center;color:#94a3b8;padding:30px 0;font-size:13px">이 주에 완료된 방문이 없습니다.</div>')
     +(exclN?'<div class="cduwk-np" style="margin-top:10px;font-size:11px;color:#94a3b8">'
@@ -7182,7 +7182,7 @@ function cduWkPDF(){
 function cduExportCSV(){
   var vs=_cduFiltered().slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
   if(!vs.length){ alert('내보낼 방문 기록이 없습니다.'); return; }
-  var cols=[['date','방문일'],['custName','병원명'],['dealer','대리점/담당'],['doctor','대표원장'],['doctorCount','원장수'],['mainProc','주력시술'],['competitor','경쟁사'],['channels','마케팅채널'],['price','시술수가(천원)'],['procCount','시술건수'],['event','이벤트'],['reels','릴스'],['stock','재고'],['churnRisk','이탈가능성'],['feedback','피드백'],['sales','담당']];
+  var cols=[['date','방문일'],['custName','병원명'],['dealer','대리점/담당'],['doctor','대표원장'],['doctorCount','원장수'],['mainProc','주력검사'],['competitor','경쟁사'],['channels','마케팅채널'],['price','검사수가(천원)'],['procCount','검사건수'],['event','이벤트'],['reels','릴스'],['stock','재고'],['churnRisk','이탈가능성'],['feedback','피드백'],['sales','담당']];
   var esc=s=>'"'+String(s==null?'':s).replace(/"/g,'""').replace(/[\r\n]+/g,' ')+'"';
   var lines=[cols.map(c=>esc(c[1])).join(',')];
   vs.forEach(v=>lines.push(cols.map(c=>esc(v[c[0]])).join(',')));
@@ -9070,7 +9070,7 @@ function editSchedule(id){ const l=(DB.d.logs||[]).find(x=>x.id===id); if(l) ope
 // 제품 자동완성 목록
 function _schFillProdList(){ const dl=document.getElementById('sch-prod-list'); if(!dl||dl.dataset.filled)return;
   const ps=new Set(); Object.keys((typeof DEVICE!=='undefined'&&DEVICE.products2026)||{}).forEach(p=>ps.add(p)); Object.keys((typeof CONS!=='undefined'&&CONS.products2026)||{}).forEach(p=>ps.add(p));
-  ['애니젠','애니젠 Strip','애니젠 X','애니젠 XM','Tightan','VEGA LASER','NeoDx','MicroDx','ChemiPro C-300','QC Plus','ImmunoFlow','BioPCR','DualScan'].forEach(p=>ps.add(p));
+  ['애니젠','애니젠 Strip','애니젠 X','애니젠 XM','Tightan','형광분석기','NeoDx','MicroDx','ChemiPro C-300','QC Plus','ImmunoFlow','BioPCR','DualScan'].forEach(p=>ps.add(p));
   dl.innerHTML=[...ps].sort((a,b)=>a.localeCompare(b,'ko')).map(p=>'<option value="'+p.replace(/"/g,'&quot;')+'">').join(''); dl.dataset.filled='1';
 }
 // 일정 모달 닫고 병원 상세 열기(모달 겹침 방지)
@@ -10927,7 +10927,7 @@ window.addEventListener('pageshow', function(e){
         +'</div>'
         +'<div class="lux-list">'
           +'<div class="lux-item hi"><div class="li-l">패키지 총 순수익<small>소모품 '+consumableCount+'개 완주 시</small></div><div class="li-v">'+_kr(pureProfit)+'</div></div>'
-          +'<div class="lux-item"><div class="li-l">총 시술 횟수<small>'+consumableCount+'개 × '+(tipShots/shotsPerTreatment).toFixed(1)+'회</small></div><div class="li-v">'+_times(totalTreatments)+'</div></div>'
+          +'<div class="lux-item"><div class="li-l">총 검사 횟수<small>'+consumableCount+'개 × '+(tipShots/shotsPerTreatment).toFixed(1)+'회</small></div><div class="li-v">'+_times(totalTreatments)+'</div></div>'
           +'<div class="lux-item"><div class="li-l">총 매출</div><div class="li-v">'+_kr(totalRevenue)+'</div></div>'
           +'<div class="lux-item"><div class="li-l">하루 매출<small>1회 '+_won(pricePerTreatment)+'원 × '+treatmentsPerDay+'회</small></div><div class="li-v">'+_kr(dailyRevenue)+'</div></div>'
         +'</div>'
@@ -10942,7 +10942,7 @@ window.addEventListener('pageshow', function(e){
           ticketingCount=_n(_ls('ticketingCount').value), customerCount=_n(_ls('customerCount').value);
     const err = m => el.innerHTML='<div class="lux-err">'+m+'</div>';
     if(equipmentPrice<=0) return err('장비 가격을 입력하세요.');
-    if(sessionUnitPrice<=0||ticketingCount<=0||customerCount<=0) return err('시술단가, 티케팅수, 고객수는 0보다 커야 합니다.');
+    if(sessionUnitPrice<=0||ticketingCount<=0||customerCount<=0) return err('검사단가, 티케팅수, 고객수는 0보다 커야 합니다.');
     const dailyRevenue=sessionUnitPrice*ticketingCount*customerCount;
     const paybackDays=equipmentPrice/dailyRevenue;
     el.innerHTML =
@@ -10975,7 +10975,7 @@ window.addEventListener('pageshow', function(e){
     const items=(q.items||[]).slice().sort((a,b)=>Number(b.amount||0)-Number(a.amount||0));
     const dev=(items[0]&&items[0].name)||'';
     const total=Number(q.total||0);
-    if(/aura|tightan|올리지오|타이탄/i.test(dev)){
+    if(/애니젠|aura|tightan|애니젠|타이탄/i.test(dev)){
       roiTab('rf');
       const eq=_rf('equipment'); let matched=false;
       for(const nm of Object.keys(RF_PACKAGE_DATA)){
@@ -11025,7 +11025,7 @@ window.addEventListener('pageshow', function(e){
     if(typeof renderQuotes==='function') renderQuotes();
     _roiBannerFor(q);
   };
-  // ===== 병원 맞춤 추정(실제 팁 구매량 → 시술량) =====
+  // ===== 병원 맞춤 추정(실제 팁 구매량 → 검사량) =====
   const _ROI_TIP_PRICE=400000;   // 팁 1개 단가 가정(패키지 환산 35~49만원 범위의 중간값)
   function _roiHospList(){ const dl=document.getElementById('roi-hosp-list'); if(!dl||dl.dataset.f) return; const hs=Object.keys((typeof CONS!=='undefined'&&CONS.hospitals)||{}).sort((a,b)=>a.localeCompare(b,'ko')); dl.innerHTML=hs.slice(0,2500).map(n=>'<option value="'+n.replace(/"/g,'&quot;')+'">').join(''); dl.dataset.f='1'; }
   function _roiHospEst(){
@@ -11034,7 +11034,7 @@ window.addEventListener('pageshow', function(e){
     if(!nm){ note.textContent=''; return; }
     const h=((typeof CONS!=='undefined'&&CONS.hospitals)||{})[nm];
     if(!h){ note.textContent='매출 데이터에 없는 병원명입니다(정확한 병원명을 선택하세요).'; return; }
-    const isTip=t=>String(t[2]||'').indexOf('애니젠 키트')===0;
+    const isTip=t=>/키트|카세트/.test(String(t[2]||''));
     const t26=(h.txns2026||[]).filter(isTip), t25=(h.txns2025||[]).filter(isTip);
     const use=t26.length?t26:t25;
     if(!use.length){ note.textContent='이 병원의 팁 구매 이력이 없습니다.'; return; }
@@ -11044,7 +11044,7 @@ window.addEventListener('pageshow', function(e){
     const trMo=(moAmt/_ROI_TIP_PRICE)*(ts/st);
     const perDay=Math.max(1,Math.round(trMo/25));
     _rf('treatmentsPerDay').value=perDay;
-    note.innerHTML='이 병원 '+(t26.length?'올해':'작년')+' 팁 구매 월평균 '+_kr(moAmt)+' ≈ 월 '+Math.round(trMo)+'회 시술 → <b>일 '+perDay+'회</b> 자동 반영 (팁단가 40만원 가정)';
+    note.innerHTML='이 병원 '+(t26.length?'올해':'작년')+' 팁 구매 월평균 '+_kr(moAmt)+' ≈ 월 '+Math.round(trMo)+'회 검사 → <b>일 '+perDay+'회</b> 자동 반영 (팁단가 40만원 가정)';
     calcRF();
   }
   window.roiTab = function(which){
@@ -11064,54 +11064,54 @@ window.addEventListener('pageshow', function(e){
 
   // ===== Sales Speech 데이터(한국어) =====
   const SPEECH_DATA = [
-    {id:'VegaPCR',name:'VEGA LASER',color:'#e8472a',tagline:'엑셀브이급 적응증, 혁신적인 ROI의 혈관레이저',competitors:['Excel V','Vbeam','Cynergy'],table:{competitor:'Excel V',rows:[
+    {id:'VegaPCR',name:'형광분석기',color:'#e8472a',tagline:'엑셀브이급 적응증, 혁신적인 ROI의 혈관레이저',competitors:['Excel V','Vbeam','Cynergy'],table:{competitor:'Excel V',rows:[
       {label:'가격',노바진단:'약 6,000만원',rival:'1.5~2억'},{label:'소모품',노바진단:'없음',rival:'있음'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'},{label:'ROI',노바진단:'매우 우수',rival:'투자금 부담'}]},speech:[
-      {text:'VEGA LASER는 **핸드피스 교체 없이 532nm와 1064nm 두 파장을 즉시 전환**해 사용할 수 있어, 시술 흐름을 끊지 않고 연속 진료가 가능합니다.'},
-      {text:'4단계 접촉식 완충액 시스템으로 피부 타입과 병변 종류에 따라 시술자가 세밀하게 파라미터를 조절할 수 있으며, **화상 위험을 최소화**합니다.'},
-      {text:'**소모품이 없어 유지비가 거의 발생하지 않고**, 혈관 병변부터 리쥬브·색소·여드름까지 폭넓은 적응증을 하나의 장비로 커버합니다.'},
+      {text:'형광분석기는 **핸드피스 교체 없이 532nm와 1064nm 두 파장을 즉시 전환**해 사용할 수 있어, 검사 흐름을 끊지 않고 연속 진료가 가능합니다.'},
+      {text:'4단계 접촉식 완충액 시스템으로 피부 타입과 병변 종류에 따라 검사자가 세밀하게 파라미터를 조절할 수 있으며, **화상 위험을 최소화**합니다.'},
+      {text:'**소모품이 없어 유지비가 거의 발생하지 않고**, 혈관 병변부터 생화학검사·색소·여드름까지 폭넓은 적응증을 하나의 장비로 커버합니다.'},
       {closing:true,text:"소모품 비용 '0', 넓은 적응증 — Excel V 효과를 6,000만원으로. ROI가 가장 빠른 혈관·색소 플랫폼입니다."}]},
-    {id:'QC Reagent-pro',name:'DERMAPRO PLUS',color:'#8b5cf6',tagline:'기존 Q-Switch가 못 지우는 문신색상까지 커버',competitors:['Spectra XT','Revlite SI','Medlite C6'],table:{competitor:'기존 Q-Switched',rows:[
-      {label:'파장',노바진단:'1064/532/595/660',rival:'1064/532'},{label:'문신 색상',노바진단:'거의 전색상',rival:'제한적'},{label:'MLA',노바진단:'가능',rival:'제한'},{label:'활용성',노바진단:'매우 높음',rival:'색소 위주'}]},speech:[
-      {text:'기존 Q-Switched 장비가 1064/532nm에 한정된 것과 달리, **DERMAPRO PLUS는 595nm(홍조·파란 문신)와 660nm(초록 문신·고멜라닌)까지 총 4파장을 지원**합니다.'},
-      {text:'덕분에 기존에 거절할 수밖에 없었던 다양한 색상의 문신도 효과적으로 치료할 수 있습니다.'},
+    {id:'QC Reagent-pro',name:'정밀진단키트',color:'#8b5cf6',tagline:'기존 Q-Switch가 못 지우는 색소검사색상까지 커버',competitors:['Spectra XT','Revlite SI','Medlite C6'],table:{competitor:'기존 Q-Switched',rows:[
+      {label:'파장',노바진단:'1064/532/595/660',rival:'1064/532'},{label:'색소검사 색상',노바진단:'거의 전색상',rival:'제한적'},{label:'MLA',노바진단:'가능',rival:'제한'},{label:'활용성',노바진단:'매우 높음',rival:'색소 위주'}]},speech:[
+      {text:'기존 Q-Switched 장비가 1064/532nm에 한정된 것과 달리, **정밀진단키트는 595nm(홍조·파란 색소검사)와 660nm(초록 색소검사·고멜라닌)까지 총 4파장을 지원**합니다.'},
+      {text:'덕분에 기존에 거절할 수밖에 없었던 다양한 색상의 색소검사도 효과적으로 치료할 수 있습니다.'},
       {text:'**HEXA MLA와 멀티 PTP 모드**는 광기계적 파괴력을 극대화해 기존 Q-Switched 대비 더 적은 횟수로 뚜렷한 개선 효과를 냅니다.'},
-      {closing:true,text:'4가지 파장으로 모든 문신 색상까지 전부 수용하세요. 시술 메뉴 확장과 수익성이 동시에 해결됩니다.'}]},
+      {closing:true,text:'4가지 파장으로 모든 색소검사 색상까지 전부 수용하세요. 검사 메뉴 확장과 수익성이 동시에 해결됩니다.'}]},
     {id:'ChemiPro-majesty',name:'PICOPRO MAJESTY',color:'#f59e0b',tagline:'250ps 초단파 펄스로 프리미엄 피코 시장 공략',competitors:['피코웨이','PicoPlus','디스커버리 피코'],table:{competitor:'PicoPlus',rows:[
       {label:'펄스폭',노바진단:'250ps',rival:'300ps급'},{label:'피크파워',노바진단:'2GW',rival:'상대적 낮음'},{label:'유지비',노바진단:'국산 저렴',rival:'수입 고가'},{label:'가격',노바진단:'경쟁력 우수',rival:'고가'}]},speech:[
       {text:'PICOPRO MAJESTY는 **전 세계 최초로 250ps 펄스듀레이션을 구현한 피코레이저** 장비입니다. 기존 Q스위치보다 1,000배 빠르고, 멜라노좀의 SRT인 300ps보다 짧은 펄스로 **멜라노좀만 선택적으로 파괴**합니다.'},
-      {text:'**2GW 피크 파워**는 나노 레이저로 치료가 어려웠던 완고한 색소 병변과 복잡한 문신 색상에서도 탁월한 효과를 발휘합니다.'},
+      {text:'**2GW 피크 파워**는 나노 레이저로 치료가 어려웠던 완고한 색소 병변과 복잡한 색소검사 색상에서도 탁월한 효과를 발휘합니다.'},
       {text:'국산 장비이므로 수입 피코 대비 **유지비가 저렴하고, A/S 대응이 신속**합니다.'},
-      {closing:true,text:'세계 최초 250ps · 2GW — 피코플러스보다 빠르고 강하면서 가격은 더 낮습니다. 프리미엄 시술 단가를 기술로 정당화하는 유일한 국산 플래그십입니다.'}]},
+      {closing:true,text:'세계 최초 250ps · 2GW — 피코플러스보다 빠르고 강하면서 가격은 더 낮습니다. 프리미엄 검사 단가를 기술로 정당화하는 유일한 국산 플래그십입니다.'}]},
     {id:'picoalex',name:'PICOALEX',color:'#10b981',tagline:'755nm 피코 시장 공략용 플랫폼',competitors:['PicoSure','Discovery Pico'],table:{competitor:'PicoSure',rows:[
       {label:'출력',노바진단:'310mJ',rival:'상대적 낮음'},{label:'캘리브레이션',노바진단:'초기 1회',rival:'스팟 변경마다'},{label:'운용편의성',노바진단:'우수',rival:'보통'},{label:'가격',노바진단:'경쟁력 우수',rival:'고가'}]},speech:[
       {text:'PICOALEX는 **755nm 알렉산드라이트 파장 특유의 높은 멜라닌 선택성**을 600ps 피코초 기술과 결합한 장비입니다.'},
-      {text:'피코슈어(PicoSure) 대비 **최대 출력(310mJ)이 높고**, 스팟 사이즈 변경 시 매번 캘리브레이션을 진행해야 하는 번거로움 없이 **시술 시작 시 한 번만** 진행하면 되어 시술 흐름이 훨씬 효율적입니다.'},
-      {text:'Zoom과 MLA 핸드피스로 문신 제거·토닝에서 리쥬브네이션·흉터 치료까지 폭넓게 대응하며, 동급 수입 장비 대비 **합리적인 가격으로 도입 문턱을 낮춥니다.**'},
-      {closing:true,text:'피코슈어 대비 출력은 높고, 캘리브레이션은 1회로 끝나고, 가격은 낮습니다. 동일 결과를 더 빠르고 효율적으로 낼 수 있습니다.'}]},
+      {text:'경쟁사 E(PicoSure) 대비 **최대 출력(310mJ)이 높고**, 스팟 사이즈 변경 시 매번 캘리브레이션을 진행해야 하는 번거로움 없이 **검사 시작 시 한 번만** 진행하면 되어 검사 흐름이 훨씬 효율적입니다.'},
+      {text:'Zoom과 MLA 핸드피스로 색소검사 제거·토닝에서 생화학검사네이션·혈액검사 치료까지 폭넓게 대응하며, 동급 수입 장비 대비 **합리적인 가격으로 도입 문턱을 낮춥니다.**'},
+      {closing:true,text:'경쟁사 E 대비 출력은 높고, 캘리브레이션은 1회로 끝나고, 가격은 낮습니다. 동일 결과를 더 빠르고 효율적으로 낼 수 있습니다.'}]},
     {id:'picoandy',name:'PICOANDY',color:'#3b82f6',tagline:'개원가에서 가장 무난하게 수익 내는 피코 장비',competitors:['PicoPlus','PicoLO','Enlighten'],table:{competitor:'피코플러스',rows:[
       {label:'출력',노바진단:'600mJ',rival:'500mJ'},{label:'펄스폭',노바진단:'450~550ps',rival:'유사'},{label:'가격',노바진단:'우수',rival:'상대적 고가'},{label:'범용성',노바진단:'매우 높음',rival:'높음'}]},speech:[
       {text:'PICOANDY는 **450ps의 피코초 펄스**로 기존 나노 레이저 대비 색소 파괴력을 높이면서도 주변 조직 손상을 최소화합니다.'},
-      {text:'**1064nm 기준 최대 600mJ의 출력**은 깊은 진피 색소부터 표피 잡티, 문신 제거까지 넓은 적응증을 한 번의 도입으로 커버합니다.'},
-      {text:'낮은 통증과 부작용 프로파일 덕분에 **환자 만족도가 높고**, 유연한 패키지 구성으로 시술 단가와 재방문율 향상에 직접 기여합니다.'},
-      {closing:true,text:'나노 레이저를 쓰고 계신다면, 동일 환자에게 피코 옵션을 추가해 시술 단가를 높일 수 있는 가장 합리적인 업그레이드입니다.'}]},
-    {id:'aura',name:'반려동물 Rapid',color:'#f97316',tagline:'써마지급 효과 + 국내 A/S + 낮은 소모품 비용',competitors:['써마지 FLX','볼뉴머'],table:{competitor:'써마지 FLX',rows:[
+      {text:'**1064nm 기준 최대 600mJ의 출력**은 깊은 진피 색소부터 표피 잡티, 색소검사 제거까지 넓은 적응증을 한 번의 도입으로 커버합니다.'},
+      {text:'낮은 통증과 부작용 프로파일 덕분에 **환자 만족도가 높고**, 유연한 패키지 구성으로 검사 단가와 재방문율 향상에 직접 기여합니다.'},
+      {closing:true,text:'나노 레이저를 쓰고 계신다면, 동일 환자에게 피코 옵션을 추가해 검사 단가를 높일 수 있는 가장 합리적인 업그레이드입니다.'}]},
+    {id:'aura',name:'반려동물 Rapid',color:'#f97316',tagline:'경쟁사 A급 효과 + 국내 A/S + 낮은 소모품 비용',competitors:['경쟁분석기 A','볼뉴머'],table:{competitor:'경쟁분석기 A',rows:[
       {label:'원리',노바진단:'Monopolar RF',rival:'Monopolar RF'},{label:'가격',노바진단:'약 5,500만원',rival:'1.5억 이상'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'},{label:'소모품',노바진단:'저렴',rival:'고가'}]},speech:[
       {text:'애니젠는 **한국 최초 모노폴라 RF 장비**로, 진피 콜라겐에 열에너지를 직접 전달해 콜라겐 수축과 섬유아세포 자극을 통해 신생 콜라겐을 생성합니다.'},
-      {text:'**4중 안전장치와 GAS 완충액 시스템**이 시술 중 실시간으로 작동하여 열 손상 위험을 최소화하면서도 충분한 치료 심도를 확보합니다.'},
-      {text:'싱글·듀얼·오토 모드와 자유로운 완충액 조절 기능으로 시술자의 임상 판단에 따른 맞춤 프로토콜이 가능하며, 울쎄라·써마지 대비 **합리적인 도입 비용과 우수한 국내 A/S 체계**를 갖추고 있습니다.'},
-      {closing:true,text:'써마지와 동일한 모노폴라 RF, 동등한 최대출력 400W — 도입 비용은 5분의 1 이하에 국내 즉시 A/S까지. 효과는 같고 운영 효율은 훨씬 높습니다.'}]},
-    {id:'aura-xm',name:'애니젠 XM',color:'#f97316',tagline:'RF + HIFU 복합 전층 리프팅 — 두 장비가 하나로',competitors:['써마지 FLX','울쎄라','볼뉴머'],table:{competitor:'써마지 FLX',rows:[
-      {label:'RF',노바진단:'O',rival:'O'},{label:'HIFU',노바진단:'O',rival:'X'},{label:'복합시술',노바진단:'O',rival:'X'},{label:'완충액',노바진단:'강화',rival:'기본'}]},speech:[
-      {text:'애니젠 XM은 **HIFU와 RF를 하나의 플랫폼에 통합한 세계 최초 복합 리프팅 장비**입니다.'},
-      {text:'HIFU로 SMAS층부터 끌어올리고, RF G모드로 진피 상부를 부드럽게 가열하고, RF X모드로 심부까지 강력하게 히팅하는 **3에너지 교차 시술**이 가능합니다.'},
-      {text:'울쎄라는 HIFU만, 써마지는 RF만 제공하는 데 반해, **애니젠 XM은 두 장비의 적응증을 단일 플랫폼으로 커버**합니다. XM Pack 소모품 패키지로 1인 1팩 프리미엄 시술 구조를 설계할 수 있습니다.'},
-      {closing:true,text:'울쎄라와 써마지를 따로 살 이유가 없습니다. 애니젠 XM 하나로 HIFU+RF 전층 리프팅을 완성하고, XM Pack으로 반복 매출 구조까지 만드세요.'}]},
-    {id:'tightan',name:'TIGHTAN',color:'#22c55e',tagline:'HIFU 시장 진입용 — 최고의 투자 효율',competitors:['울쎄라','울트라포머 MPT','슈링크 유니버스'],table:{competitor:'울쎄라',rows:[
-      {label:'가격',노바진단:'1천만원대',rival:'1억 이상'},{label:'시술속도',노바진단:'300샷 6분',rival:'상대적 느림'},{label:'도입부담',노바진단:'매우 낮음',rival:'높음'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
-      {text:'TIGHTAN은 HIFU 기반 비침습 리프팅 장비로, 타깃층에만 에너지를 정밀 집속해 **주변 조직 손상 없이 즉각적인 리프팅 효과**를 제공합니다.'},
-      {text:'**1회 시술로 6개월~1년까지 효과가 지속**되며, 300샷을 6분 이내에 완료하는 빠른 시술 속도로 회전율 높은 시술 환경에 최적화되어 있습니다.'},
-      {text:'합리적인 도입 가격으로 **HIFU 시술 메뉴를 처음 추가하려는 클리닉에도 진입 장벽이 낮고**, 얼굴 부위별 카세트 선택으로 개인화 시술이 가능합니다.'},
-      {closing:true,text:'울쎄라 대비 10분의 1 가격에 HIFU 리프팅 메뉴 추가, 300샷을 6분에 완료. 시술 단가는 유지하면서 도입 부담은 최소화됩니다.'}]},
+      {text:'**4중 안전장치와 GAS 완충액 시스템**이 검사 중 실시간으로 작동하여 열 손상 위험을 최소화하면서도 충분한 치료 심도를 확보합니다.'},
+      {text:'싱글·듀얼·오토 모드와 자유로운 완충액 조절 기능으로 검사자의 임상 판단에 따른 맞춤 프로토콜이 가능하며, 경쟁사 B·경쟁사 A 대비 **합리적인 도입 비용과 우수한 국내 A/S 체계**를 갖추고 있습니다.'},
+      {closing:true,text:'경쟁사 A와 동일한 모노폴라 RF, 동등한 최대출력 400W — 도입 비용은 5분의 1 이하에 국내 즉시 A/S까지. 효과는 같고 운영 효율은 훨씬 높습니다.'}]},
+    {id:'aura-xm',name:'애니젠 XM',color:'#f97316',tagline:'RF + HIFU 복합 전층 면역검사 — 두 장비가 하나로',competitors:['경쟁분석기 A','경쟁사 B','볼뉴머'],table:{competitor:'경쟁분석기 A',rows:[
+      {label:'RF',노바진단:'O',rival:'O'},{label:'HIFU',노바진단:'O',rival:'X'},{label:'복합검사',노바진단:'O',rival:'X'},{label:'완충액',노바진단:'강화',rival:'기본'}]},speech:[
+      {text:'애니젠 XM은 **HIFU와 RF를 하나의 플랫폼에 통합한 세계 최초 복합 면역검사 장비**입니다.'},
+      {text:'HIFU로 SMAS층부터 끌어올리고, RF G모드로 진피 상부를 부드럽게 가열하고, RF X모드로 심부까지 강력하게 히팅하는 **3에너지 교차 검사**이 가능합니다.'},
+      {text:'경쟁사 B는 HIFU만, 경쟁사 A는 RF만 제공하는 데 반해, **애니젠 XM은 두 장비의 적응증을 단일 플랫폼으로 커버**합니다. XM Pack 소모품 패키지로 1인 1팩 프리미엄 검사 구조를 설계할 수 있습니다.'},
+      {closing:true,text:'경쟁사 B와 경쟁사 A를 따로 살 이유가 없습니다. 애니젠 XM 하나로 HIFU+RF 전층 면역검사을 완성하고, XM Pack으로 반복 매출 구조까지 만드세요.'}]},
+    {id:'tightan',name:'TIGHTAN',color:'#22c55e',tagline:'HIFU 시장 진입용 — 최고의 투자 효율',competitors:['경쟁사 B','울트라포머 MPT','경쟁사 F 유니버스'],table:{competitor:'경쟁사 B',rows:[
+      {label:'가격',노바진단:'1천만원대',rival:'1억 이상'},{label:'검사속도',노바진단:'300테스트 6분',rival:'상대적 느림'},{label:'도입부담',노바진단:'매우 낮음',rival:'높음'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
+      {text:'TIGHTAN은 HIFU 기반 비침습 면역검사 장비로, 타깃층에만 에너지를 정밀 집속해 **주변 조직 손상 없이 즉각적인 면역검사 효과**를 제공합니다.'},
+      {text:'**1회 검사로 6개월~1년까지 효과가 지속**되며, 300테스트을 6분 이내에 완료하는 빠른 검사 속도로 회전율 높은 검사 환경에 최적화되어 있습니다.'},
+      {text:'합리적인 도입 가격으로 **HIFU 검사 메뉴를 처음 추가하려는 클리닉에도 진입 장벽이 낮고**, 얼굴 부위별 카세트 선택으로 개인화 검사이 가능합니다.'},
+      {closing:true,text:'경쟁사 B 대비 10분의 1 가격에 HIFU 면역검사 메뉴 추가, 300테스트을 6분에 완료. 검사 단가는 유지하면서 도입 부담은 최소화됩니다.'}]},
     {id:'ImmunoFlow',name:'AURORA',color:'#14b8a6',tagline:'CO2 대비 짧은 다운타임 — 같은 효과, 더 빠른 회복',competitors:['액션2','루트로닉 eCO2','CO2 레이저'],table:{competitor:'CO2 레이저',rows:[
       {label:'열손상',노바진단:'적음',rival:'많음'},{label:'회복속도',노바진단:'빠름',rival:'느림'},{label:'PIH',노바진단:'적음',rival:'상대적 높음'},{label:'A/S',노바진단:'국내',rival:'수입'}]},speech:[
       {text:'AURORA는 **수분 흡수율이 CO2 레이저보다 16배 높은 Er:YAG 2940nm 레이저**로, 표피 손상과 열 확산이 최소화되어 회복 기간이 훨씬 짧습니다.'},
@@ -11122,18 +11122,18 @@ window.addEventListener('pageshow', function(e){
       {label:'다운타임',노바진단:'짧음',rival:'상대적 김'},{label:'소모품',노바진단:'없음',rival:'있음'},{label:'드럭딜리버리',노바진단:'강점',rival:'보통'},{label:'환자인지도',노바진단:'BB레이저',rival:'프락셀'}]},speech:[
       {text:'LUMINA은 **1927nm Thulium 파장이 수분에 선택적으로 반응하는 BB레이저**입니다. 각질층을 보존한 채로 표피와 진피 상부에만 열에너지를 전달하기 때문에 CO2 대비 다운타임이 짧고 피부 장벽 손상이 최소화됩니다.'},
       {text:"'**비비크림 필요 없는 올인원 레이저**'라는 컨셉으로 환자 인지도가 높아 상담 전환율이 좋은 장비입니다."},
-      {text:'핵심 강점은 **시술 후 드럭 딜리버리 효과**입니다. MTZ 형성 후 EGF·FGF·PDRN·트라넥삼산 등 앰플을 도포하면 흡수율이 현저히 높아져 **앰플 판매로 추가 수익 구조**를 만들 수 있습니다.'},
+      {text:'핵심 강점은 **검사 후 드럭 딜리버리 효과**입니다. MTZ 형성 후 EGF·FGF·PDRN·트라넥삼산 등 앰플을 도포하면 흡수율이 현저히 높아져 **앰플 판매로 추가 수익 구조**를 만들 수 있습니다.'},
       {closing:true,text:'경쟁 프랙셔널 장비들의 소모품 비용 없이 BB레이저 고객 유입 · 앰플 수익 · 복합 패키지 단가 극대화를 동시에 실현하세요.'}]},
-    {id:'combo-dual',name:'COMBO DUAL',color:'#06b6d4',tagline:'제모·색소·혈관을 모두 커버하는 수익형 레이저 플랫폼',competitors:['젠틀맥스 프로','아포지 플러스','클라리티2'],table:{competitor:'젠틀맥스',rows:[
-      {label:'파장',노바진단:'755+1064 동시조사',rival:'개별조사'},{label:'냉각',노바진단:'파장별 독립냉각',rival:'DCD 냉각'},{label:'활용도',노바진단:'제모+색소+혈관',rival:'제모 중심'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'}]},speech:[
+    {id:'combo-dual',name:'COMBO DUAL',color:'#06b6d4',tagline:'기생충검사·색소·혈관을 모두 커버하는 수익형 레이저 플랫폼',competitors:['경쟁사 D 프로','아포지 플러스','클라리티2'],table:{competitor:'경쟁사 D',rows:[
+      {label:'파장',노바진단:'755+1064 동시조사',rival:'개별조사'},{label:'냉각',노바진단:'파장별 독립냉각',rival:'DCD 냉각'},{label:'활용도',노바진단:'기생충검사+색소+혈관',rival:'기생충검사 중심'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'}]},speech:[
       {text:'COMBO DUAL은 **755nm Alexandrite와 1064nm Nd:YAG 파장을 단일 플랫폼에 통합**한 멀티 레이저 장비입니다.'},
-      {text:'경쟁사 대부분의 듀얼 장비가 두 파장을 순차적으로만 사용하는 데 반해, **COMBO DUAL은 하이브리드 모드를 통해 두 파장을 동시에 조사**할 수 있어 시술 시간을 단축하고 치료 효율을 극대화합니다.'},
-      {text:'각 파장별 독립 냉각 시스템(SCS)으로 출력 안정성이 뛰어나며, **제모는 물론 색소·혈관 병변과 리쥬브네이션까지 한 장비로 커버**할 수 있어 원내 장비 투자 효율이 높습니다.'},
-      {closing:true,text:'젠틀맥스 프로는 두 파장을 순차 조사하지만, COMBO DUAL은 755nm + 1064nm을 동시 조사 — 시술 시간은 줄고 치료 효율은 올라갑니다. 파장별 독립 냉각으로 출력 안정성까지 갖췄으니, 젠틀맥스 프로 가격의 절반 이하로 더 넓은 적응증을 커버하는 장비입니다.'}]}
+      {text:'경쟁사 대부분의 듀얼 장비가 두 파장을 순차적으로만 사용하는 데 반해, **COMBO DUAL은 하이브리드 모드를 통해 두 파장을 동시에 조사**할 수 있어 검사 시간을 단축하고 치료 효율을 극대화합니다.'},
+      {text:'각 파장별 독립 냉각 시스템(SCS)으로 출력 안정성이 뛰어나며, **기생충검사는 물론 색소·혈관 병변과 생화학검사네이션까지 한 장비로 커버**할 수 있어 원내 장비 투자 효율이 높습니다.'},
+      {closing:true,text:'경쟁사 D 프로는 두 파장을 순차 조사하지만, COMBO DUAL은 755nm + 1064nm을 동시 조사 — 검사 시간은 줄고 치료 효율은 올라갑니다. 파장별 독립 냉각으로 출력 안정성까지 갖췄으니, 경쟁사 D 프로 가격의 절반 이하로 더 넓은 적응증을 커버하는 장비입니다.'}]}
   ];
   const CLOSING_SPEECH = {
-    quote:"노바진단 장비의 가장 큰 장점은\n단순히 효과가 아니라 **투자금 회수**입니다.\n\n수입장비 대비 초기 투자금은 낮고,\n유지비는 적으며, 시술 메뉴는 더 많이 만들 수 있습니다.\n\n결국 장비는 스펙이 아니라\n**병원 매출을 만드는 도구**인데,\n노바진단 장비는 그 부분에 가장 최적화되어 있습니다.",
-    points:[{icon:'💰',title:'낮은 초기 투자금',desc:'수입장비 대비 대폭 절감'},{icon:'🔧',title:'적은 유지비',desc:'국내 A/S · 소모품 절약'},{icon:'📈',title:'넓은 시술 메뉴',desc:'투자 대비 수익 극대화'}]
+    quote:"노바진단 장비의 가장 큰 장점은\n단순히 효과가 아니라 **투자금 회수**입니다.\n\n수입장비 대비 초기 투자금은 낮고,\n유지비는 적으며, 검사 메뉴는 더 많이 만들 수 있습니다.\n\n결국 장비는 스펙이 아니라\n**병원 매출을 만드는 도구**인데,\n노바진단 장비는 그 부분에 가장 최적화되어 있습니다.",
+    points:[{icon:'💰',title:'낮은 초기 투자금',desc:'수입장비 대비 대폭 절감'},{icon:'🔧',title:'적은 유지비',desc:'국내 A/S · 소모품 절약'},{icon:'📈',title:'넓은 검사 메뉴',desc:'투자 대비 수익 극대화'}]
   };
   const _bold = t => String(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   const _esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');

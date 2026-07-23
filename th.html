@@ -911,16 +911,16 @@ function closeDw(){document.getElementById('dw').classList.remove('open');docume
 async function seedSample(save){
   const dt=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);};
   const mAgo=(n,day)=>{const d=new Date();d.setMonth(d.getMonth()-n);const y=d.getFullYear(),m=d.getMonth()+1;return y+'-'+String(m).padStart(2,'0')+'-'+String(day||15).padStart(2,'0');};
-  const C1='Bangkok Aesthetic Group',C2='Siam Medical Supply',C3='Phuket Skin Clinic';
+  const C1='Bangkok Animal Health Group',C2='Siam Medical Supply',C3='Phuket Vet Clinic';
   const A1=2300000,A2=180000,A3=1150000,A4=3450000;
   const E1=900000,E2=250000,E3=120000;
   const cid=()=>uid();
   D.sales=[
     {id:cid(),date:dt(-4),client:C1,product:'AniGen IF-100',qty:2,amt:A1,memo:'',collections:[]},
-    {id:cid(),date:dt(-12),client:C2,product:'AniGen 키트 [F-4.0]',qty:200,amt:A2,memo:'',collections:[{id:cid(),date:dt(-2),amt:A2,ref:'전액'}]},
+    {id:cid(),date:dt(-12),client:C2,product:'Parvo Antigen Kit',qty:200,amt:A2,memo:'',collections:[{id:cid(),date:dt(-2),amt:A2,ref:'전액'}]},
     {id:cid(),date:dt(-40),client:C3,product:'BioPCR',qty:1,amt:A3,memo:'',collections:[{id:cid(),date:dt(-20),amt:Math.round(A3/2),ref:'선금 50%'}]},
     {id:cid(),date:mAgo(2,20),client:C1,product:'AniGen IF-100',qty:3,amt:A4,memo:'',collections:[{id:cid(),date:mAgo(1,25),amt:A4,ref:''}]},
-    {id:cid(),date:mAgo(3,10),client:C2,product:'Cartridge',qty:120,amt:A2,memo:'',collections:[{id:cid(),date:mAgo(3,28),amt:A2,ref:''}]},
+    {id:cid(),date:mAgo(3,10),client:C2,product:'Reagent Kit',qty:120,amt:A2,memo:'',collections:[{id:cid(),date:mAgo(3,28),amt:A2,ref:''}]},
     {id:cid(),date:mAgo(4,15),client:C3,product:'ChemiPro',qty:1,amt:A3,memo:'',collections:[]},
     {id:cid(),date:mAgo(1,8),client:C1,product:'Heartworm Kit',qty:1,amt:A3,memo:'',collections:[{id:cid(),date:dt(-6),amt:Math.round(A3*0.6),ref:'부분'}]},
     {id:cid(),date:mAgo(5,12),client:C1,product:'AniGen IF-100',qty:2,amt:A1,memo:'',collections:[{id:cid(),date:mAgo(4,5),amt:A1,ref:''}]},
@@ -928,20 +928,20 @@ async function seedSample(save){
   D.orders=[
     {id:cid(),date:dt(-6),client:C1,product:'AniGen IF-100',qty:5,amt:A4,status:'생산중',eta:dt(18),memo:''},
     {id:cid(),date:dt(-14),client:C3,product:'BioPCR',qty:2,amt:A3,status:'선적중',eta:dt(5),memo:'해상운송'},
-    {id:cid(),date:dt(-3),client:C2,product:'AniGen 키트 [F-4.0]',qty:300,amt:A2,status:'수주',eta:dt(24),memo:''},
-    {id:cid(),date:dt(-25),client:C2,product:'Cartridge',qty:100,amt:A2,status:'수주',eta:dt(-4),memo:'납기 확인 필요'},
+    {id:cid(),date:dt(-3),client:C2,product:'Parvo Antigen Kit',qty:300,amt:A2,status:'수주',eta:dt(24),memo:''},
+    {id:cid(),date:dt(-25),client:C2,product:'Reagent Kit',qty:100,amt:A2,status:'수주',eta:dt(-4),memo:'납기 확인 필요'},
   ];
   D.items=[
     {id:cid(),name:'AniGen IF-100 분석기',qty0:6,unit:'대',safety:3,loc:'창고 A-1'},
-    {id:cid(),name:'AniGen 키트 [F-4.0]',qty0:420,unit:'개',safety:200,loc:'창고 B-2'},
+    {id:cid(),name:'Parvo Antigen Kit',qty0:420,unit:'개',safety:200,loc:'창고 B-2'},
     {id:cid(),name:'BioPCR 분석기',qty0:2,unit:'대',safety:2,loc:'창고 A-2'},
-    {id:cid(),name:'Cartridge',qty0:80,unit:'개',safety:150,loc:'창고 B-1'},
+    {id:cid(),name:'Reagent Kit',qty0:80,unit:'개',safety:150,loc:'창고 B-1'},
   ];
   D.moves=[
     {id:cid(),date:dt(-5),type:'입고',item:'AniGen IF-100 분석기',qty:3,ref:'선적 SH-2607'},
     {id:cid(),date:dt(-4),type:'출고',item:'AniGen IF-100 분석기',qty:2,ref:C1},
-    {id:cid(),date:dt(-12),type:'출고',item:'AniGen 키트 [F-4.0]',qty:200,ref:C2},
-    {id:cid(),date:dt(-16),type:'입고',item:'Cartridge',qty:50,ref:'선적 SH-2606'},
+    {id:cid(),date:dt(-12),type:'출고',item:'Parvo Antigen Kit',qty:200,ref:C2},
+    {id:cid(),date:dt(-16),type:'입고',item:'Reagent Kit',qty:50,ref:'선적 SH-2606'},
   ];
   D.accounts=[{name:'주거래계좌',opening:4000000},{name:'급여계좌',opening:1000000}];
   D.funds=[

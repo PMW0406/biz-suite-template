@@ -341,7 +341,7 @@ function parseTargets(wb){
   function col(letter){ var a=[]; for(var r=5;r<=16;r++){ var c=ws[letter+r]; a.push(c&&typeof c.v==='number'?c.v:null); } return a; }
   return { dX:col('B'), dO:col('D'), iX:col('G'), iO:col('I') };
 }
-// G래프 시트: 카세트(국내/해외)·Fiber 데이터 (26목표/26실적/25년이 정리돼 있음)
+// G래프 시트: 카세트(국내/해외)·분자진단 데이터 (26목표/26실적/25년이 정리돼 있음)
 function parseGraphSheet(wb){
   var ws=wb.Sheets['G래프']; if(!ws) return [];
   var g=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
@@ -361,7 +361,7 @@ function parseGraphSheet(wb){
   return [
     {title:'국내 카세트 월 판매량 (회계기준)', actual:cd.actual, prior:cd.prior, target:cd.target, color:'#dc2626'},
     {title:'해외 카세트 월 판매량 (회계기준)', actual:ci.actual, prior:ci.prior, target:ci.target, color:'#dc2626'},
-    {title:'Fiber 월 판매량 (회계기준)',           actual:fb.actual, prior:fb.prior, target:fb.target, color:'#fb923c'}
+    {title:'분자진단 시약 월 판매량 (회계기준)',           actual:fb.actual, prior:fb.prior, target:fb.target, color:'#fb923c'}
   ];
 }
 function parseAllCharts(wb){
@@ -370,9 +370,9 @@ function parseAllCharts(wb){
     var charts=[];
     if(dom&&intl&&t){
       charts.push(
-        {title:'국내 애니젠 X, Immuno 키트 월 판매량 (출고기준)', actual:dom.xA, prior:dom.xP, target:t.dX, color:'#f97316'},
+        {title:'국내 동물·인체 진단키트 월 판매량 (출고기준)', actual:dom.xA, prior:dom.xP, target:t.dX, color:'#f97316'},
         {title:'국내 애니젠 키트 월 판매량 (출고기준)',        actual:dom.oA, prior:dom.oP, target:t.dO, color:'#f97316'},
-        {title:'해외 애니젠 X, Immuno 키트 월 판매량 (회계기준)', actual:intl.xA, prior:intl.xP, target:t.iX, color:'#f97316'},
+        {title:'해외 동물·인체 진단키트 월 판매량 (회계기준)', actual:intl.xA, prior:intl.xP, target:t.iX, color:'#f97316'},
         {title:'해외 애니젠 키트 월 판매량 (회계기준)',        actual:intl.oA, prior:intl.oP, target:t.iO, color:'#f97316'}
       );
     }
@@ -382,15 +382,17 @@ function parseAllCharts(wb){
 }
 
 // ══ 노바몰 마감(raw) → 국내 진단키트 매출 ═══════════════════
-var WOM_GRPS=['애니젠 Face','애니젠 Eye','X/Immuno Face','X/Immuno Eye','카세트','Cooling','리턴스트립','커플링시약','기타'];
+var WOM_GRPS=['동물 항원키트','동물 항체키트','인체 면역진단','PCR 시약','신속진단키트','생화학 시약','혈액검사','품질관리','기타'];
 function womGrp(name){
   name=String(name||'');
-  if(/Cartridge/i.test(name)) return '카세트';
-  if(/Cooling/i.test(name)) return 'Cooling';
-  if(/Pad/i.test(name)) return '리턴스트립';
-  if(/Oil/i.test(name)) return '커플링시약';
-  if(/애니젠X|Immuno/i.test(name)) return /Eye/i.test(name)?'X/Immuno Eye':'X/Immuno Face';
-  if(/애니젠/i.test(name)) return /Eye/i.test(name)?'애니젠 Eye':'애니젠 Face';
+  if(/항원|\bAg\b/i.test(name)) return '동물 항원키트';
+  if(/항체|\bAb\b/i.test(name)) return '동물 항체키트';
+  if(/면역|Immuno|IgG|IgM/i.test(name)) return '인체 면역진단';
+  if(/PCR|분자/i.test(name)) return 'PCR 시약';
+  if(/신속|Rapid|스트립|strip/i.test(name)) return '신속진단키트';
+  if(/생화학|화학|Chem/i.test(name)) return '생화학 시약';
+  if(/혈액|혈구|CBC/i.test(name)) return '혈액검사';
+  if(/QC|품질/i.test(name)) return '품질관리';
   return '기타';
 }
 function _ym(v){
@@ -605,7 +607,7 @@ function renderReport(R){
   // 3-1 병원별
   if(R.hospitals && R.hospitals.length){
     h+=' <div class="sec"><h3><span class="n">3</span> 일일 수주 상세 — 병원별</h3><div class="scroll"><table>';
-    h+='<tr><th>병원명</th><th>X·Immuno F</th><th>X·Immuno E</th><th>애니젠 F</th><th>애니젠 E</th><th>Tip 매출액</th></tr>';
+    h+='<tr><th>병원명</th><th>항원 Ag</th><th>항체 Ab</th><th>면역 IF</th><th>분자 PCR</th><th>키트 매출액</th></tr>';
     R.hospitals.forEach(function(x){
       h+='<tr><td class="lbl">'+esc(x.name)+'</td><td>'+(x.xF||'-')+'</td><td>'+(x.xE||'-')+'</td><td>'+(x.oF||'-')+'</td><td>'+(x.oE||'-')+'</td><td>'+fmtWonFull(x.tip)+'</td></tr>';
     });
