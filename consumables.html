@@ -90,7 +90,7 @@
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 </style>
-<script>/* WT_ERRLOG_V1 — 공통 오류수집+요청함 (자동주입 스니펫, 개별 수정 금지) */
+<script>/* WT_ERRLOG_V1 rev3 — 공통 오류수집+요청함 (자동주입 스니펫, 개별 수정 금지) */
 (function(){
 var U='https://bdkurlqmfsswgeiujyev.supabase.co/rest/v1/';
 var K='sb_publishable_pOXTPRPFUESBxgXBAo9mBg_zaW5jID3';
@@ -108,11 +108,12 @@ b.style.cssText='position:fixed;right:18px;bottom:64px;z-index:99990;background:
 b.onmouseover=function(){b.style.opacity='1';};b.onmouseout=function(){b.style.opacity='.85';};
 var p=document.createElement('div');p.id='wt-fb-panel';
 p.style.cssText='display:none;position:fixed;right:18px;bottom:108px;z-index:99991;width:min(320px,90vw);background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;box-shadow:0 12px 32px rgba(0,0,0,.5);font-family:inherit';
-p.innerHTML='<div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:8px">\uC694\uCCAD \u00B7 \uBD88\uD3B8\uC2E0\uACE0</div><textarea id="wt-fb-msg" placeholder="\uBD88\uD3B8\uD55C \uC810\uC774\uB098 \uC694\uCCAD\uC0AC\uD56D\uC744 \uC801\uC5B4\uC8FC\uC138\uC694" style="width:100%;height:88px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;padding:8px;resize:none;box-sizing:border-box"></textarea><div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end"><button id="wt-fb-cancel" style="background:none;border:1px solid #475569;color:#94a3b8;padding:5px 12px;border-radius:7px;font-size:12px;cursor:pointer">\uB2EB\uAE30</button><button id="wt-fb-send" style="background:#0d9488;border:none;color:#fff;padding:5px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600">\uC804\uC1A1</button></div>';
+var needName=!wtEmail();
+p.innerHTML='<div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:8px">\uC694\uCCAD \u00B7 \uBD88\uD3B8\uC2E0\uACE0</div>'+(needName?'<input id="wt-fb-name" placeholder="\uC774\uB984 \u00B7 \uBD80\uC11C (\uD544\uC218, \uC608: \uD64D\uAE38\uB3D9 \uC601\uC5C5\uD300)" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;padding:7px 8px;margin-bottom:6px;box-sizing:border-box">':'')+'<textarea id="wt-fb-msg" placeholder="\uBD88\uD3B8\uD55C \uC810\uC774\uB098 \uC694\uCCAD\uC0AC\uD56D\uC744 \uC801\uC5B4\uC8FC\uC138\uC694" style="width:100%;height:80px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;padding:8px;resize:none;box-sizing:border-box"></textarea>'+(needName?'<div style="font-size:10px;color:#64748b;margin-top:4px">\uB85C\uADF8\uC778 \uD6C4 \uC81C\uCD9C\uD558\uBA74 \uC774\uB984\uC774 \uC790\uB3D9 \uC785\uB825\uB429\uB2C8\uB2E4</div>':'')+'<div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end"><button id="wt-fb-cancel" style="background:none;border:1px solid #475569;color:#94a3b8;padding:5px 12px;border-radius:7px;font-size:12px;cursor:pointer">\uB2EB\uAE30</button><button id="wt-fb-send" style="background:#0d9488;border:none;color:#fff;padding:5px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600">\uC804\uC1A1</button></div>';
 document.body.appendChild(b);document.body.appendChild(p);
-b.onclick=function(){p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block'){var t=document.getElementById('wt-fb-msg');if(t)t.focus();}};
+b.onclick=function(){p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block'){var t=document.getElementById(needName?'wt-fb-name':'wt-fb-msg');if(t)t.focus();}};
 document.getElementById('wt-fb-cancel').onclick=function(){p.style.display='none';};
-document.getElementById('wt-fb-send').onclick=function(){var t=document.getElementById('wt-fb-msg');var m=(t&&t.value||'').trim();if(!m)return;wtPost('site_feedback',{site:SITE,page:PAGE,message:m.slice(0,2000),reporter:wtEmail()||null});p.innerHTML='<div style="color:#5eead4;font-size:13px;text-align:center;padding:14px 4px">\uC811\uC218\uB418\uC5C8\uC2B5\uB2C8\uB2E4! \uAC10\uC0AC\uD569\uB2C8\uB2E4 \uD83D\uDE4F</div>';setTimeout(function(){p.style.display='none';p.remove();b.remove();wtFb();},1600);};
+document.getElementById('wt-fb-send').onclick=function(){var t=document.getElementById('wt-fb-msg');var m=(t&&t.value||'').trim();var em=wtEmail();var nmEl=document.getElementById('wt-fb-name');var nm=(nmEl&&nmEl.value||'').trim();if(!em && !nm){ if(nmEl){ nmEl.style.borderColor='#ef4444'; nmEl.focus(); } return; }if(!m){ if(t){ t.style.borderColor='#ef4444'; t.focus(); } return; }wtPost('site_feedback',{site:SITE,page:PAGE,message:m.slice(0,2000),reporter:em||nm.slice(0,100)});p.innerHTML='<div style="color:#5eead4;font-size:13px;text-align:center;padding:14px 4px">\uC811\uC218\uB418\uC5C8\uC2B5\uB2C8\uB2E4! \uAC10\uC0AC\uD569\uB2C8\uB2E4 \uD83D\uDE4F</div>';setTimeout(function(){p.style.display='none';p.remove();b.remove();wtFb();},1600);};
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',wtFb);}else{wtFb();}
 })();</script>
@@ -138,18 +139,8 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     <span class="logo">📊 아우라 소모품 일일매출보고</span>
     <span class="who" id="who"></span>
     <span class="sp"></span>
-    <select onchange="if(this.value)location.href=this.value" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);padding:8px 10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+    <select id="wt-site-sel" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);padding:8px 10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
       <option value="" style="color:#000">🔁 사이트 이동</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/total.html" style="color:#000">전사 종합 경영현황</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/#app=korea" style="color:#000">한국 영업</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/" style="color:#000">해외 영업</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/wtj-management/" style="color:#000">일본법인 관리</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/us.html" style="color:#000">미국법인 관리</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/th.html" style="color:#000">태국법인 관리</option>
-      <option value="" style="color:#000" disabled>● 일일매출보고 (현재)</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/sales-portfolio/" style="color:#000">Sales Portfolio</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/demo-schedule/" style="color:#000">데모 일정</option>
-      <option value="https://pmw0406.github.io/biz-suite-template/#app=admin" style="color:#000">관리자 페이지</option>
     </select>
     <input type="file" id="xlsx-input" accept=".xlsx,.xls" class="hidden" onchange="handleUpload(this)">
     <button class="primary" onclick="document.getElementById('xlsx-input').click()">📤 엑셀 업로드</button>
@@ -329,8 +320,8 @@ function parseGSheet(wb, sheetName){
     else if(s.indexOf('월')>=0 && cur){
       var m=parseInt(s,10);
       if(m>=1 && m<=12){
-        if(typeof row[4]==='number') cur.x[m]=row[4];   // AuraX 합계
-        if(typeof row[7]==='number') cur.o[m]=row[7];   // Aura 합계
+        if(typeof row[4]==='number') cur.x[m]=row[4];   // 아우라X 합계
+        if(typeof row[7]==='number') cur.o[m]=row[7];   // 아우라 합계
       }
     }
   }
@@ -379,10 +370,10 @@ function parseAllCharts(wb){
     var charts=[];
     if(dom&&intl&&t){
       charts.push(
-        {title:'국내 Aura X, Lumi Tip 월 판매량 (출고기준)', actual:dom.xA, prior:dom.xP, target:t.dX, color:'#f97316'},
-        {title:'국내 Aura Tip 월 판매량 (출고기준)',        actual:dom.oA, prior:dom.oP, target:t.dO, color:'#f97316'},
-        {title:'해외 Aura X, Lumi Tip 월 판매량 (회계기준)', actual:intl.xA, prior:intl.xP, target:t.iX, color:'#f97316'},
-        {title:'해외 Aura Tip 월 판매량 (회계기준)',        actual:intl.oA, prior:intl.oP, target:t.iO, color:'#f97316'}
+        {title:'국내 아우라 X, Lumi Tip 월 판매량 (출고기준)', actual:dom.xA, prior:dom.xP, target:t.dX, color:'#f97316'},
+        {title:'국내 아우라 Tip 월 판매량 (출고기준)',        actual:dom.oA, prior:dom.oP, target:t.dO, color:'#f97316'},
+        {title:'해외 아우라 X, Lumi Tip 월 판매량 (회계기준)', actual:intl.xA, prior:intl.xP, target:t.iX, color:'#f97316'},
+        {title:'해외 아우라 Tip 월 판매량 (회계기준)',        actual:intl.oA, prior:intl.oP, target:t.iO, color:'#f97316'}
       );
     }
     charts=charts.concat(parseGraphSheet(wb));
@@ -391,15 +382,15 @@ function parseAllCharts(wb){
 }
 
 // ══ 샘플몰 마감(raw) → 국내 소모품 매출 ═══════════════════
-var WOM_GRPS=['Aura Face','Aura Eye','X/Lumi Face','X/Lumi Eye','카트리지','Cooling','Return Pad','Coupling Oil','기타'];
+var WOM_GRPS=['아우라 Face','아우라 Eye','X/Lumi Face','X/Lumi Eye','카트리지','Cooling','Return Pad','Coupling Oil','기타'];
 function womGrp(name){
   name=String(name||'');
   if(/Cartridge/i.test(name)) return '카트리지';
   if(/Cooling/i.test(name)) return 'Cooling';
   if(/Pad/i.test(name)) return 'Return Pad';
   if(/Oil/i.test(name)) return 'Coupling Oil';
-  if(/AuraX|Lumi/i.test(name)) return /Eye/i.test(name)?'X/Lumi Eye':'X/Lumi Face';
-  if(/Aura/i.test(name)) return /Eye/i.test(name)?'Aura Eye':'Aura Face';
+  if(/아우라X|Lumi/i.test(name)) return /Eye/i.test(name)?'X/Lumi Eye':'X/Lumi Face';
+  if(/아우라/i.test(name)) return /Eye/i.test(name)?'아우라 Eye':'아우라 Face';
   return '기타';
 }
 function _ym(v){
@@ -483,8 +474,9 @@ function setTabs(){
   function off(b){ if(!b)return; b.style.background='transparent'; b.style.color='#475569'; b.style.boxShadow='none'; }
   if(_curView==='samplemall'){ on(tw); off(tr); } else { on(tr); off(tw); }
 }
-function showReport(){ _curView='report'; try{sessionStorage.setItem('cons_view','report');}catch(e){} setTabs(); loadReport(); }
-function showWomall(){ _curView='samplemall'; try{sessionStorage.setItem('cons_view','samplemall');}catch(e){} setTabs(); loadWomall(); }
+function _navPush(key){ try{ if(!(history.state && history.state.p===key)) history.pushState({p:key},'','#'+key); }catch(e){} }
+function showReport(push){ _curView='report'; try{sessionStorage.setItem('cons_view','report');}catch(e){} if(push!==false) _navPush('report'); setTabs(); loadReport(); }
+function showWomall(push){ _curView='samplemall'; try{sessionStorage.setItem('cons_view','samplemall');}catch(e){} if(push!==false) _navPush('samplemall'); setTabs(); loadWomall(); }
 function loadWomall(){
   _sb.from('consumables_report').select('data').eq('key','samplemall').maybeSingle().then(function(r){
     if(r.error){ document.getElementById('report-area').innerHTML='<div id="empty"><div class="big">⚠️</div><div>샘플몰 데이터를 불러오지 못했습니다: '+esc(r.error.message)+'</div></div>'; return; }
@@ -613,7 +605,7 @@ function renderReport(R){
   // 3-1 병원별
   if(R.hospitals && R.hospitals.length){
     h+=' <div class="sec"><h3><span class="n">3</span> 일일 수주 상세 — 병원별</h3><div class="scroll"><table>';
-    h+='<tr><th>병원명</th><th>X·Lumi F</th><th>X·Lumi E</th><th>Aura F</th><th>Aura E</th><th>Tip 매출액</th></tr>';
+    h+='<tr><th>병원명</th><th>X·Lumi F</th><th>X·Lumi E</th><th>아우라 F</th><th>아우라 E</th><th>Tip 매출액</th></tr>';
     R.hospitals.forEach(function(x){
       h+='<tr><td class="lbl">'+esc(x.name)+'</td><td>'+(x.xF||'-')+'</td><td>'+(x.xE||'-')+'</td><td>'+(x.oF||'-')+'</td><td>'+(x.oE||'-')+'</td><td>'+fmtWonFull(x.tip)+'</td></tr>';
     });
@@ -660,7 +652,7 @@ function handleUpload(input){
       if(isWomall(wb)){
         var W=parseWomall(wb);
         if(!W.byProduct.length){ alert('샘플몰 데이터를 읽지 못했습니다. 파일을 확인해주세요.'); return; }
-        _curView='samplemall'; try{sessionStorage.setItem('cons_view','samplemall');}catch(e2){} setTabs(); renderWomall(W);
+        _curView='samplemall'; try{sessionStorage.setItem('cons_view','samplemall');}catch(e2){} _navPush('samplemall'); setTabs(); renderWomall(W);
         _sb.from('consumables_report').upsert({key:'samplemall', data:W, updated_at:new Date().toISOString()}, {onConflict:'key'})
           .then(function(r){ if(r.error) alert('저장 실패: '+r.error.message); else toast('✅ 샘플몰 국내 소모품 매출 갱신 완료 ('+fmtWonFull(W.totAmt)+')'); });
         return;
@@ -687,6 +679,9 @@ function loadReport(){
 }
 
 // ── 인증 ──────────────────────────────────────────────
+var CENTRAL='https://pmw0406.github.io/biz-suite-template/';
+/* 중앙 로그인으로 이동(세션 없음). ret에는 해시를 절대 포함하지 않음 — #at/rt 토큰 유출·오염 방지 */
+function _goCentralWithRet(){ location.replace(CENTRAL+'#ret='+encodeURIComponent(location.origin+location.pathname+location.search)); }
 function doLogin(){
   var email=document.getElementById('login-email').value.trim();
   var pw=document.getElementById('login-pw').value;
@@ -721,7 +716,7 @@ function doLogin(){
   });
   _arm();
 })();
-function doLogout(){ _sb.auth.signOut().then(function(){ location.href='https://pmw0406.github.io/biz-suite-template/'; }); }
+function doLogout(){ try{sessionStorage.removeItem('cons_view');}catch(e){} _sb.auth.signOut().then(function(){ location.href='https://pmw0406.github.io/biz-suite-template/'; }); }
 async function wtChangePw(){
   var np=prompt('새 비밀번호를 입력하세요 (6자 이상)');
   if(np===null) return;
@@ -731,32 +726,96 @@ async function wtChangePw(){
   if(r.error){ alert('변경 실패: '+r.error.message); return; }
   alert('비밀번호가 변경되었습니다.');
 }
+/* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
+var _WT_MASTER='pmw0406@gmail.com';
+var _WT_OWN=["daily"];                 /* 이 사이트 자신의 registry key(들) */
+var _WT_샘플메디='https://pmw0406.github.io/biz-suite-template/';
+var _wtReg=null, _wtItems=[];
+async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
+function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(ac,ad); }catch(e){ return false; } } return false; }
+async function _wtGo(i){
+  var s=_wtItems[i]; if(!s) return;
+  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_샘플메디:s.url;
+  var extra=s.key==='korea'?'&app=korea':(s.key==='admin'?'&app=admin':'');
+  var sess=null; try{ sess=(await _sb.auth.getSession()).data.session; }catch(e){}
+  if(sess && u.indexOf('#')<0) u+='#at='+encodeURIComponent(sess.access_token)+'&rt='+encodeURIComponent(sess.refresh_token);
+  u+=extra; location.href=u;
+}
+async function _wtRenderSwitcher(){
+  await _wtLoadReg();
+  var ac=[], ad=false;
+  try{ var ses=(await _sb.auth.getSession()).data.session;
+    if(ses&&ses.user){ if(ses.user.email===_WT_MASTER) ad=true;
+      var p=await _sb.from('crm_profiles').select('access,role').eq('id',ses.user.id).maybeSingle();
+      if(p&&p.data){ ac=(p.data.access||'').split(',').map(function(x){return x.trim();}).filter(Boolean); if(p.data.role==='admin') ad=true; }
+    }
+  }catch(e){}
+  var seen={};
+  _wtItems=_wtReg.filter(function(s){
+    if(_WT_OWN.indexOf(s.key)>=0) return false;
+    if(!_wtVis(s,ac,ad)) return false;
+    var dest=(s.key==='korea'||s.url==='LOCAL')?'central':s.url; if(seen[dest]) return false; seen[dest]=1;
+    return true;
+  }).sort(function(a,b){ return a.key==='total'?-1:(b.key==='total'?1:(a.sort_order-b.sort_order)); });
+  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_샘플메디}); }
+  var esc=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var box=document.querySelector("#wt-site-sel"); if(!box) return;
+  if("select"==='select'){
+    box.innerHTML='<option value="">사이트 이동…</option>'+_wtItems.map(function(s,i){ return '<option value="'+i+'">'+esc(s.badge)+' · '+esc(s.title)+'</option>'; }).join('');
+    box.onchange=function(){ var v=box.value; if(v!=='') _wtGo(+v); };
+  } else {
+    box.innerHTML=_wtItems.map(function(s,i){
+      return '<div class="sw-item" onclick="_wtGo('+i+')"><span class="sw-badge" style="background:'+(s.grad_from||'#64748b')+'">'+esc(s.badge)+'</span><span style="flex:1">'+esc(s.title)+'</span><i class="bi bi-arrow-right" style="font-size:11px;opacity:.5"></i></div>';
+    }).join('');
+  }
+}
 function enterApp(user){
   _currentUser=user;
   // ── 접근 권한 검사: daily 권한(또는 관리자/마스터)만 진입 ──
   _sb.from('crm_profiles').select('access,role').eq('id',user.id).maybeSingle().then(function(r){
     var pf=(r&&r.data)||{};
     var allowed = user.email==='pmw0406@gmail.com' || pf.role==='admin' || String(pf.access||'').includes('daily');
-    if(!allowed){ alert('소모품 일일매출보고 접근 권한이 없습니다.'); _sb.auth.signOut().then(function(){ location.href='https://pmw0406.github.io/biz-suite-template/'; }); return; }
+    if(!allowed){ alert('소모품 일일매출보고 접근 권한이 없습니다.'); location.replace(CENTRAL); return; }  /* 권한 없음: ret 없이(무한 루프 방지) · signOut 금지(전 사이트 공유 세션 파괴) */
     document.getElementById('login').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     document.getElementById('veil').classList.add('hidden');
     document.getElementById('who').textContent=user.email;
-    var _v=''; try{_v=sessionStorage.getItem('cons_view')||'';}catch(e){}
-    if(_v==='samplemall'){ showWomall(); } else { _curView='report'; setTabs(); loadReport(); }
-  }).catch(function(){ _sb.auth.signOut().then(function(){ location.href='https://pmw0406.github.io/biz-suite-template/'; }); });
+    // WT_NAV 부팅: 딥링크 해시 > (reload/back_forward 시) 저장 뷰 > 기본 report
+    var initKey='report';
+    var hk=(location.hash||'').replace(/^#/,'');
+    if(hk==='report'||hk==='samplemall'){ initKey=hk; }
+    else{
+      var navType='navigate';
+      try{ var ne=performance.getEntriesByType('navigation'); if(ne&&ne[0]&&ne[0].type) navType=ne[0].type; }catch(e){}
+      if(navType==='reload'||navType==='back_forward'){
+        var _v=''; try{_v=sessionStorage.getItem('cons_view')||'';}catch(e){}
+        if(_v==='samplemall'||_v==='report') initKey=_v;
+      }
+    }
+    try{ history.replaceState({p:initKey},'','#'+initKey); }catch(e){}
+    if(initKey==='samplemall'){ showWomall(false); } else { showReport(false); }
+    _wtRenderSwitcher();
+  }).catch(function(){ location.replace(CENTRAL); });  /* 프로필 조회 실패: 게이트 실패로 간주 → ret 없이 중앙(signOut 금지) */
 }
-function showLogin(){
-  document.getElementById('app').classList.add('hidden');
-  document.getElementById('login').classList.remove('hidden');
-  document.getElementById('veil').classList.add('hidden');
-}
+/* 자체 로그인 화면은 더 이상 표시하지 않는다 — 중앙 로그인으로 통일 */
+function showLogin(){ _goCentralWithRet(); }
 
 // ── 부팅 ──────────────────────────────────────────────
+// WT_NAV: SSO 토큰해시 등 미지원 해시는 부팅 즉시 제거(딥링크 #report/#womall만 보존)
+(function(){ var h=location.hash||''; if(h && h!=='#report' && h!=='#womall'){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){} } })();
+// WT_NAV: popstate — 피드백 패널 열림 시 닫기만, state 유효 시 해당 뷰(푸시 없이)
+window.addEventListener('popstate',function(e){
+  var fb=document.getElementById('wt-fb-panel');
+  if(fb && fb.style.display==='block'){ fb.style.display='none'; try{ history.pushState({p:_curView},'','#'+_curView); }catch(e2){} return; }
+  if(!_currentUser) return;
+  if(e.state && e.state.p){ if(e.state.p==='samplemall') showWomall(false); else showReport(false); }
+});
+// WT_NAV: bfcache 복원 시 세션 없으면 리로드(로그아웃 후 뒤로가기 화면노출 차단)
+window.addEventListener('pageshow',function(e){ if(e.persisted){ _sb.auth.getSession().then(function(r){ if(!(r&&r.data&&r.data.session)) location.reload(); }); } });
 window.addEventListener('load', function(){
   _sb.auth.getSession().then(function(r){
     if(r.data && r.data.session) enterApp(r.data.session.user);
-    else location.href='https://pmw0406.github.io/biz-suite-template/';
+    else _goCentralWithRet();
   });
 });
 </script>
