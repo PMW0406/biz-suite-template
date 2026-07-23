@@ -11,8 +11,8 @@ const KEY=fs.readFileSync(process.env.WT_SECRET_FILE||'C:/Users/user/Desktop/메
 function api(m,p,b,e){return new Promise((res,rej)=>{const data=b!=null?JSON.stringify(b):null;const u=new URL(BASE+p);const rq=https.request(u,{method:m,headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=representation',...(e||{}),...(data?{'Content-Length':Buffer.byteLength(data)}:{})}},r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>res({status:r.statusCode,body:d}));});rq.on('error',rej);if(data)rq.write(data);rq.end();});}
 const rest=(m,t,b,h)=>api(m,'/rest/v1/'+t,b,h);
 const rand=a=>a[Math.floor(Math.random()*a.length)], ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, pad=n=>String(n).padStart(2,'0');
-const HOSP=['서울미래의원','강남스킨클리닉','부산더마피부과','대구라인의원','인천뷰티클리닉','수원성형외과','청담365의원','분당에스의원','일산필의원','목동참의원'];
-const CONS_GRPS=['Aura Face','Aura Eye','X/Lumi Face','X/Lumi Eye','카트리지','Cooling','Return Pad','Coupling Oil','기타'];
+const HOSP=['서울동물메디컬','강남종합동물병원','부산수의검사센터','대구펫클리닉','인천진단검사센터','수원바이오랩','청담동물의료원','분당진단랩','일산동물메디컬','목동수의검사센터'];
+const CONS_GRPS=['동물 항원키트','동물 항체키트','인체 면역진단','PCR 시약','신속진단키트','생화학 시약','혈액검사','품질관리','기타'];
 const DIVS=['국내제품','국내소모품','해외영업','Surgical','B2C','고객만족','기타'];
 
 // ── cons_cache: ilbo_acc ────────────────────────────────

@@ -16,8 +16,8 @@ const MONTHS=[[2025,[1,2,3,4,5,6,7,8,9,10,11,12]],[2026,[1,2,3,4,5,6,7]]];
 
 const US_CLIENTS=['Sunrise Dermatology','Pacific Aesthetics Center','Lakeside Skin Clinic','Summit MedSpa','Bayview Laser & Derm','Grandview Cosmetic Group','Cedar Valley Dermatology','Heritage Skin Institute'];
 const TH_CLIENTS=['Bangkok Aesthetic Group','Siam Medical Supply','Phuket Skin Center','Chiang Mai Derma','Pattaya Beauty Clinic','Nonthaburi MedSpa'];
-const DEV_PROD=['Aura X','Lumina','PicoPro Majesty'];        // 장비(대당 고가)
-const CONS_PROD=['Aura Tip [F-4.0]','Cartridge','Aura Kiss']; // 소모품
+const DEV_PROD=['AniGen IF-100','BioPCR P-200','ChemiPro C-300'];        // 장비(대당 고가)
+const CONS_PROD=['Parvo Antigen Kit','Heartworm Kit','ImmunoStrip']; // 소모품
 const ALL_PROD=DEV_PROD.concat(CONS_PROD);
 const isDev=p=>DEV_PROD.includes(p);
 const ORDER_ST=['수주','생산중','선적중','완료'];

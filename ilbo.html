@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
-<title>샘플메디 · 일일보고</title>
+<title>노바진단 · 일일보고</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%2316a34a'/><g transform='translate(13,36) scale(0.144)' fill='%23fff'><rect width='110' height='110' rx='28'/><rect x='204' width='110' height='110' rx='28'/><rect x='408' width='110' height='110' rx='28'/><rect x='102' y='97' width='110' height='110' rx='28'/><rect x='306' y='97' width='110' height='110' rx='28'/></g></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -143,7 +143,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 <div id="login" class="hidden">
   <div class="box">
     <h1>🏢 전사 일 매출 일보</h1>
-    <p>샘플메디 영업 관리 시스템</p>
+    <p>노바진단 영업 관리 시스템</p>
     <div class="err" id="login-err"></div>
     <input id="login-email" type="email" placeholder="이메일" autocomplete="username">
     <input id="login-pw" type="password" placeholder="비밀번호" autocomplete="current-password">
@@ -167,7 +167,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
   <div class="toggle-wrap">
     <div class="toggle">
       <button id="tg-report" class="on" onclick="showView('report')">🏢 일 매출 일보</button>
-      <button onclick="location.href='https://pmw0406.github.io/biz-suite-template/consumables.html'">🧴 소모품 매출 일보</button>
+      <button onclick="location.href='https://pmw0406.github.io/biz-suite-template/consumables.html'">🧴 진단키트 매출 일보</button>
       <button id="tg-pending" onclick="showView('pending')" style="display:none">🗂️ 미반영분 관리</button>
     </div>
   </div>
@@ -188,7 +188,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     <div id="empty" style="text-align:center;padding:50px 20px;background:#fff;border-radius:14px;margin-top:18px">
       <div style="font-size:46px">📄</div>
       <div style="margin-top:10px">아직 업로드된 회계 매출자료가 없습니다.</div>
-      <div class="note">우측 상단 <b>📤 회계 매출자료 업로드</b>를 누르면 <b>통합 업로드 페이지</b>로 이동합니다. 거기서 회계팀 일별 매출 엑셀(샘플메디_YYYY년 M월 D일.xlsx)을 한 번 올리면 일일보고·한국·해외·종합·Sales Portfolio가 모두 갱신됩니다.</div>
+      <div class="note">우측 상단 <b>📤 회계 매출자료 업로드</b>를 누르면 <b>통합 업로드 페이지</b>로 이동합니다. 거기서 회계팀 일별 매출 엑셀(노바진단_YYYY년 M월 D일.xlsx)을 한 번 올리면 일일보고·한국·해외·종합·Sales Portfolio가 모두 갱신됩니다.</div>
     </div>
 
     <div id="report" class="hidden">
@@ -248,7 +248,7 @@ var _sb=supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 var _user=null;
 
 var DEPT_MAP={'A0402040':'국내영업','A0402020':'국내영업','A0402030':'국내영업','A0402010':'국내영업','A0402050':'국내영업','A0401020':'국내영업','A0401040':'국내영업','A0401070':'국내영업','A0401030':'해외영업','A0401050':'Surgical','B0901030':'Surgical','A0501020':'고객만족','A0501030':'고객만족','A0501010':'고객만족','A0401060':'B2C','A0701020':'기타'};
-var CONS_RE=/tip|cartridge|cathet|카트리지|팁|니들|needle|소모|consum|spray|쿨링|멸균|fiber|pad|패드/i;
+var CONS_RE=/tip|cartridge|cathet|카세트|팁|니들|needle|소모|consum|spray|완충액|멸균|fiber|pad|스트립/i;
 var DIVS=['국내제품','국내소모품','해외영업','Surgical','B2C','고객만족','기타'];          // 회계 집계용
 var SECT2=['국내영업','해외영업','Surgical','B2C','고객만족'];                              // 사업부별 표 행
 function divRegion(div){ return div==='해외영업'?'해외':'국내'; }
@@ -473,7 +473,7 @@ function renderDatalists(){
   (ACC.lines||[]).forEach(function(l){ if(cust[l.region]){ if(l.customer)cust[l.region][l.customer]=1; if(l.product)prod[l.region][l.product]=1; } });
   PENDING.forEach(function(p){ if(cust[p.region]){ if(p.customer)cust[p.region][p.customer]=1; if(p.product)prod[p.region][p.product]=1; } });
   function dl(id,o){
-    // 대소문자/공백만 다른 중복 통합 — 혼합표기(아우라 X)를 전부 대문자(AURA X)보다 우선
+    // 대소문자/공백만 다른 중복 통합 — 혼합표기(애니젠 X)를 전부 대문자(AURA X)보다 우선
     var g={};
     Object.keys(o).forEach(function(v){ var k=String(v).toLowerCase().replace(/\s+/g,' ').trim(); if(!k) return; if(!g[k]) g[k]=[]; g[k].push(v); });
     var canon=Object.keys(g).map(function(k){
@@ -657,13 +657,13 @@ window.addEventListener('pageshow',function(e){ if(e.persisted){ _sb.auth.getSes
 /* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
 var _WT_MASTER='pmw0406@gmail.com';
 var _WT_OWN=["daily"];                 /* 이 사이트 자신의 registry key(들) */
-var _WT_샘플메디='https://pmw0406.github.io/biz-suite-template/';
+var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
 function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(ac,ad); }catch(e){ return false; } } return false; }
 async function _wtGo(i){
   var s=_wtItems[i]; if(!s) return;
-  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_샘플메디:s.url;
+  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_노바진단:s.url;
   var extra=s.key==='korea'?'&app=korea':(s.key==='admin'?'&app=admin':'');
   var sess=null; try{ sess=(await _sb.auth.getSession()).data.session; }catch(e){}
   if(sess && u.indexOf('#')<0) u+='#at='+encodeURIComponent(sess.access_token)+'&rt='+encodeURIComponent(sess.refresh_token);
@@ -685,7 +685,7 @@ async function _wtRenderSwitcher(){
     var dest=(s.key==='korea'||s.url==='LOCAL')?'central':s.url; if(seen[dest]) return false; seen[dest]=1;
     return true;
   }).sort(function(a,b){ return a.key==='total'?-1:(b.key==='total'?1:(a.sort_order-b.sort_order)); });
-  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_샘플메디}); }
+  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_노바진단}); }
   var esc=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var box=document.querySelector("#wt-site-sel"); if(!box) return;
   if("select"==='select'){
