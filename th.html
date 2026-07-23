@@ -141,7 +141,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
 <div id="app">
   <aside id="sidebar">
-    <div class="brand"><div class="lg">🇹🇭</div><div><b>태국법인</b><small>NovaDx ASIA (TH)</small></div></div>
+    <div class="brand"><div class="lg">🇹🇭</div><div><b>태국법인</b><small>노바진단 ASIA (TH)</small></div></div>
     <nav class="nav" id="nav">
       <div class="grp">경영 요약</div>
       <a class="active" data-v="dash"><span class="ico">📈</span><span class="lbl">임원 대시보드</span></a>
@@ -222,13 +222,13 @@ function ready(){document.getElementById('boot-ov').style.display='none';documen
 /* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
 var _WT_MASTER='pmw0406@gmail.com';
 var _WT_OWN=["th"];                 /* 이 사이트 자신의 registry key(들) */
-var _WT_NovaDx='https://pmw0406.github.io/biz-suite-template/';
+var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
 function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(ac,ad); }catch(e){ return false; } } return false; }
 async function _wtGo(i){
   var s=_wtItems[i]; if(!s) return;
-  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_NovaDx:s.url;
+  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_노바진단:s.url;
   var extra=s.key==='korea'?'&app=korea':(s.key==='admin'?'&app=admin':'');
   var sess=null; try{ sess=(await _sb.auth.getSession()).data.session; }catch(e){}
   if(sess && u.indexOf('#')<0) u+='#at='+encodeURIComponent(sess.access_token)+'&rt='+encodeURIComponent(sess.refresh_token);
@@ -250,7 +250,7 @@ async function _wtRenderSwitcher(){
     var dest=(s.key==='korea'||s.url==='LOCAL')?'central':s.url; if(seen[dest]) return false; seen[dest]=1;
     return true;
   }).sort(function(a,b){ return a.key==='total'?-1:(b.key==='total'?1:(a.sort_order-b.sort_order)); });
-  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_NovaDx}); }
+  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_노바진단}); }
   var esc=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var box=document.querySelector("#swdd"); if(!box) return;
   if("div"==='select'){
@@ -574,7 +574,7 @@ function openClient(name){
 
 // ── 물류·재고 ──
 function _needsBoncheCleanup(){
-  const re=/분석기/;
+  const re=/본체/;
   return (D.items||[]).some(i=>re.test(i.name))
     ||(D.moves||[]).some(m=>re.test(m.item))
     ||(D.equipment||[]).some(e=>re.test(e.item))
@@ -582,15 +582,15 @@ function _needsBoncheCleanup(){
     ||(D.orders||[]).some(o=>re.test(o.product));
 }
 async function cleanupBoncheNames(){
-  if(!confirm('장비·매출·수주 이름에서 "분석기"를 제거할까요? (예: "AniGen IF-100 분석기"→"AniGen IF-100") 되돌릴 수 없습니다.'))return;
-  const re=/\s*분석기/g;
+  if(!confirm('장비·매출·수주 이름에서 "본체"를 제거할까요? (예: "AniGen IF-100 Unit"→"AniGen IF-100") 되돌릴 수 없습니다.'))return;
+  const re=/\s*본체/g;
   const strip=s=>s?s.replace(re,''):s;
   (D.items||[]).forEach(i=>{i.name=strip(i.name);});
   (D.moves||[]).forEach(m=>{m.item=strip(m.item);});
   (D.equipment||[]).forEach(e=>{e.item=strip(e.item);});
   (D.sales||[]).forEach(s=>{s.product=strip(s.product);});
   (D.orders||[]).forEach(o=>{o.product=strip(o.product);});
-  await saveAll('"분석기" 제거 완료');
+  await saveAll('"본체" 제거 완료');
 }
 function vInv(){
   const items=(D.items||[]);
@@ -599,7 +599,7 @@ function vInv(){
   const mv=(D.moves||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,50);
   const mRows=mv.length?mv.map(m=>`<tr onclick="mMove('${m.id}')"><td class="l">${m.date}</td><td class="l">${m.type==='입고'?'<span class="chip c-green">입고</span>':'<span class="chip c-amber">출고</span>'}</td><td class="l"><b style="color:var(--ink)">${esc(m.item)}</b></td><td>${(+m.qty||0).toLocaleString()}</td><td class="l muted">${esc(m.ref||'')}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">입출고 이력 없음</td></tr>';
   return head('📦 물류 · 재고','현재고 = 기초 + 입고 − 출고 + 장비 이력 재고 자동 계산',
-    (_needsBoncheCleanup()?`<button class="btn" style="color:var(--warn)" onclick="cleanupBoncheNames()">🧹 이름에서 "분석기" 제거</button>`:'')
+    (_needsBoncheCleanup()?`<button class="btn" style="color:var(--warn)" onclick="cleanupBoncheNames()">🧹 이름에서 "본체" 제거</button>`:'')
     +`<button class="btn" onclick="mItemImport()"><i class="bi bi-file-earmark-spreadsheet"></i> 엑셀로 장비 등록</button><button class="btn" onclick="mItem()">+ 장비</button><button class="btn btn-primary" onclick="mMove()">+ 입출고</button>`)
     +`<div class="grid" style="grid-template-columns:1fr 1.15fr">
       <div class="card" style="padding:0;overflow:auto"><div class="sect" style="padding:15px 16px 4px"><span>📦 장비별 재고</span></div><table><thead><tr><th class="l">장비</th><th>현재고</th><th>안전</th><th class="l">위치</th><th class="l">상태</th></tr></thead><tbody>${iRows}</tbody></table></div>
@@ -932,14 +932,14 @@ async function seedSample(save){
     {id:cid(),date:dt(-25),client:C2,product:'Reagent Kit',qty:100,amt:A2,status:'수주',eta:dt(-4),memo:'납기 확인 필요'},
   ];
   D.items=[
-    {id:cid(),name:'AniGen IF-100 분석기',qty0:6,unit:'대',safety:3,loc:'창고 A-1'},
+    {id:cid(),name:'AniGen IF-100 Unit',qty0:6,unit:'대',safety:3,loc:'창고 A-1'},
     {id:cid(),name:'Parvo Antigen Kit',qty0:420,unit:'개',safety:200,loc:'창고 B-2'},
-    {id:cid(),name:'BioPCR 분석기',qty0:2,unit:'대',safety:2,loc:'창고 A-2'},
+    {id:cid(),name:'BioPCR Unit',qty0:2,unit:'대',safety:2,loc:'창고 A-2'},
     {id:cid(),name:'Reagent Kit',qty0:80,unit:'개',safety:150,loc:'창고 B-1'},
   ];
   D.moves=[
-    {id:cid(),date:dt(-5),type:'입고',item:'AniGen IF-100 분석기',qty:3,ref:'선적 SH-2607'},
-    {id:cid(),date:dt(-4),type:'출고',item:'AniGen IF-100 분석기',qty:2,ref:C1},
+    {id:cid(),date:dt(-5),type:'입고',item:'AniGen IF-100 Unit',qty:3,ref:'선적 SH-2607'},
+    {id:cid(),date:dt(-4),type:'출고',item:'AniGen IF-100 Unit',qty:2,ref:C1},
     {id:cid(),date:dt(-12),type:'출고',item:'Parvo Antigen Kit',qty:200,ref:C2},
     {id:cid(),date:dt(-16),type:'입고',item:'Reagent Kit',qty:50,ref:'선적 SH-2606'},
   ];
@@ -958,9 +958,9 @@ async function seedSample(save){
     {id:cid(),ym:curYm(),category:'물류비',amt:E3,memo:''},
   ];
   D.equipment=[
-    {id:cid(),serial:'WT-OX-24001',item:'AniGen IF-100 분석기',status:'재고',client:'',inDate:dt(-5),shipRef:'선적 SH-2607',outDate:'',note:'',events:[{date:dt(-5),type:'입고',detail:'선적 SH-2607'}]},
-    {id:cid(),serial:'WT-OX-24002',item:'AniGen IF-100 분석기',status:'설치',client:C1,inDate:dt(-5),shipRef:'선적 SH-2607',outDate:dt(-4),note:'',events:[{date:dt(-5),type:'입고',detail:'선적 SH-2607'},{date:dt(-4),type:'출고',detail:C1},{date:dt(-3),type:'설치',detail:'설치 완료'}]},
-    {id:cid(),serial:'WT-LV-24010',item:'BioPCR 분석기',status:'AS',client:C3,inDate:mAgo(4,15),shipRef:'',outDate:dt(-14),note:'헤드 교체 요청',events:[{date:mAgo(4,15),type:'입고',detail:''},{date:dt(-14),type:'출고',detail:C3},{date:dt(-2),type:'AS',detail:'헤드 교체 요청'}]},
+    {id:cid(),serial:'WT-OX-24001',item:'AniGen IF-100 Unit',status:'재고',client:'',inDate:dt(-5),shipRef:'선적 SH-2607',outDate:'',note:'',events:[{date:dt(-5),type:'입고',detail:'선적 SH-2607'}]},
+    {id:cid(),serial:'WT-OX-24002',item:'AniGen IF-100 Unit',status:'설치',client:C1,inDate:dt(-5),shipRef:'선적 SH-2607',outDate:dt(-4),note:'',events:[{date:dt(-5),type:'입고',detail:'선적 SH-2607'},{date:dt(-4),type:'출고',detail:C1},{date:dt(-3),type:'설치',detail:'설치 완료'}]},
+    {id:cid(),serial:'WT-LV-24010',item:'BioPCR Unit',status:'AS',client:C3,inDate:mAgo(4,15),shipRef:'',outDate:dt(-14),note:'헤드 교체 요청',events:[{date:mAgo(4,15),type:'입고',detail:''},{date:dt(-14),type:'출고',detail:C3},{date:dt(-2),type:'AS',detail:'헤드 교체 요청'}]},
   ];
   // 목표: 올해 12개월 (월평균 매출 수준 ×1.1)
   const yr=curYr();D.targets={};
