@@ -9765,12 +9765,23 @@ function _leaveOverlays() {
 }
 
 async function renderAdminUsers() {
-  try { const {data:{session:_ms}} = await _sb.auth.getSession(); if(_ms && _ms.user) _isMaster = _ms.user.email === 'pmw0406@gmail.com'; } catch(e){}
   const el = document.getElementById('admin-user-list');
   el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:#64748b">불러오는 중...</td></tr>`;
-  const {data: profiles} = await _sb.from('crm_profiles').select('*').order('dept').order('display_name');
+  // 세션 확립 대기 + 빈결과 재시도: 로그인 직후/새로고침-관리자 직행 시 세션이 아직 _sb에 안 붙어
+  // crm_profiles가 anon RLS로 0행을 반환 → "해당 사용자 없음"으로 굳는 문제 방지.
+  let profiles = null;
+  for(let attempt=0; attempt<6; attempt++){
+    const {data:{session:_ms}} = await _sb.auth.getSession();
+    if(_ms && _ms.user){
+      _isMaster = _ms.user.email === 'pmw0406@gmail.com';
+      const {data} = await _sb.from('crm_profiles').select('*').order('dept').order('display_name');
+      if(data && data.length){ profiles = data; break; }
+    }
+    await new Promise(r=>setTimeout(r, 350));   // 세션/데이터 준비까지 잠시 대기 후 재시도
+  }
   _allProfiles = profiles || [];
   try { const {data:dp} = await _sb.from('dept_perms').select('*'); _deptPerms={}; (dp||[]).forEach(r=>{ _deptPerms[r.dept]={access:r.access||'',upload:r.upload||''}; }); } catch(e){ _deptPerms={}; }
+  if(!profiles){ el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:#94a3b8">사용자를 불러오지 못했습니다 — 세션 확인 중입니다. 잠시 후 새로고침(Ctrl+Shift+R) 해주세요.</td></tr>`; return; }
   _paintUsers();
 }
 let _allProfiles = [];
