@@ -344,7 +344,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:700px" id="launcher-cards"></div>
     <div style="margin-top:32px;display:flex;gap:16px;align-items:center">
-      <button id="launcher-admin-btn" onclick="showAdminPanel()" style="display:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#94a3b8;font-size:12px;padding:7px 16px;border-radius:8px;cursor:pointer"><i class="bi bi-shield-lock me-1"></i>관리자 페이지</button>
+      <button id="launcher-admin-btn" onclick="enterAdmin()" style="display:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#94a3b8;font-size:12px;padding:7px 16px;border-radius:8px;cursor:pointer"><i class="bi bi-shield-lock me-1"></i>관리자 페이지</button>
       <button onclick="doLogout()" style="background:none;border:none;color:#475569;font-size:12px;cursor:pointer"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</button>
     </div>
   </div>
@@ -531,7 +531,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
         <div style="padding:6px">
           <div style="border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;color:#0891b2;font-size:12px;font-weight:700;background:rgba(8,145,178,.12)"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:18px;background:#0891b2;color:#fff;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em;padding:0 5px;flex-shrink:0">KR</span><span style="flex:1">한국 영업</span><i class="bi bi-check2" style="font-size:12px"></i></div>
           <div id="site-dropdown-dynamic"></div>
-          <div id="switcher-admin-item" onclick="document.getElementById('site-dropdown').style.display='none';sessionStorage.setItem('wt_app','admin');document.getElementById('main-content').style.display='none';showAdminPanel();document.getElementById('launcher-screen').style.display='flex';"
+          <div id="switcher-admin-item" onclick="enterAdmin()"
             style="display:none;margin-top:2px;border-radius:6px;padding:8px 12px;align-items:center;gap:8px;color:#475569;font-size:12px;cursor:pointer;transition:background .15s"
             onmouseover="this.style.background='#eef2f7'" onmouseout="this.style.background=''"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:18px;background:#6b7280;color:#fff;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em;padding:0 5px;flex-shrink:0">ADM</span><span style="flex:1">관리자 페이지</span><i class="bi bi-arrow-right" style="font-size:11px;opacity:.5"></i>
           </div>
@@ -2702,7 +2702,7 @@ async function init() {
 }
 
 // 런처 카테고리(키→그룹). 여기 없는 신규 키는 '기타'로 자동 표시(registry 자동반영 유지)
-const _LAUNCH_GRPS=[['매출 현황',['total','korea','intl']],['해외법인',['japan','us','th']],['영업전략 도구',['daily','portfolio','equip','ar']]];
+const _LAUNCH_GRPS=[['매출 현황',['total','korea','consumables']],['해외법인',['us','th']],['영업전략 도구',['daily','ar']]];
 function _buildLauncherCardsHTML(access) {
   // site_registry 기반 — 신규 사이트는 DB row 추가만으로 여기 자동 반영됨
   const cardStyle = 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:20px;width:200px;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;overflow:hidden';
@@ -2773,6 +2773,8 @@ async function _showLauncherOrApp(user) {
   _isStrat = String(profile?.dept||'').replace(/\s/g,'').includes('영업전략');   // 영업전략파트 → 현황판 열람 허용
   // 새로고침 시 이전 상태 복원
   if(sessionStorage.getItem('wt_app') === 'admin' && _isAdmin) {
+    // 새로고침으로 관리자 직행 — 뒤로가기 대비 [런처→관리자] 히스토리 구성
+    try{ history.replaceState({page:'launcher'},'',location.pathname+location.search); history.pushState({page:'admin'},'',location.pathname+location.search); }catch(e){}
     document.getElementById('launcher-screen').style.display='flex';
     showAdminPanel(); _hideLoading(); return;
   }
@@ -9723,13 +9725,25 @@ function showAdminPanel() {
   renderAdminUsers(); _fbLoadBadge();
 }
 
+// 관리자 진입(런처 버튼·앱 사이트스위처 공용) — 히스토리에 admin 엔트리를 남겨 뒤로가기/새로고침이 일관되게 동작
+function enterAdmin() {
+  sessionStorage.setItem('wt_app','admin');
+  const dd=document.getElementById('site-dropdown'); if(dd) dd.style.display='none';
+  document.getElementById('main-content').style.display='none';
+  showAdminPanel();
+  document.getElementById('launcher-screen').style.display='flex';
+  if(!(history.state && history.state.page==='admin')) history.pushState({page:'admin'}, '', location.pathname+location.search);
+}
 function hideAdminPanel() {
+  // 히스토리에 admin 엔트리가 있으면 뒤로가기로 정상 복귀(왔던 곳: 앱 또는 런처). 없으면(새로고침 직행) 런처로 폴백.
+  if(history.state && history.state.page==='admin') { history.back(); return; }
   document.title = '노바진단';
   sessionStorage.removeItem('wt_app');
   document.getElementById('launcher-admin').style.display = 'none';
   document.getElementById('launcher-main').style.display = 'flex';
   const ls = document.getElementById('launcher-screen');
-  if(ls) ls.style.justifyContent = 'center';   // 메인 런처는 다시 중앙 정렬
+  if(ls){ ls.style.justifyContent = 'center'; ls.style.display='flex'; }   // 메인 런처는 다시 중앙 정렬
+  document.getElementById('main-content').style.display='none';
   // 카드가 비어 있으면 재렌더링 (사이트 전환에서 바로 들어온 경우)
   if(!document.getElementById('launcher-cards').innerHTML.trim()) {
     _renderLauncherCards(_currentAccess);
@@ -9739,6 +9753,15 @@ function hideAdminPanel() {
 function _renderLauncherCards(access) {
   document.getElementById('launcher-cards').innerHTML = _buildLauncherCardsHTML(access);
   if(_isAdmin) document.getElementById('launcher-admin-btn').style.display = '';
+}
+// 런처/관리자 오버레이를 걷어내고 한국 앱 본문으로 복귀(뒤로가기로 관리자→앱 복귀 시 사용)
+function _leaveOverlays() {
+  sessionStorage.removeItem('wt_app');
+  const ls=document.getElementById('launcher-screen'); if(ls) ls.style.display='none';
+  const la=document.getElementById('launcher-admin'); if(la) la.style.display='none';
+  const lm=document.getElementById('launcher-main'); if(lm) lm.style.display='flex';
+  const mc=document.getElementById('main-content'); if(mc) mc.style.display='block';
+  document.title='노바진단 - 한국';
 }
 
 async function renderAdminUsers() {
@@ -10760,16 +10783,29 @@ window.addEventListener('popstate', function(e) {
     history.pushState({page: _cur}, '', _cur==='launcher' ? (location.pathname+location.search) : (location.href.split('#')[0] + '#' + _cur));
     return;
   }
-  if(e.state?.page === 'launcher') {
+  if(e.state?.page === 'admin') {
+    // 관리자 엔트리로 (앞으로가기 등) 이동 — 관리자 패널 재표시
+    sessionStorage.setItem('wt_app','admin');
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('launcher-screen').style.display = 'flex';
+    if(typeof showAdminPanel==='function') showAdminPanel();
+  } else if(e.state?.page === 'launcher') {
     sessionStorage.removeItem('wt_app');
     sessionStorage.removeItem('wt_page');
     document.getElementById('main-content').style.display = 'none';
+    // 관리자 패널이 떠있던 상태에서 런처로 복귀 시 반드시 런처 메인으로 리셋(관리자 패널 잔류 방지)
+    document.getElementById('launcher-admin').style.display = 'none';
+    document.getElementById('launcher-main').style.display = 'flex';
+    document.title = '노바진단';
+    const _ls=document.getElementById('launcher-screen'); _ls.style.justifyContent='center';
     if(!document.getElementById('launcher-cards').innerHTML.trim()) { try{ _renderLauncherCards(_currentAccess); }catch(err){} }   // 새로고침으로 앱 직행 부팅한 세션은 카드 미렌더 상태 — 빈 런처 방지
-    document.getElementById('launcher-screen').style.display = 'flex';
+    _ls.style.display = 'flex';
   } else if(e.state?.page === 'speech' && e.state?.sd) {
+    _leaveOverlays();
     showPage('speech', null, true);
     if(typeof showSpeechDetail==='function') showSpeechDetail(e.state.sd, true);
   } else if(e.state?.page) {
+    _leaveOverlays();   // 관리자/런처 오버레이가 떠있으면 정리하고 앱으로 복귀
     showPage(e.state.page, null, true);   // showPage 내부에서 권한 게이트(device-reps 등) 재검증됨
   } else {
     // state 없는 엔트리(사이트 밖/시드 이전) — 아무것도 하지 않음. pushState로 되밀면 forward 파괴 + 무한 트랩.
