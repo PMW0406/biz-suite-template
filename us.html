@@ -348,7 +348,7 @@ async function goSite(url,extra){try{const{data:{session:s}}=await _sb.auth.getS
 /* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
 var _WT_MASTER='pmw0406@gmail.com';
 var _WT_OWN=["us"];                 /* 이 사이트 자신의 registry key(들) */
-var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/';
+var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/kor.html';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
 function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(ac,ad); }catch(e){ return false; } } return false; }

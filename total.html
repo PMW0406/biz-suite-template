@@ -1235,7 +1235,7 @@ const arrow = v => v===null?'-':(v>=0?'▲':'▼')+Math.abs(v).toFixed(0)+'%';
 // ── 중앙 로그인(WT_SSO) ──────────────────────────────────
 // 자체 로그인 화면은 더 이상 노출하지 않는다. 세션 없음 → 중앙(노바진단)으로 ret 붙여 보냄(로그인 후 복귀).
 // 권한 없음은 ret 없이 보낸다(붙이면 중앙→여기→중앙 무한루프).
-var _WT_CENTRAL='https://pmw0406.github.io/biz-suite-template/';
+var _WT_CENTRAL='https://pmw0406.github.io/biz-suite-template/kor.html';
 var _wtDenied=false;   // 권한 게이트 실패 → 중앙 이동 중(후속 렌더/네비 차단)
 function _wtToCentral(withRet){
   var u=_WT_CENTRAL;
@@ -1297,7 +1297,7 @@ async function goSite(base,extra){
 /* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
 var _WT_MASTER='pmw0406@gmail.com';
 var _WT_OWN=["total"];                 /* 이 사이트 자신의 registry key(들) */
-var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/';
+var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/kor.html';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
 function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(ac,ad); }catch(e){ return false; } } return false; }
