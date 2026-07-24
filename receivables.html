@@ -357,7 +357,7 @@ function applyEdits(){
   const h=document.getElementById('hdr-asof');if(h&&RAW.asOf)h.textContent='기준 '+RAW.asOf+' · '+(RAW.rows||[]).length+'건';
 }
 const VIEWS=['home','list','mgmt','wo','trend','report','brief','upload'];
-const RESTRICTED_USER='staff@demo.local';
+const RESTRICTED_USER='admin@demo.local';   // 임원보고·발표용·업로드는 임원/관리자(데모 admin)만 노출
 const RESTRICTED_VIEWS=['report','brief','upload'];
 function afterLoad(){
   document.getElementById('load').style.display='none';document.getElementById('app').style.display='block';

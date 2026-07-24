@@ -10476,8 +10476,8 @@ function devRepExport() {
   const _allNames=[...new Set([...KOR_SALES_TEAM, ...Object.keys(reps)])];
   const _flt=(typeof _devFilter!=='undefined'?_devFilter:'all');
   _allNames.map((name) => { const rep=reps[name]||_emptyRep; const isTeam=_isKorSales(name); const inf=(KOR_TEAM_INFO[name]||{});
-    const cur  = YTD.reduce((s,m)=>s+((yr===2026?rep.m2026:rep.m2025)||{})[m]||0, 0);
-    const pre  = YTD.reduce((s,m)=>s+((yr===2026?rep.m2025:{})||{})[m]||0, 0);
+    const cur  = YTD.reduce((s,m)=>s+(((yr===2026?rep.m2026:rep.m2025)||{})[m]||0), 0);
+    const pre  = YTD.reduce((s,m)=>s+(((yr===2026?rep.m2025:{})||{})[m]||0), 0);
     const yoy  = pre>0?((cur/pre-1)*100).toFixed(1):'';
     const qty  = yr===2026?rep.qty2026:rep.qty2025;
     const cust = yr===2026?rep.cust2026:rep.cust2025;
@@ -11026,14 +11026,15 @@ window.addEventListener('pageshow', function(e){
     if(/anigen|애니젠|이뮤노|파보체크|바이오PCR|퀵스캔|케미프로|헤마카운트|biopcr/i.test(dev)){
       roiTab('rf');
       const eq=_rf('equipment'); let matched=false;
+      const _base=Math.round(total/1.1);   // 견적 total은 VAT 포함 → 패키지가(공급가)와 비교 위해 VAT 제외 환산
       for(const nm of Object.keys(RF_PACKAGE_DATA)){
-        const idx=RF_PACKAGE_DATA[nm].findIndex(p=>p.packagePrice===total);
+        const idx=RF_PACKAGE_DATA[nm].findIndex(p=>p.packagePrice===total||Math.abs(p.packagePrice-_base)<=5000);
         if(idx>=0){ eq.value=nm; document.getElementById('rf-package-row').style.display=''; _populateRFPackages(); _rf('package').value=String(idx); _setRFDefaults(RF_PACKAGE_DATA[nm][idx]); matched=true; break; }
       }
       if(!matched){
         eq.value='custom'; _setAllRFEditable();
         if(total>0) _rf('packagePrice').value=total.toLocaleString('ko-KR');
-        _rf('shotsPerTreatment').value=600; _rf('tipShots').value=900; _rf('consumableCount').value=90;
+        _rf('shotsPerTreatment').value=1; _rf('tipShots').value=1; _rf('consumableCount').value=300;
         _rf('pricePerTreatment').value=(1200000).toLocaleString('ko-KR'); _rf('treatmentsPerDay').value=3;
         calcRF();
       }
@@ -11092,7 +11093,7 @@ window.addEventListener('pageshow', function(e){
     const trMo=(moAmt/_ROI_TIP_PRICE)*(ts/st);
     const perDay=Math.max(1,Math.round(trMo/25));
     _rf('treatmentsPerDay').value=perDay;
-    note.innerHTML='이 병원 '+(t26.length?'올해':'작년')+' 팁 구매 월평균 '+_kr(moAmt)+' ≈ 월 '+Math.round(trMo)+'회 검사 → <b>일 '+perDay+'회</b> 자동 반영 (팁단가 40만원 가정)';
+    note.innerHTML='이 병원 '+(t26.length?'올해':'작년')+' 팁 구매 월평균 '+_kr(moAmt)+' ≈ 월 '+Math.round(trMo)+'회 검사 → <b>일 '+perDay+'회</b> 자동 반영 (키트단가 5만원 가정)';
     calcRF();
   }
   window.roiTab = function(which){

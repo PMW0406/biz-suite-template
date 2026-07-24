@@ -2058,8 +2058,8 @@ function renderThisMonth(){
   ].join('');
 }
 function _monthTarget(mo){
-  const ymKey='2026-'+String(mo).padStart(2,'0');
-  return (TARGETS||[]).filter(x=>String(x.ym||'')===ymKey).reduce((s,x)=>s+(Number(x.target)||0),0);
+  // 국내 월목표 = sales_targets(SALEST)의 국내영업 제품+소모품 (구 targets 테이블은 데모 DB에 없어 상시 0이던 것 교체)
+  return _tgt('국내영업','제품',mo,mo)+_tgt('국내영업','소모품',mo,mo);
 }
 
 // ── 상세 조회 ────────────────────────────────────────────
