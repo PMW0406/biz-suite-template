@@ -316,41 +316,36 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
 <!-- 런처 화면 -->
 <style id="launcher-opt">
-#launcher-screen{padding:44px 24px}
-#launcher-cards{max-width:840px!important;display:flex!important;flex-direction:column;gap:30px!important;justify-content:flex-start}
+#launcher-screen{padding:60px 24px}
+#launcher-cards{width:100%;max-width:756px!important;display:flex!important;flex-direction:column;gap:30px!important}
 .lc-grp{width:100%}
-.lc-grp-t{font-size:11px;font-weight:800;color:#7c88a1;letter-spacing:.18em;margin:0 0 13px 2px;display:flex;align-items:center;gap:13px;text-transform:uppercase}
-.lc-grp-t:after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.11),rgba(255,255,255,0))}
-.lc-grp-row{display:flex;gap:17px;flex-wrap:wrap}
-.lc-card{position:relative;width:196px;border-radius:20px;cursor:pointer;overflow:hidden;padding:22px 20px 18px;
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.022));
-  border:1px solid rgba(255,255,255,.09);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset;
-  transition:transform .24s cubic-bezier(.2,.7,.3,1),border-color .24s,box-shadow .24s}
-.lc-card:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gf),var(--gt))}
-.lc-card:after{content:'';position:absolute;top:-46%;right:-34%;width:170px;height:170px;border-radius:50%;
-  background:radial-gradient(circle,var(--gf),transparent 68%);opacity:.13;pointer-events:none;transition:opacity .24s}
-.lc-card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.2);box-shadow:0 24px 48px rgba(0,0,0,.5)}
-.lc-card:hover:after{opacity:.3}
-.lc-ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;
-  background:linear-gradient(135deg,var(--gf),var(--gt));box-shadow:0 10px 22px -6px var(--gf)}
-.lc-ico i{font-size:21px;color:#fff;line-height:1}
-.lc-title{font-size:15.5px;font-weight:800;color:#f1f5f9;letter-spacing:-.3px;margin-bottom:6px}
-.lc-body{font-size:11px;color:#8791a5;line-height:1.62;min-height:34px}
-.lc-enter{margin-top:16px;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--ac)}
-.lc-enter i{font-size:11px;transition:transform .24s}
-.lc-card:hover .lc-enter i{transform:translateX(4px)}
-@media(max-width:860px){#launcher-cards{max-width:632px!important}.lc-grp-row{justify-content:flex-start}}
-@media(max-width:640px){
-  #launcher-screen{padding:22px 12px!important;justify-content:flex-start!important}
-  #launcher-main{padding:0 6px;width:100%}
-  #launcher-cards{max-width:100%!important;gap:22px!important}
-  .lc-grp-row{gap:11px!important;justify-content:flex-start!important}
-  .lc-card{width:100%!important}
+.lc-grp-t{font-size:10.5px;font-weight:700;color:#5b6683;letter-spacing:.17em;text-transform:uppercase;margin:0 0 13px 4px}
+.lc-grp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.lc-card{position:relative;border-radius:16px;cursor:pointer;padding:22px 20px;display:flex;flex-direction:column;min-height:158px;
+  background:#141a2b;border:1px solid rgba(255,255,255,.06);
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease}
+.lc-card:hover{transform:translateY(-4px);background:#182039;border-color:color-mix(in srgb,var(--ac) 50%,transparent);box-shadow:0 20px 44px -18px rgba(0,0,0,.8)}
+.lc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:15px}
+.lc-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--gf),var(--gt));box-shadow:0 6px 16px -6px var(--gf)}
+.lc-ico i{font-size:20px;color:#fff;line-height:1}
+.lc-arrow{font-size:15px;color:var(--ac);opacity:0;transform:translate(-3px,3px);transition:opacity .2s ease,transform .2s ease}
+.lc-card:hover .lc-arrow{opacity:.9;transform:translate(0,0)}
+.lc-title{font-size:15px;font-weight:700;color:#eef1f7;letter-spacing:-.2px;margin-bottom:5px}
+.lc-body{font-size:11.5px;color:#79839a;line-height:1.6;flex:1}
+.lc-enter{margin-top:14px;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--ac)}
+.lc-enter i{font-size:11px;transition:transform .2s ease}
+.lc-card:hover .lc-enter i{transform:translateX(3px)}
+@media(max-width:800px){#launcher-cards{max-width:498px!important}.lc-grp-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){
+  #launcher-screen{padding:26px 14px!important;justify-content:flex-start!important}
+  #launcher-main{width:100%}
+  #launcher-cards{max-width:100%!important;gap:24px!important}
+  .lc-grp-row{grid-template-columns:1fr;gap:11px}
+  .lc-card{min-height:0}
 }
 </style>
-<div id="launcher-screen" style="display:none;position:fixed;inset:0;background:radial-gradient(1100px 620px at 50% -8%,rgba(14,116,144,.22),transparent 60%),linear-gradient(135deg,#0f172a 0%,#1a1e38 55%,#151831 100%);z-index:9998;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto">
+<div id="launcher-screen" style="display:none;position:fixed;inset:0;background:radial-gradient(900px 480px at 50% -10%,rgba(14,116,144,.16),transparent 62%),#0b1020;z-index:9998;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto">
   <!-- 런처 메인 -->
   <div id="launcher-main" style="display:flex;flex-direction:column;align-items:center;width:100%">
     <div style="text-align:center;margin-bottom:42px">
@@ -2733,7 +2728,7 @@ function _buildLauncherCardsHTML(access) {
           ? `(async()=>{const {data:{session:s}}=await _sb.auth.getSession();let u='${s.url}';if(s)u+='#at='+encodeURIComponent(s.access_token)+'&rt='+encodeURIComponent(s.refresh_token);location.href=u;})()`
           : `location.href='${s.url}'`);
     return `<div class="lc-card" style="--gf:${s.grad_from};--gt:${s.grad_to};--ac:${s.accent_color}" onclick="${onclick.replace(/"/g,'&quot;')}">
-      <div class="lc-ico"><i class="bi ${s.icon}"></i></div>
+      <div class="lc-top"><div class="lc-ico"><i class="bi ${s.icon}"></i></div><i class="bi bi-arrow-up-right lc-arrow"></i></div>
       <div class="lc-title">${s.title}</div>
       <div class="lc-body">${s.body_html}</div>
       <div class="lc-enter">입장하기 <i class="bi bi-arrow-right"></i></div>
