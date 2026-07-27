@@ -3030,14 +3030,14 @@ function _dashPeriodYMs() {
   const curY=new Date().getFullYear(), curM=new Date().getMonth()+1;
   if(p === 'year') {
     const maxM = (y===curY) ? curM : 12;
-    return { yms:Array.from({length:maxM},(_,i)=>ym(y,i+1)), label:`${y}년` };
+    return { yms:Array.from({length:maxM},(_,i)=>ym(y,i+1)), ymsFull:Array.from({length:12},(_,i)=>ym(y,i+1)), label:`${y}년` };
   }
   if(p.startsWith('Q')) {
     const q=Number(p[1]), start=(q-1)*3+1;
-    return { yms:[0,1,2].map(i=>ym(y,start+i)), label:`${y}년 ${q}분기` };
+    return { yms:[0,1,2].map(i=>ym(y,start+i)), ymsFull:[0,1,2].map(i=>ym(y,start+i)), label:`${y}년 ${q}분기` };
   }
   const mo=Number(p);
-  return { yms:[ym(y,mo)], label:`${y}년 ${mo}월` };
+  return { yms:[ym(y,mo)], ymsFull:[ym(y,mo)], label:`${y}년 ${mo}월` };
 }
 
 
@@ -3965,7 +3965,7 @@ function openWarrantyDetail(){
 function renderDashboard() {
   const now = new Date();
   _initDashPeriodUI();
-  const { yms, label } = _dashPeriodYMs();
+  const { yms, ymsFull, label } = _dashPeriodYMs();
   const hour = now.getHours();
   const greet = hour<12?'좋은 아침이에요 ☀️':hour<18?'안녕하세요 👋':'수고하셨어요 🌙';
   document.getElementById('dash-greeting').textContent = greet;
@@ -3990,7 +3990,7 @@ function renderDashboard() {
   const wonPeriod=DB.d.pipeline.filter(d=>d.stage==='계약완료'&&yms.some(ym=>(d.stageUpdatedAt||'').startsWith(ym)));
   const wonAmt=wonPeriod.reduce((s,d)=>s+Number(d.amount||0),0);
   // KPI 2: 기간 내 마감 예정 파이프라인 금액(전액 합계)
-  const closingPeriod=DB.d.pipeline.filter(d=>d.stage!=='계약완료'&&yms.some(ym=>(d.expectedDate||'').startsWith(ym)));
+  const closingPeriod=DB.d.pipeline.filter(d=>d.stage!=='계약완료'&&ymsFull.some(ym=>(d.expectedDate||'').startsWith(ym)));
   const expectedAmt=Math.round(closingPeriod.reduce((s,d)=>s+Number(d.amount||0),0));
   const totalForecast=wonAmt+expectedAmt;
   // 전월 대비 (월 단위일 때만)
@@ -7828,6 +7828,7 @@ function renderPerformance(){
     const daysSince=lastLog?Math.floor((Date.now()-new Date(lastLog.date))/864e5):null;
     return{s,wonAmt,wonCnt:wonDeals.length,pipeW,pipeCnt:pipeDeals.length,logCnt:logs.length,allLogCnt:allLogs.length,daysSince};
   }).sort((a,b)=>b.wonAmt-a.wonAmt);
+  const _ymsJ="["+yms.map(m=>"'"+m+"'").join(",")+"]";
   const maxWon=Math.max(...salesData.map(x=>x.wonAmt),1);
 
   // KPI — 파이프라인 액션 중심 (대시보드와 중복 없이)
@@ -7883,11 +7884,11 @@ function renderPerformance(){
           <div style="font-size:20px;font-weight:800;color:#1e40af;margin-bottom:4px">${fmtAmt(x.wonAmt)}</div>
           <div style="height:6px;background:#e5e7eb;border-radius:4px;margin-bottom:10px"><div style="height:6px;width:${barW}%;background:#2563eb;border-radius:4px"></div></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;text-align:center">
-            <div style="background:#fff;border-radius:8px;padding:7px 4px;border:1px solid #e5e7eb;cursor:pointer" onclick="showPerfDrill('deals','${x.s} — 계약완료',d=>d.stage==='계약완료'&&(d.sales||'')==='${x.s.replace(/'/g,"\\'")}')">
+            <div style="background:#fff;border-radius:8px;padding:7px 4px;border:1px solid #e5e7eb;cursor:pointer" onclick="showPerfDrill('deals','${x.s} — 계약완료',d=>d.stage==='계약완료'&&(d.sales||'')==='${x.s.replace(/'/g,"\\'")}'&&${_ymsJ}.some(ym=>(d.stageUpdatedAt||'').startsWith(ym)))">
               <div style="font-size:16px;font-weight:700;color:#2563eb">${x.wonCnt}</div>
               <div style="font-size:9px;color:#6b7280">계약건</div>
             </div>
-            <div style="background:#fff;border-radius:8px;padding:7px 4px;border:1px solid #e5e7eb;cursor:pointer" onclick="showPerfDrill('logs','${x.s} — 상담일지(기간)',l=>(l.sales||'')==='${x.s.replace(/'/g,"\\'")}')">
+            <div style="background:#fff;border-radius:8px;padding:7px 4px;border:1px solid #e5e7eb;cursor:pointer" onclick="showPerfDrill('logs','${x.s} — 상담일지(기간)',l=>(l.sales||'')==='${x.s.replace(/'/g,"\\'")}'&&${_ymsJ}.some(ym=>(l.date||'').startsWith(ym)))">
               <div style="font-size:16px;font-weight:700;color:#f59e0b">${x.logCnt}</div>
               <div style="font-size:9px;color:#6b7280">상담(기간)</div>
             </div>
