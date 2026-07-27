@@ -2152,7 +2152,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
       <div class="qed-foot">
         <div class="qed-terms" id="qed-terms-rows"></div><button type="button" onclick="_qedTermAdd('','')" style="border:1px dashed var(--line);background:#fff;color:var(--mut);font-size:11px;border-radius:8px;padding:3px 10px;cursor:pointer;margin-top:6px">＋ 조건 추가</button>
         <div class="qed-memo" id="qed-note-rows"></div>
-        <div class="qed-tagline">www.노바진단.com</div>
+        <div class="qed-tagline">www.novadx.co.kr</div>
       </div>
     </div>
   </div>
@@ -2750,7 +2750,7 @@ const _WT_BASE='https://pmw0406.github.io/biz-suite-template/';
 function _retOk(u){
   try{ const d=decodeURIComponent(String(u||''));
     if(d.indexOf(_WT_BASE)!==0) return '';                       // 동일 오리진·경로만 허용(오픈 리다이렉트 차단)
-    const p=new URL(d); if(/^\/노바진단\/?(index\.html)?$/.test(p.pathname)) return '';  // 중앙 자기 자신 → 루프 방지
+    const p=new URL(d); if(/^\/biz-suite-template\/?(index\.html)?$/.test(p.pathname)) return '';  // 중앙 자기 자신 → 루프 방지
     return p.origin+p.pathname+p.search;                          // 토큰 등 해시는 버림
   }catch(e){ return ''; }
 }
@@ -7458,7 +7458,7 @@ function _qedSalesPhoneSync(){
 }
 function _qedTmpl(t,quiet){ _qed.tmpl=t; const s=document.getElementById('qedtpl-std'),p=document.getElementById('qedtpl-simple'); if(s)s.classList.toggle('on',t==='premium'); if(p)p.classList.toggle('on',t==='classic');
   const sh=document.querySelector('#quoteEditModal .qed-sheet'); if(sh) sh.classList.toggle('t2', t!=='classic');   // 양식2 선택 시 편집 화면도 결과물과 동일 톤
-  const tg=document.querySelector('#quoteEditModal .qed-tagline'); if(tg) tg.textContent='www.노바진단.com';
+  const tg=document.querySelector('#quoteEditModal .qed-tagline'); if(tg) tg.textContent='www.novadx.co.kr';
 }
 function _qedPreview(){
   const q=_qedCollect();
@@ -7500,7 +7500,7 @@ function _qedPDF(){
 }
 
 // ── 견적서 출력(2종 템플릿 + 올바른 CI + 한글금액 + PDF) ──
-const WT_SUP={name:'노바진단 주식회사',reg:'496-88-01552',ceo:'김종원, 김정현',addr:'대전광역시 유성구 테크노8로 64',tel:'042) 934-6800',fax:'070) 7882-8658',web:'www.노바진단.com'};
+const WT_SUP={name:'노바진단 주식회사',reg:'220-88-12345',ceo:'이현우',addr:'서울특별시 강남구 테헤란로 501',tel:'02) 555-0100',fax:'02) 555-0199',web:'www.novadx.co.kr'};
 // ── 실제 CI 로고(원본 PNG) + 장비별 기본 부속품(★견적서 엑셀 기준) ──
 const _WT_SEAL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 const _WT_LOGO_URI="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
@@ -8861,8 +8861,8 @@ function _schItemRow(i){
 }
 // 요약 통계바 + 유형 범례
 function _schStatsBar(all){
-  const today=_schTodayStr(), wk=_schWeekRange();
-  const tArr=all.filter(i=>i.date===today);
+  const today=_schTodayStr(), _dayRef=(_schView==='today'&&_schRef)?_schRef:today, _navWk=(!!_schRef&&(_schView==='week'||_schView==='today')), wk=_schWeekRange(_navWk?_schRef:null), _wkLbl=(_navWk?(wk.start.slice(5).replace('-','.')+'~'+wk.end.slice(5).replace('-','.')+' 일정'):'이번주 일정');
+  const tArr=all.filter(i=>i.date===_dayRef);
   const t=tArr.length, tDone=tArr.filter(i=>i.kind==='sched'&&i.done).length, tVisit=tArr.filter(i=>i.type==='방문').length;
   const wArr=all.filter(i=>i.date>=wk.start&&i.date<=wk.end);
   const w=wArr.length, wDone=wArr.filter(i=>i.kind==='sched'&&i.done).length, wVisit=wArr.filter(i=>i.type==='방문').length;
@@ -8880,11 +8880,11 @@ function _schStatsBar(all){
   const sf=(lbl,n,sub,cl,click)=>'<div class="cdud-fact'+(click?' clk" onclick="'+click+'"':'"')+'><span>'+lbl+'</span><b'+(cl?' class="'+cl+'"':'')+'>'+n+'</b>'+(sub?'<i>'+sub+'</i>':'')+'</div>';
   return '<div class="cdud" style="padding:16px 20px;margin:0 0 12px">'
     +'<div class="cdud-kpis" style="border-bottom:0;padding:2px 0 4px">'
-      +'<div class="cdud-hero" style="flex:1.4;cursor:pointer" onclick="setSchView(\'week\',document.getElementById(\'sch-v-week\'))"><span class="l">이번주 일정</span><b>'+w+'건</b><span class="s">방문 '+wVisit+' · 완료 '+wDone+'/'+w+(nextUp?' · 다음 예정 '+nextUp.slice(5).replace('-','/'):'')+'</span></div>'
-      +sf('오늘',t+'건','방문 '+tVisit+' · 완료 '+tDone,'',"setSchView('today',document.getElementById('sch-v-today'))")
+      +'<div class="cdud-hero" style="flex:1.4;cursor:pointer" onclick="setSchView(\'week\',document.getElementById(\'sch-v-week\'))"><span class="l">'+_wkLbl+'</span><b>'+w+'건</b><span class="s">방문 '+wVisit+' · 완료 '+wDone+'/'+w+(nextUp?' · 다음 예정 '+nextUp.slice(5).replace('-','/'):'')+'</span></div>'
+      +sf((_dayRef===today?'오늘':_dayRef.slice(5).replace('-','/')),t+'건','방문 '+tVisit+' · 완료 '+tDone,'',"setSchView('today',document.getElementById('sch-v-today'))")
       +sf('놓친 일정',overdue+'건',(overdue?'눌러서 결과 입력':'없음 👍'),(overdue?'rd':''),overdue?'_schShowOverdueOnly()':'')
       +sf('예정',pend+'건',(nextUp?'다음 '+nextUp.slice(5).replace('-','/'):'오늘 이후'),'',"setSchView('week',document.getElementById('sch-v-week'))")
-      +sf('완료',done+'건','이번주'+(noResAll?' · 결과누락 '+noResAll:''),(noResAll?'':'gr'),'_schShowDoneOnly()')
+      +sf('완료',done+'건',(_navWk?'선택 주':'이번주')+(noResAll?' · 결과누락 '+noResAll:''),(noResAll?'':'gr'),'_schShowDoneOnly()')
     +'</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding-top:10px;margin-top:6px;border-top:1px solid #e4e8ef"><span style="font-size:10.5px;color:#64748b;font-weight:700">유형</span>'+legend+'</div>'
   +'</div>';
@@ -10556,6 +10556,7 @@ function _renderDevInsight(){
     +tile('상위 3 집중도',conc.toFixed(0)+'%','상위 3인 매출 비중',null,'conc')
     +tile('신규 / 이탈',nw+' / '+lost,'담당 기준',null,'newlost');
 }
+function _devInsightToRep(n){ try{ var m=bootstrap.Modal.getInstance(document.getElementById('dashDetailModal')); if(m) m.hide(); }catch(e){} setTimeout(function(){ try{ showDevRepDetail(n); }catch(e){} }, 250); }
 // 핵심 지표 타일 클릭 → 상세 조회(공용 dashDetailModal 재사용)
 function _devInsightDrill(kind){
   var E=(_devLastEntries||[]).filter(function(e){return e.cur>0||e.pre>0;}); if(!E.length) return;
@@ -10567,7 +10568,7 @@ function _devInsightDrill(kind){
   if(kind==='newlost'){
     var nw=E.filter(function(e){return e.pre<=0&&e.cur>0;}).sort(function(a,b){return b.cur-a.cur;});
     var lost=E.filter(function(e){return e.cur<=0&&e.pre>0;}).sort(function(a,b){return b.pre-a.pre;});
-    var mk=function(lbl,list,valf){ return '<div style="font-size:13px;font-weight:700;margin:12px 0 5px">'+lbl+' <span style="color:#94a3b8;font-weight:400">'+list.length+'명</span></div>'+(list.length?'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums"><tbody>'+list.map(function(e){return '<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:7px 8px;font-weight:600">'+esc(e.name)+'</td><td style="text-align:right;padding:7px 8px;font-weight:700">'+valf(e)+'</td></tr>';}).join('')+'</tbody></table></div>':'<div style="font-size:12px;color:#94a3b8;padding:4px 0">없음</div>'); };
+    var mk=function(lbl,list,valf){ return '<div style="font-size:13px;font-weight:700;margin:12px 0 5px">'+lbl+' <span style="color:#94a3b8;font-weight:400">'+list.length+'명</span></div>'+(list.length?'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums"><tbody>'+list.map(function(e){var _nn=String(e.name).replace(/"/g,'&quot;');return '<tr data-n="'+_nn+'" onclick="_devInsightToRep(this.getAttribute(\'data-n\'))" style="border-bottom:1px solid #f1f5f9;cursor:pointer" title="클릭하면 담당자 상세"><td style="padding:7px 8px;font-weight:600">'+esc(e.name)+'</td><td style="text-align:right;padding:7px 8px;font-weight:700">'+valf(e)+'</td></tr>';}).join('')+'</tbody></table></div>':'<div style="font-size:12px;color:#94a3b8;padding:4px 0">없음</div>'); };
     title='신규 · 이탈 담당';
     body=mk('🆕 신규 (전년 0 → 올해 매출)',nw,function(e){return fw(e.cur);})+mk('⚠ 이탈 (전년 있음 → 올해 0)',lost,function(e){return '전년 '+fw(e.pre);});
   } else {
@@ -10576,7 +10577,7 @@ function _devInsightDrill(kind){
     else if(kind==='top'){ title='매출 순위'; arr=E.slice().sort(function(a,b){return b.cur-a.cur;}); }
     else { title='전체 담당 매출'; arr=E.slice().sort(function(a,b){return b.cur-a.cur;}); }
     body=(note?'<div style="font-size:11.5px;color:#94a3b8;margin-bottom:8px">'+note+'</div>':'')+'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums"><thead><tr style="color:#94a3b8;font-size:11px"><th style="text-align:left;'+thc+'">#</th><th style="text-align:left;'+thc+'">담당</th><th style="text-align:right;'+thc+'">올해</th><th style="text-align:right;'+thc+'">전년</th><th style="text-align:right;'+thc+'">전년비</th><th style="text-align:right;'+thc+'">비중</th></tr></thead><tbody>'
-      +arr.map(function(e,i){ var g=e.pre>0?((e.cur/e.pre-1)*100):null; return '<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:8px;color:#9ca3af">'+(i+1)+'</td><td style="font-weight:600">'+esc(e.name)+'</td><td style="text-align:right;font-weight:700;color:#2563eb;padding:8px">'+fw(e.cur)+'</td><td style="text-align:right;color:#94a3b8">'+fw(e.pre)+'</td><td style="text-align:right;padding:8px">'+(g==null?'<span style="color:#cbd5e1;font-size:10px">신규</span>':'<span style="color:'+(g>=0?'#16a34a':'#dc2626')+';font-weight:700">'+(g>=0?'▲':'▼')+Math.abs(g).toFixed(0)+'%</span>')+'</td><td style="text-align:right;color:#64748b">'+(tot>0?(e.cur/tot*100).toFixed(0):'0')+'%</td></tr>'; }).join('')
+      +arr.map(function(e,i){ var g=e.pre>0?((e.cur/e.pre-1)*100):null; var _nn=String(e.name).replace(/"/g,'&quot;'); return '<tr data-n="'+_nn+'" onclick="_devInsightToRep(this.getAttribute(\'data-n\'))" style="border-bottom:1px solid #f1f5f9;cursor:pointer" title="클릭하면 담당자 상세"><td style="padding:8px;color:#9ca3af">'+(i+1)+'</td><td style="font-weight:600">'+esc(e.name)+'</td><td style="text-align:right;font-weight:700;color:#2563eb;padding:8px">'+fw(e.cur)+'</td><td style="text-align:right;color:#94a3b8">'+fw(e.pre)+'</td><td style="text-align:right;padding:8px">'+(g==null?'<span style="color:#cbd5e1;font-size:10px">신규</span>':'<span style="color:'+(g>=0?'#16a34a':'#dc2626')+';font-weight:700">'+(g>=0?'▲':'▼')+Math.abs(g).toFixed(0)+'%</span>')+'</td><td style="text-align:right;color:#64748b">'+(tot>0?(e.cur/tot*100).toFixed(0):'0')+'%</td></tr>'; }).join('')
       +'</tbody></table></div>';
   }
   document.getElementById('dashDetailTitle').innerHTML='<i class="bi bi-people-fill me-1" style="color:#7c3aed"></i>'+title;
