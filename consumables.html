@@ -763,7 +763,7 @@ async function _wtRenderSwitcher(){
   var esc=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var box=document.querySelector("#wt-site-sel"); if(!box) return;
   if("select"==='select'){
-    box.innerHTML='<option value="">사이트 이동…</option>'+_wtItems.map(function(s,i){ return '<option value="'+i+'">'+esc(s.badge)+' · '+esc(s.title)+'</option>'; }).join('');
+    box.innerHTML='<option value="" style="color:#111">사이트 이동…</option>'+_wtItems.map(function(s,i){ return '<option value="'+i+'" style="color:#111">'+esc(s.badge)+' · '+esc(s.title)+'</option>'; }).join('');
     box.onchange=function(){ var v=box.value; if(v!=='') _wtGo(+v); };
   } else {
     box.innerHTML=_wtItems.map(function(s,i){
