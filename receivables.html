@@ -254,6 +254,7 @@ let _charts=[];
 
 // ── 유틸 ──
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escJs(s){return esc(String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"));}
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fmt(v){return Math.round(v||0).toLocaleString();}
 function eok(v){return ((v||0)/1e8).toFixed(1)+'억';}
@@ -374,7 +375,7 @@ function applyView(v){if(RESTRICTED_VIEWS.indexOf(v)>=0&&ME!==RESTRICTED_USER){v
   render();}
 
 // ── 집계 ──
-function typeAgg(rows){const m={};rows.forEach(r=>{const t=r.type||'미분류';m[t]=m[t]||{cnt:0,ar:0,prov:0,rows:[]};m[t].cnt++;m[t].ar+=r.ar;m[t].prov+=r.prov;m[t].rows.push(r);});return m;}
+function typeAgg(rows){const m={};rows.forEach(r=>{const t=(r.type&&TYPE_ORDER.indexOf(r.type)>=0)?r.type:'미분류';m[t]=m[t]||{cnt:0,ar:0,prov:0,rows:[]};m[t].cnt++;m[t].ar+=r.ar;m[t].prov+=r.prov;m[t].rows.push(r);});return m;}
 function yearAgg(rows){const m={};rows.forEach(r=>{const y=r.year||'?';m[y]=m[y]||{cnt:0,amt:0,ar:0,prov:0};m[y].cnt++;m[y].amt+=r.amt;m[y].ar+=r.ar;m[y].prov+=r.prov;});return m;}
 function kpis(){
   const tot=E.reduce((s,r)=>s+r.amt,0),coll=E.reduce((s,r)=>s+r.coll,0),bad=E.reduce((s,r)=>s+r.bad,0);
@@ -467,7 +468,7 @@ function viewHome(){
   const ma=mgrAgg(),ab=agingBuckets();
   h+='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">';
   h+='<div class="card"><div class="sec">담당자별 미수 현황 <span class="hint">잔액 보유 기준 · 행 클릭 → 목록</span></div><div class="tbl-scroll" style="max-height:340px;overflow-y:auto"><table class="dt"><thead><tr><th class="l">담당자</th><th>건수</th><th>미수잔액</th><th>지연·체납</th><th>계획미기재</th></tr></thead><tbody>'
-    +ma.map(x=>`<tr class="clk" onclick="goListMgr('${esc(x.mgr)}')"><td class="l"><b>${esc(x.mgr)}</b></td><td>${x.cnt}</td><td><b>${fmt(x.ar)}</b></td><td>${x.delay?`<span class="chip" style="background:#fef3c7;color:#b45309">${x.delay}건</span>`:'-'}</td><td>${x.noplan?`<span class="chip" style="background:#e0f2fe;color:#0369a1">${x.noplan}건</span>`:'-'}</td></tr>`).join('')
+    +ma.map(x=>`<tr class="clk" onclick="goListMgr('${escJs(x.mgr)}')"><td class="l"><b>${esc(x.mgr)}</b></td><td>${x.cnt}</td><td><b>${fmt(x.ar)}</b></td><td>${x.delay?`<span class="chip" style="background:#fef3c7;color:#b45309">${x.delay}건</span>`:'-'}</td><td>${x.noplan?`<span class="chip" style="background:#e0f2fe;color:#0369a1">${x.noplan}건</span>`:'-'}</td></tr>`).join('')
     +'</tbody></table></div></div>';
   h+='<div class="card"><div class="sec">채권 연령(Aging) <span class="hint">매출일 기준 경과 · 클릭 → 목록</span></div>';
   const abMax=Math.max(...ab.map(x=>x.ar),1);
@@ -541,7 +542,7 @@ function viewList(){
       if(r.saleDate>x.last)x.last=r.saleDate;if(r.nextDate&&(!x.follow||r.nextDate<x.follow))x.follow=r.nextDate;});
     const arrG=Object.values(g).sort((a,b)=>b.ar-a.ar);
     h+='<div class="card" style="padding:0;overflow:auto;max-height:72vh"><table class="dt"><thead><tr><th class="l">거래처</th><th>채권 건수</th><th>발생액 합계</th><th>미수잔액 합계</th><th class="l">유형</th><th class="l">담당</th><th class="l">최근 매출일</th><th class="l">다음 조치</th></tr></thead><tbody>';
-    h+=arrG.map(x=>`<tr class="clk" onclick="_f.group=false;_f.q='${esc(x.name).replace(/'/g,"\\'")}';render()">
+    h+=arrG.map(x=>`<tr class="clk" onclick="_f.group=false;_f.q='${escJs(x.name)}';render()">
       <td class="l"><b>${esc(x.name)}</b></td><td>${x.cnt}</td><td>${fmt(x.amt)}</td><td><b style="color:${x.ar>0?'#b45309':'inherit'}">${fmt(x.ar)}</b></td>
       <td class="l">${Object.keys(x.types).map(typeChip).join(' ')}</td><td class="l">${Object.keys(x.mgrs).map(esc).join(', ')||'-'}</td>
       <td class="l">${esc(x.last)}</td><td class="l">${x.follow?`<span class="chip" style="background:${x.follow<=today()?'#fee2e2;color:#b91c1c':'#dcfce7;color:#15803d'}">${x.follow}</span>`:'-'}</td></tr>`).join('')
@@ -1011,7 +1012,7 @@ function parseMgmtSheet(ws,name,latestRows){
       let mo=latestRows.find(o=>String(Math.trunc(xlNum(o.no)||0))===String(Math.trunc(xlNum(it.no)||0))&&o.name===it.name);
       if(!mo)mo=latestRows.find(o=>o.name===it.name&&Math.abs(o.ar-it.ar)<1);
       if(!mo)mo=latestRows.find(o=>nn(o.name)===nn(it.name)&&Math.abs(o.ar-it.ar)<1);
-      it.rid=mo?mo.rid:'';
+      it.rid=mo?mo.rid:('_um|'+nn(it.name)+'|'+Math.trunc(it.ar||0));
       mg.items.push(it);}
     return mg.items.length?mg:null;
   }catch(e){return null;}
@@ -1032,7 +1033,7 @@ async function applyUpload(){
 
 // ═══ 상세/편집 모달 ═══
 function openRow(ridv){
-  const r=E.find(x=>x.rid===ridv);if(!r){toast('상세 데이터를 찾을 수 없습니다');return;}
+  const r=E.find(x=>x.rid===ridv);if(!r){toast(String(ridv).indexOf('_um|')===0?'채권 원장과 매칭되지 않은 항목이라 상세가 없습니다':'상세 데이터를 찾을 수 없습니다');return;}
   const mi=M.find(i=>i.rid===ridv);
   const ed=EDITS[ridv]||{};
   const F=(l,v)=>`<div class="fld"><label>${l}</label><div class="fv">${esc(v==null||v===''?'-':v)}</div></div>`;
