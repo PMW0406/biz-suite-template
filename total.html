@@ -3768,5 +3768,9 @@ window.addEventListener('popstate', function(e){
 });
 </script>
 <button id="pdf-fab" onclick="printPDF()" title="이 페이지를 PDF로 추출"><i class="bi bi-filetype-pdf me-1"></i>PDF</button>
+<script>
+/* 서비스워커 등록: 일반 새로고침(F5)에도 항상 최신 HTML(network-first) — 하드리프레시 불필요 */
+if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+</script>
 </body>
 </html>
