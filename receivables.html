@@ -584,9 +584,9 @@ function viewMgmt(){
   const items=M.filter(i=>(!_mf.cls||i.cls===_mf.cls)&&(!_mf.q||((i.name||'')+(i.mgr||'')).toLowerCase().indexOf(_mf.q.toLowerCase())>=0)).sort((a,b)=>b.ar-a.ar);
   let h='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px">';
   [['집중관리','수금 실행 관리'],['검토필요','분류·조치 검토'],['관리제외','대손·매출취소 처리 예정']].forEach(([c,d])=>{const s=sum[c]||{cnt:M.filter(i=>i.cls===c).length,ar:M.filter(i=>i.cls===c).reduce((x,i)=>x+i.ar,0)};
-    h+=`<div class="kpi clk" style="flex:0 0 200px;min-width:0;${_mf.cls===c?'outline:2px solid '+(CLS_META[c].c):''}" onclick="_mf.cls=_mf.cls==='${c}'?'':'${c}';render()"><div class="l">${clsChip(c)} ${d}</div><div class="v">${s.cnt}건</div><div class="s">${eok2(s.ar)}</div></div>`;});
+    h+=`<div class="kpi clk" style="flex:1 1 200px;min-width:0;${_mf.cls===c?'outline:2px solid '+(CLS_META[c].c):''}" onclick="_mf.cls=_mf.cls==='${c}'?'':'${c}';render()"><div class="l">${clsChip(c)} ${d}</div><div class="v">${s.cnt}건</div><div class="s">${eok2(s.ar)}</div></div>`;});
   const tot=M.reduce((s,i)=>s+i.ar,0);
-  h+=`<div class="kpi" style="flex:0 0 200px;min-width:0"><div class="l">관리대상 합계 <span class="hint">(잔액 보유 채권)</span></div><div class="v">${M.length}건</div><div class="s">${eok2(tot)}</div></div></div>`;
+  h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">관리대상 합계 <span class="hint">(잔액 보유 채권)</span></div><div class="v">${M.length}건</div><div class="s">${eok2(tot)}</div></div></div>`;
   h+=`<div class="bar-row"><input class="inp" style="width:230px" placeholder="거래처·담당자 검색" value="${esc(_mf.q)}" oninput="_mf.q=this.value;render()">${_mf.cls?`<button class="btn" onclick="_mf.cls='';render()">필터 해제: ${_mf.cls} ✕</button>`:''}<span class="hint">${items.length}건 표시 · 분류·의견은 행 클릭 후 수정</span></div>`;
   h+='<div class="card" style="padding:0;overflow:auto;max-height:70vh"><table class="dt"><thead><tr><th>#</th><th class="l">거래처명</th><th class="l">발생</th><th class="l">경과</th><th>미수금액(원)</th><th class="l">담당자</th><th class="l">현재상태</th><th class="l">분류</th><th class="l">분류 근거</th><th class="l">관리 의견</th></tr></thead><tbody>';
   h+=items.map((i,n)=>`<tr class="clk" onclick="openRow('${i.rid}')"><td>${n+1}</td><td class="l"><b>${esc(i.name)}</b>${i._edited?' <span class="chip" style="background:#ecfdf5;color:#047857">수정</span>':''}</td><td class="l">${esc(i.year)}</td><td class="l hint">${esc(i.elapsed)}</td><td><b>${fmt(i.ar)}</b></td><td class="l">${esc(i.mgr)}</td><td class="l">${typeChip(i.state)}</td><td class="l">${clsChip(i.cls)}</td><td class="l memo" title="${esc(i.basis)}">${esc(i.basis)}</td><td class="l memo" title="${esc(i.opinion)}">${esc(i.opinion)}</td></tr>`).join('')
@@ -653,11 +653,11 @@ function viewWo(){
   if(_woMode==='doc')return viewWoDoc(cf);
   let h='<div class="editable-note" style="background:#f0f9ff;border-color:#bae6fd;color:#075985">회의 후속: 회수 실익이 없는 채권을 선별해 <b>대손처리 품의 리스트</b>를 확정합니다. 근거는 원본 데이터(폐업·회수불가·충당금·관리분류)에서 자동 수집되며, 최종 판단(확정/소송/보류/제외)만 지정하면 품의서가 만들어집니다.<br>우선순위 등급(추정손실급/회수의문급/요주의급)은 금융기관 자산건전성 분류 관행을 참고해 사건발생여부·충당금커버율·최근상환활동으로 매긴 참고값입니다.</div>';
   h+='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px">';
-  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===''?'outline:2px solid #64748b':''}" onclick="_woF='';render()"><div class="l">후보 전체</div><div class="v">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))} · 미검토 ${undone.length}건</div></div>`;
-  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===1?'outline:2px solid #b91c1c':''}" onclick="_woF=1;render()"><div class="l">🔴 추정손실급</div><div class="v" style="color:#b91c1c">${t1.length}건</div><div class="s">미수잔액 ${eok2(sum(t1))} · 손실영향 ${eok2(addLoss(t1))}</div></div>`;
-  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===2?'outline:2px solid #b45309':''}" onclick="_woF=2;render()"><div class="l">🟠 회수의문급</div><div class="v" style="color:#b45309">${t2.length}건</div><div class="s">미수잔액 ${eok2(sum(t2))} · 손실영향 ${eok2(addLoss(t2))}</div></div>`;
-  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===3?'outline:2px solid #0369a1':''}" onclick="_woF=3;render()"><div class="l">🔵 요주의급</div><div class="v" style="color:#0369a1">${t3.length}건</div><div class="s">미수잔액 ${eok2(sum(t3))} · 보류 권장</div></div>`;
-  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF==='done'?'outline:2px solid #047857':''}" onclick="_woF='done';render()"><div class="l">✅ 처리 진행</div><div class="v">${done.length}/${cands.length}</div><div class="s">${undone.length}건 미검토 남음</div></div>`;
+  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===''?'outline:2px solid #64748b':''}" onclick="_woF='';render()"><div class="l">후보 전체</div><div class="v">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))} · 미검토 ${undone.length}건</div></div>`;
+  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===1?'outline:2px solid #b91c1c':''}" onclick="_woF=1;render()"><div class="l">🔴 추정손실급</div><div class="v" style="color:#b91c1c">${t1.length}건</div><div class="s">미수잔액 ${eok2(sum(t1))} · 손실영향 ${eok2(addLoss(t1))}</div></div>`;
+  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===2?'outline:2px solid #b45309':''}" onclick="_woF=2;render()"><div class="l">🟠 회수의문급</div><div class="v" style="color:#b45309">${t2.length}건</div><div class="s">미수잔액 ${eok2(sum(t2))} · 손실영향 ${eok2(addLoss(t2))}</div></div>`;
+  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===3?'outline:2px solid #0369a1':''}" onclick="_woF=3;render()"><div class="l">🔵 요주의급</div><div class="v" style="color:#0369a1">${t3.length}건</div><div class="s">미수잔액 ${eok2(sum(t3))} · 보류 권장</div></div>`;
+  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF==='done'?'outline:2px solid #047857':''}" onclick="_woF='done';render()"><div class="l">✅ 처리 진행</div><div class="v">${done.length}/${cands.length}</div><div class="s">${undone.length}건 미검토 남음</div></div>`;
   h+='</div>';
   const rows=_woF===''?cands:_woF==='done'?done:cands.filter(x=>woTier(x.r).n===_woF);
   const opts=st=>`<option value="">미검토</option>`+Object.keys(WO_ST).map(k=>`<option value="${k}" ${st===k?'selected':''}>${WO_ST[k].l}</option>`).join('');
@@ -850,9 +850,9 @@ function viewBrief(){
   document.getElementById('pt-a').innerHTML='<button class="btn" onclick="window.print()"><i class="bi bi-printer"></i> 인쇄</button>';
   let h='<div class="editable-note" style="background:#fef2f2;border-color:#fecaca;color:#991b1b">🔒 이 화면은 본인 계정에만 보입니다. 발표 준비용 상세 자료이며, 실시간 상태 변경은 <a onclick="setView(\'wo\')" style="color:inherit;text-decoration:underline;cursor:pointer">손실처리</a> 메뉴에서 하세요.</div>';
   h+='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px">';
-  h+=`<div class="kpi" style="flex:0 0 200px;min-width:0"><div class="l">총 채권 / 수금률</div><div class="v">${eok(k.tot)}</div><div class="s">수금률 ${pct(k.collRate)} · ${E.length}건</div></div>`;
-  h+=`<div class="kpi" style="flex:0 0 200px;min-width:0"><div class="l">잔여 미수금</div><div class="v" style="color:#b45309">${eok(k.arSum)}</div><div class="s">전체의 ${pct(k.tot?k.arSum/k.tot:0)}</div></div>`;
-  h+=`<div class="kpi" style="flex:0 0 200px;min-width:0"><div class="l">손실처리 후보</div><div class="v" style="color:#b91c1c">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))}</div></div>`;
+  h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">총 채권 / 수금률</div><div class="v">${eok(k.tot)}</div><div class="s">수금률 ${pct(k.collRate)} · ${E.length}건</div></div>`;
+  h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">잔여 미수금</div><div class="v" style="color:#b45309">${eok(k.arSum)}</div><div class="s">전체의 ${pct(k.tot?k.arSum/k.tot:0)}</div></div>`;
+  h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">손실처리 후보</div><div class="v" style="color:#b91c1c">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))}</div></div>`;
   h+='</div>';
   h+='<div class="card"><div class="sec">손실처리 '+cands.length+'건 — 3단계 우선순위</div>';
   h+='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px">';

@@ -43,8 +43,8 @@ header select{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(2
 .rpt-wrap{border:1px solid #e3e8f0;border-radius:12px;overflow:hidden;background:#fff;overflow-x:auto;box-shadow:0 1px 3px rgba(16,24,40,.07)}
 table.rpt{width:100%;border-collapse:collapse;font-size:13px;background:#fff;table-layout:fixed}
 table.rpt th,table.rpt td{padding:12px 14px;text-align:right;border-bottom:1px solid #eaedf3;font-variant-numeric:tabular-nums;word-break:keep-all}
-table.rpt th{background:#334155;color:#fff;font-weight:600;font-size:12px;text-align:center;letter-spacing:.02em;border-bottom:0;line-height:1.35}
-table.rpt th.g2{background:#475569}
+table.rpt th{background:#f8fafc;color:#475569;font-weight:700;font-size:12px;text-align:center;letter-spacing:.02em;border-bottom:2px solid #e5e7eb;line-height:1.35}
+table.rpt th.g2{background:#e2e8f0;color:#475569}
 table.rpt tbody tr:last-child td{border-bottom:0}
 table.rpt td.lbl{text-align:left;background:#f3f6fb;font-weight:700;color:#1e293b}
 table.rpt td.grp{text-align:center;background:#eef2f8;font-weight:700;vertical-align:middle;color:#334155}
@@ -62,13 +62,13 @@ table.rpt tr.sum:hover td{background:#dfeafb}
 /* 미반영 입력 */
 .region-box{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:16px}
 .region-box.dom .rb-head{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
-.region-box.intl .rb-head{background:linear-gradient(135deg,#0f766e,#14b8a6)}
+.region-box.intl .rb-head{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
 .rb-head{color:#fff;padding:11px 16px;display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}
 .rb-head .sub{margin-left:auto;font-size:12px;font-weight:600;opacity:.95}
 .rb-body{padding:12px 14px}
 .rb-tools{display:flex;gap:8px;margin-bottom:8px}
 .rb-tools button{background:#eef2f7;color:#1d4ed8;border:1px solid #dbeafe;padding:6px 12px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer}
-.region-box.intl .rb-tools button{color:#0f766e;border-color:#ccfbf1}
+.region-box.intl .rb-tools button{color:#1d4ed8;border-color:#ccfbf1}
 table.ptable{width:100%;border-collapse:collapse;table-layout:fixed}
 .ptable th,.ptable td{border-bottom:1px solid #f1f5f9;padding:5px 3px;font-size:12.5px;text-align:left}
 .ptable input,.ptable select{width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:5px 4px;font-size:11.5px;min-width:0;box-sizing:border-box}
@@ -562,7 +562,7 @@ function openMatch(pid){
   var hits=MATCHES[pid]||[];
   var h='<div style="font-size:12px;color:#64748b;margin-bottom:5px">미반영 입력 건</div>'+
     '<div class="mm-card">'+(p.country?(esc(p.country)+' · '):'')+'<b>'+esc(p.customer||'')+'</b> · '+esc(p.product||'')+' · <b>'+won(p.amount)+'원</b>'+(Number(p.qty)?(' · '+p.qty+'개'):'')+' · 예정 '+esc(p.expectedDate||'-')+'</div>'+
-    '<div style="font-size:12.5px;color:#0f766e;font-weight:700;margin:14px 0 6px">↓ 회계자료('+((ACC&&ACC.reportDate)||'')+')에 아래와 같이 잡힌 것으로 추정</div>'+
+    '<div style="font-size:12.5px;color:#1d4ed8;font-weight:700;margin:14px 0 6px">↓ 회계자료('+((ACC&&ACC.reportDate)||'')+')에 아래와 같이 잡힌 것으로 추정</div>'+
     '<table class="mm-tbl"><tr><th>거래처</th><th>제품</th><th style="text-align:right">금액</th></tr>'+
     hits.map(function(l){ return '<tr><td>'+esc(l.customer||'')+'</td><td>'+esc(l.product||'')+'</td><td style="text-align:right">'+won(l.amount)+'원</td></tr>'; }).join('')+'</table>'+
     '<div class="mm-note">⚠️ 회계 데이터가 완벽하지 않을 수 있으니, 위 내역이 실제 이 건인지 확인 후 제외하세요. 제외하면 미반영 목록에서 삭제됩니다.</div>';
@@ -592,7 +592,7 @@ function openReflectedDetail(pid){
   document.getElementById('mm-confirm').style.display='none';
   var h='<div style="font-size:12px;color:#64748b;margin-bottom:5px">미반영 입력 건</div>'+
     '<div class="mm-card">'+(p.country?(esc(p.country)+' · '):'')+'<b>'+esc(p.customer||'')+'</b> · '+esc(p.product||'')+' · <b>'+won(p.amount)+'원</b>'+(Number(p.qty)?(' · '+p.qty+'개'):'')+'</div>'+
-    '<div style="font-size:12.5px;color:#0f766e;font-weight:700;margin:14px 0 6px">↓ 회계 매출자료('+(p.reflectedDate||(ACC&&ACC.reportDate)||'')+') 반영 내역'+(p.matchAuto?' <span style="color:#94a3b8;font-weight:400">· 자동매칭</span>':'')+'</div>'+
+    '<div style="font-size:12.5px;color:#1d4ed8;font-weight:700;margin:14px 0 6px">↓ 회계 매출자료('+(p.reflectedDate||(ACC&&ACC.reportDate)||'')+') 반영 내역'+(p.matchAuto?' <span style="color:#94a3b8;font-weight:400">· 자동매칭</span>':'')+'</div>'+
     '<table class="mm-tbl"><tr><th>일자</th><th>거래처</th><th>제품</th><th>수량</th><th style="text-align:right">금액</th></tr>'+
     (ls.length?ls.map(function(l){ return '<tr><td>'+(l.d||'')+'</td><td>'+esc(l.c||'')+'</td><td>'+esc(l.p||'')+'</td><td>'+(l.q||'')+'</td><td style="text-align:right">'+won(l.a)+'원</td></tr>'; }).join(''):'<tr><td colspan="5" style="color:#9ca3af;text-align:center;padding:10px">현재 회계자료에서 해당 내역을 찾지 못했습니다 (다른 기간 자료일 수 있음).</td></tr>')+'</table>'+
     '<div class="mm-note">제외가 잘못됐으면 닫고 「↩ 복구」를 누르면 미반영으로 되돌아옵니다.</div>';
