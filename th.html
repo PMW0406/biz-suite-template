@@ -356,15 +356,15 @@ function vDash(){
   // 히어로
   const gcol=achv>=100?'#4ade80':achv>=70?'#60a5fa':'#fbbf24';
   const hero=`<div class="hero">
-    <div><div class="hl">${yr}년 누적 매출 (매출인식 기준)</div><div class="hv">${fm(ySale)}</div>
+    <div style="cursor:pointer" onclick="setView('sales')" title="클릭하면 매출·수금 상세"><div class="hl">${yr}년 누적 매출 (매출인식 기준)</div><div class="hv">${fm(ySale)}</div>
       <div class="hs">${fkrw(ySale)} · 이번달 ${fm(mSale)} · 월평균 ${fm(mo?ySale/mo:0)}</div>
       <div class="hs" style="margin-top:8px">목표 달성률 <b style="color:${gcol}">${yTgt?achv.toFixed(1)+'%':'목표 미설정'}</b>${yTgt?' <span style="color:#64748b">(목표 '+fm(yTgt)+')</span>':''}</div>
       <div class="gauge"><i style="width:${Math.min(100,achv)}%;background:${gcol}"></i></div></div>
-    <div class="divv"><div class="hl">수금 (입금 기준 · 참고)</div><div class="hv" style="font-size:24px">${fm(yPay)}</div>
+    <div class="divv" style="cursor:pointer" onclick="setView('ar')" title="클릭하면 미수금 상세"><div class="hl">수금 (입금 기준 · 참고)</div><div class="hv" style="font-size:24px">${fm(yPay)}</div>
       <div class="hs">수금률 ${ySale?payRate.toFixed(0)+'%':'-'} · ${fkrw(yPay)}</div>
       <div class="hl" style="margin-top:12px">미수채권</div><div style="font-size:20px;font-weight:800;color:${out?'#fca5a5':'#4ade80'}">${fm(out)}</div>
       <div class="hs">${fkrw(out)}</div></div>
-    <div class="divv"><div class="hl">자금 잔액</div><div class="hv" style="font-size:24px;color:${bal<0?'#fca5a5':'#fff'}">${fm(bal)}</div>
+    <div class="divv" style="cursor:pointer" onclick="setView('funds')" title="클릭하면 자금 상세"><div class="hl">자금 잔액</div><div class="hv" style="font-size:24px;color:${bal<0?'#fca5a5':'#fff'}">${fm(bal)}</div>
       <div class="hs">${fkrw(bal)}</div>
       <div class="hl" style="margin-top:12px">수주 잔고</div><div style="font-size:20px;font-weight:800">${fm(backAmt)}</div>
       <div class="hs">${backlog.length}건 진행${lateOrd.length?' · <span style="color:#fca5a5">납기지연 '+lateOrd.length+'건</span>':''}</div></div>

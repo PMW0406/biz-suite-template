@@ -465,7 +465,7 @@ function viewHome(){
   // 추이 + 연도별 (2컬럼)
   h+='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">';
   h+='<div class="card"><div class="sec">주간 미수잔액 추이 <span class="hint">억원 · 클릭 → 주간 추이</span></div><canvas id="ch-trend" class="chart" onclick="setView(\'trend\')"></canvas></div>';
-  h+='<div class="card"><div class="sec">매출연도별 미수율 <span class="hint">미수채권 ÷ 원화금액</span></div><canvas id="ch-year" class="chart"></canvas></div>';
+  h+='<div class="card"><div class="sec">매출연도별 미수율 <span class="hint">미수채권 ÷ 원화금액 · 막대 클릭 시 해당 연도</span></div><canvas id="ch-year" class="chart"></canvas></div>';
   h+='</div>';
   // 담당자별 + 연령(aging) 2컬럼
   const ma=mgrAgg(),ab=agingBuckets();
@@ -499,7 +499,7 @@ function drawHomeCharts(){
   if(el1&&w.length){_charts.push(new Chart(el1,{type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'미수잔액 '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false},ticks:{maxTicksLimit:10}}},maintainAspectRatio:false}}));}
   const ya=yearAgg(E);const ys=Object.keys(ya).sort();
   const el2=document.getElementById('ch-year');
-  if(el2){_charts.push(new Chart(el2,{type:'bar',data:{labels:ys,datasets:[{data:ys.map(y=>+(100*ya[y].ar/(ya[y].amt||1)).toFixed(1)),backgroundColor:'#2563eb',borderRadius:4,maxBarThickness:44}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const y=ys[c.dataIndex],a=ya[y];return['미수율 '+c.parsed.y+'%','매출 '+eok(a.amt)+' · 미수 '+eok(a.ar)+' · '+a.cnt+'건'];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},maintainAspectRatio:false}}));}
+  if(el2){_charts.push(new Chart(el2,{type:'bar',data:{labels:ys,datasets:[{data:ys.map(y=>+(100*ya[y].ar/(ya[y].amt||1)).toFixed(1)),backgroundColor:'#2563eb',borderRadius:4,maxBarThickness:44}]},options:{onClick:function(e,els){if(els&&els.length){goListYear(ys[els[0].index]);}},onHover:function(e,els){if(e&&e.native&&e.native.target)e.native.target.style.cursor=(els&&els.length)?'pointer':'default';},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const y=ys[c.dataIndex],a=ya[y];return['미수율 '+c.parsed.y+'%','매출 '+eok(a.amt)+' · 미수 '+eok(a.ar)+' · '+a.cnt+'건'];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},maintainAspectRatio:false}}));}
 }
 
 // ═══ 채권 목록 ═══

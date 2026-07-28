@@ -440,7 +440,7 @@ function render(){
     var ycum=s2Cum(n,1,12)+yes+no;
     if(cum===0&&tgt===0&&acc===0&&exp===0) return;
     T.cum+=cum;T.tgt+=tgt;T.acc+=acc;T.yes+=yes;T.no+=no;T.exp+=exp;T.ycum+=ycum;
-    d2+='<tr><td class="lbl">'+n+'</td><td>'+won(cum)+'</td><td>'+won(tgt)+'</td><td class="hi">'+won(acc)+'</td><td>'+(yes?won(yes):'-')+'</td><td>'+(no?won(no):'-')+'</td><td class="hi">'+won(exp)+'</td><td>'+pctTxt(exp,tgt)+'</td><td>'+won(ycum)+'</td></tr>';
+    d2+='<tr onclick="openDivDetail(\''+n+'\')" style="cursor:pointer" title="클릭하면 사업부 상세"><td class="lbl">'+n+' <i class="bi bi-search" style="font-size:8px;color:#cbd5e1"></i></td><td>'+won(cum)+'</td><td>'+won(tgt)+'</td><td class="hi">'+won(acc)+'</td><td>'+(yes?won(yes):'-')+'</td><td>'+(no?won(no):'-')+'</td><td class="hi">'+won(exp)+'</td><td>'+pctTxt(exp,tgt)+'</td><td>'+won(ycum)+'</td></tr>';
   });
   // 기타/결산조정 회계가 있으면 합계에 포함
   var etc=dAcc('기타',cur); if(etc){ T.acc+=etc; T.exp+=etc; T.cum+=cumAcc('기타',1,cur-1); T.ycum+=cumAcc('기타',1,12); }
@@ -596,6 +596,29 @@ function openReflectedDetail(pid){
     '<table class="mm-tbl"><tr><th>일자</th><th>거래처</th><th>제품</th><th>수량</th><th style="text-align:right">금액</th></tr>'+
     (ls.length?ls.map(function(l){ return '<tr><td>'+(l.d||'')+'</td><td>'+esc(l.c||'')+'</td><td>'+esc(l.p||'')+'</td><td>'+(l.q||'')+'</td><td style="text-align:right">'+won(l.a)+'원</td></tr>'; }).join(''):'<tr><td colspan="5" style="color:#9ca3af;text-align:center;padding:10px">현재 회계자료에서 해당 내역을 찾지 못했습니다 (다른 기간 자료일 수 있음).</td></tr>')+'</table>'+
     '<div class="mm-note">제외가 잘못됐으면 닫고 「↩ 복구」를 누르면 미반영으로 되돌아옵니다.</div>';
+  document.getElementById('mm-body').innerHTML=h;
+  document.getElementById('match-modal').style.display='flex';
+}
+function openDivDetail(n){
+  var divs=(n==='국내영업')?['국내제품','국내소모품']:[n];
+  var lines=((ACC&&ACC.lines)||[]).filter(function(l){return divs.indexOf(l.div)>=0;});
+  var byCust={},byProd={},tot=0;
+  lines.forEach(function(l){var a=Math.round(Number(l.amount)||0);tot+=a;byCust[l.customer]=(byCust[l.customer]||0)+a;byProd[l.product]=(byProd[l.product]||0)+a;});
+  var cust=Object.keys(byCust).map(function(k){return [k,byCust[k]];}).sort(function(a,b){return b[1]-a[1];});
+  var prod=Object.keys(byProd).map(function(k){return [k,byProd[k]];}).sort(function(a,b){return b[1]-a[1];});
+  var mt=[];for(var m=1;m<=12;m++)mt.push(s2Acc(n,m));
+  var mx=Math.max.apply(null,mt.concat([1]));
+  var cur=(ACC&&ACC.reportDate)?(+String(ACC.reportDate).slice(5,7)):(new Date().getMonth()+1);
+  var bars=mt.map(function(v,i){var hh=Math.round(v/mx*46);return '<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px"><div title="'+(i+1)+'월 '+won(v)+'원" style="width:66%;height:'+hh+'px;background:'+((i+1)===cur?'#2563eb':'#c7d2fe')+';border-radius:3px 3px 0 0"></div><span style="font-size:9px;color:#94a3b8">'+(i+1)+'</span></div>';}).join('');
+  var tbl=function(rows,lbl){return '<table class="mm-tbl"><tr><th>'+lbl+'</th><th style="text-align:right">당월 매출</th><th style="text-align:right">비중</th></tr>'+(rows.length?rows.slice(0,15).map(function(r){return '<tr><td>'+esc(r[0]||'-')+'</td><td style="text-align:right">'+won(r[1])+'원</td><td style="text-align:right;color:#64748b">'+(tot>0?Math.round(r[1]/tot*100):0)+'%</td></tr>';}).join(''):'<tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:10px">당월 라인 데이터 없음</td></tr>')+'</table>';};
+  document.getElementById('mm-title').innerHTML='\U0001F4CA '+esc(n)+' \uC0C1\uC138';
+  document.getElementById('mm-sub').textContent='\uB2F9\uC6D4 \uD68C\uACC4 \uB9E4\uCD9C \uAD6C\uC131 \xB7 \uAC70\uB798\uCC98/\uD488\uBAA9/\uC6D4\uBCC4 \uCD94\uC774';
+  document.getElementById('mm-confirm').style.display='none';
+  var h='<div class="mm-card"><b>'+esc(n)+'</b> \xB7 \uB2F9\uC6D4 \uD68C\uACC4\uB9E4\uCD9C <b>'+won(tot)+'\uC6D0</b> \xB7 \uAC70\uB798\uCC98 '+cust.length+' \xB7 \uD488\uBAA9 '+prod.length+'</div>'+
+    '<div style="font-size:12.5px;color:#1d4ed8;font-weight:700;margin:14px 0 6px">\uC6D4\uBCC4 \uD68C\uACC4\uB9E4\uCD9C \uCD94\uC774</div>'+
+    '<div style="display:flex;align-items:flex-end;gap:3px;height:62px;padding:0 2px">'+bars+'</div>'+
+    '<div style="font-size:12.5px;color:#1d4ed8;font-weight:700;margin:16px 0 6px">\uAC70\uB798\uCC98\uBCC4 (\uB2F9\uC6D4 Top)</div>'+tbl(cust,'\uAC70\uB798\uCC98')+
+    '<div style="font-size:12.5px;color:#1d4ed8;font-weight:700;margin:16px 0 6px">\uD488\uBAA9\uBCC4 (\uB2F9\uC6D4 Top)</div>'+tbl(prod,'\uD488\uBAA9');
   document.getElementById('mm-body').innerHTML=h;
   document.getElementById('match-modal').style.display='flex';
 }
