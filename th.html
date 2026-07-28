@@ -878,7 +878,7 @@ function vExp(){
   const cy=curYm();
   const byCat={};L.filter(e=>e.ym===cy).forEach(e=>{byCat[e.category]=(byCat[e.category]||0)+(+e.amt||0);});
   const mTot=Object.values(byCat).reduce((a,b)=>a+b,0);const mx=Math.max(1,...Object.values(byCat),1);
-  const catBars=EXP_CATS.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:5px 0"><div style="width:64px;font-size:12.5px;font-weight:600">${c}</div><div class="bar" style="flex:1"><i style="width:${(byCat[c]||0)/mx*100}%"></i></div><div style="width:100px;text-align:right;font-size:12px"><b>${fm(byCat[c]||0)}</b></div></div>`).join('');
+  const catBars=EXP_CATS.map(c=>`<div onclick="expCatDw('${c}')" title="클릭하면 분류별 상세" style="display:flex;align-items:center;gap:10px;padding:5px 6px;margin:0 -6px;cursor:pointer;border-radius:7px" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><div style="width:64px;font-size:12.5px;font-weight:600">${c}</div><div class="bar" style="flex:1"><i style="width:${(byCat[c]||0)/mx*100}%"></i></div><div style="width:100px;text-align:right;font-size:12px"><b>${fm(byCat[c]||0)}</b></div></div>`).join('');
   const rows=L.length?L.map(e=>`<tr onclick="mExp('${e.id}')"><td class="l">${e.ym}</td><td class="l"><span class="chip c-gray">${esc(e.category)}</span></td><td><b>${fm(e.amt)}</b></td><td class="muted" style="font-size:11.5px">${fkrw(e.amt)}</td><td class="l muted">${esc(e.memo||'')}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">비용 기록 없음</td></tr>';
   return head('🧾 비용 · 인건비','월별 고정비·급여',`<button class="btn btn-primary" onclick="mExp()">+ 비용 등록</button>`)
     +`<div class="card" style="margin-bottom:14px"><div class="sect"><span>${cy} 비용 구성</span><b>${fm(mTot)} <span class="muted" style="font-size:11.5px;font-weight:500">${fkrw(mTot)}</span></b></div>${catBars}</div>
@@ -905,6 +905,14 @@ function closeM(){document.getElementById('mbg').style.display='none';}
 async function saveM(){if(_onSave&&await _onSave()===false)return;closeM();}
 async function delM(){if(!confirm('삭제할까요?'))return;if(_onDel)await _onDel();closeM();}
 document.getElementById('mbg').addEventListener('click',e=>{if(e.target.id==='mbg')closeM();});
+function expCatDw(c){
+  var rows=(D.expenses||[]).filter(function(e){return e.category===c;}).sort(function(a,b){return (b.ym||'').localeCompare(a.ym||'');});
+  var tot=rows.reduce(function(s,e){return s+(+e.amt||0);},0);
+  var body='<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:11px 13px;margin-bottom:12px"><b>'+esc(c)+'</b> \u00b7 \ub204\uc801 <b>'+fm(tot)+'</b> <span style="color:#94a3b8;font-size:12px">'+fkrw(tot)+'</span> \u00b7 '+rows.length+'\uac74</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12.5px"><tr style="color:#94a3b8;text-align:left"><th style="padding:6px 4px">\uc6d4</th><th style="padding:6px 4px;text-align:right">\uae08\uc561</th><th style="padding:6px 4px">\uba54\ubaa8</th></tr>'+
+    (rows.length?rows.map(function(e){return '<tr style="border-top:1px solid #f1f5f9"><td style="padding:7px 4px">'+esc(e.ym||'')+'</td><td style="padding:7px 4px;text-align:right;font-weight:700">'+fm(e.amt)+'</td><td style="padding:7px 4px;color:#64748b">'+esc(e.memo||'')+'</td></tr>';}).join(''):'<tr><td colspan="3" style="padding:10px;text-align:center;color:#9ca3af">\ub0b4\uc5ed \uc5c6\uc74c</td></tr>')+'</table>';
+  openDw('\ube44\uc6a9 \u00b7 '+esc(c), c+' \uc0c1\uc138 \ub0b4\uc5ed', body);
+}
 function openDw(kicker,title,body){
   document.getElementById('dw').innerHTML=`<div class="dwh"><button class="x" onclick="closeDw()">×</button><div class="k">${kicker}</div><h3>${title}</h3></div><div class="dwb">${body}</div>`;
   document.getElementById('dwbg').style.display='block';document.getElementById('dw').classList.add('open');}
