@@ -598,6 +598,7 @@ function vDash(){
   const PP=pqPrev();
   const ppSale=(D.sales||[]).filter(s=>_inR(s.date,PP.from,PP.to)).reduce((a,s)=>a+(+s.amt||0),0);
   const momG=ppSale?((ySale/ppSale-1)*100):null;
+  const momMoM=(sm[mo-1]>0)?(((sm[mo]||0)/sm[mo-1]-1)*100):null;
   // 시점값 (기간 무관)
   const out=totalOut(), bal=fundsBal();
   const backlog=(D.orders||[]).filter(o=>o.status!=='납품완료'&&o.status!=='취소');
@@ -662,7 +663,7 @@ function vDash(){
       <div class="mcard" onclick="setView('sales')">
         <div class="mtop"><span class="mico" style="background:#e0e7ff;color:#4338ca">💵</span><span class="mlbl">${jt('이번달 매출','Revenue (MTD)')}</span></div>
         <div class="mval">${fm(sm[mo]||0)}</div>
-        <div class="msub">${momG!=null?`<span class="mtag" style="background:${momG>=0?'#dcfce7':'#fee2e2'};color:${momG>=0?'#15803d':'#b91c1c'}">${momG>=0?'▲':'▼'} ${Math.abs(momG).toFixed(0)}%</span> ${jt('전월비','vs last mo.')}`:jt('전월 데이터 없음','no prior month')}</div></div>
+        <div class="msub">${momMoM!=null?`<span class="mtag" style="background:${momMoM>=0?'#dcfce7':'#fee2e2'};color:${momMoM>=0?'#15803d':'#b91c1c'}">${momMoM>=0?'▲':'▼'} ${Math.abs(momMoM).toFixed(0)}%</span> ${jt('전월비','vs last mo.')}`:jt('전월 데이터 없음','no prior month')}</div></div>
       <div class="mcard" onclick="setView('sales')">
         <div class="mtop"><span class="mico" style="background:#dcfce7;color:#15803d">💰</span><span class="mlbl">${jt('수금률 (누적)','Collection Rate')}</span></div>
         <div class="mval">${ySale?payRate.toFixed(0)+'%':'-'}</div>

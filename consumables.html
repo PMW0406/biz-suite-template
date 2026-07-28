@@ -803,8 +803,8 @@ function enterApp(user){
 function showLogin(){ _goCentralWithRet(); }
 
 // ── 부팅 ──────────────────────────────────────────────
-// WT_NAV: SSO 토큰해시 등 미지원 해시는 부팅 즉시 제거(딥링크 #report/#womall만 보존)
-(function(){ var h=location.hash||''; if(h && h!=='#report' && h!=='#womall'){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){} } })();
+// WT_NAV: SSO 토큰해시 등 미지원 해시는 부팅 즉시 제거(딥링크 #report/#samplemall만 보존)
+(function(){ var h=location.hash||''; if(h && h!=='#report' && h!=='#samplemall'){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){} } })();
 // WT_NAV: popstate — 피드백 패널 열림 시 닫기만, state 유효 시 해당 뷰(푸시 없이)
 window.addEventListener('popstate',function(e){
   var fb=document.getElementById('wt-fb-panel');
