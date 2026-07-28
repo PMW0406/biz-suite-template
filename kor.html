@@ -2710,7 +2710,7 @@ async function init() {
 }
 
 // 런처 카테고리(키→그룹). 여기 없는 신규 키는 '기타'로 자동 표시(registry 자동반영 유지)
-const _LAUNCH_GRPS=[['매출 현황',['total','korea','consumables']],['해외법인',['us','th']],['영업전략 도구',['daily','ar']]];
+const _LAUNCH_GRPS=[['매출 현황',['total','korea','intl','consumables']],['해외법인',['us','th']],['영업전략 도구',['daily','ar']]];
 function _buildLauncherCardsHTML(access) {
   // site_registry 기반 — 신규 사이트는 DB row 추가만으로 여기 자동 반영됨
   const card = s=>{
