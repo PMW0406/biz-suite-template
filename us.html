@@ -733,7 +733,7 @@ function vSales(){
     +`<select class="sel" onchange="fSalesYm=this.value;render()"><option value="">${jt('전체 기간','All periods')}</option>${yms.map(m=>`<option ${fSalesYm===m?'selected':''}>${m}</option>`).join('')}</select>`
     +`<button class="btn btn-sm" onclick="csvSales()"><i class="bi bi-download"></i> CSV</button><button class="btn btn-primary" onclick="mSale()">+ ${jt('매출','Sale')}</button>`)
     +`<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
-      <div class="statcard${fSalesStatus===''?' on':''}" style="border-top:3px solid #4f46e5" onclick="fSalesStatus='';render()"><div class="sv">${fmS(tot)}</div><div class="sl">${fSalesYm||jt('전체','All')} ${jt('매출','sales')} · ${jt('클릭→전체','click→all')}</div></div>
+      <div class="statcard${fSalesStatus===''?' on':''}" style="border-top:3px solid #2563eb" onclick="fSalesStatus='';render()"><div class="sv">${fmS(tot)}</div><div class="sl">${fSalesYm||jt('전체','All')} ${jt('매출','sales')} · ${jt('클릭→전체','click→all')}</div></div>
       <div class="statcard${fSalesStatus==='paid'?' on':''}" style="border-top:3px solid #16a34a" onclick="fSalesStatus=fSalesStatus==='paid'?'':'paid';render()"><div class="sv" style="color:var(--ok)">${fmS(col)}</div><div class="sl">${jt('수금','Collected')} · ${jt('클릭→완납만','click→paid only')}</div></div>
       <div class="statcard${fSalesStatus==='unpaid'?' on':''}" style="border-top:3px solid #dc2626" onclick="fSalesStatus=fSalesStatus==='unpaid'?'':'unpaid';render()"><div class="sv" style="color:${out?'var(--bad)':'var(--ink)'}">${fmS(out)}</div><div class="sl">${jt('미수','AR')} · ${jt('클릭→미수만','click→AR only')}</div></div>
       <div class="statcard" style="border-top:3px solid #64748b"><div class="sv">${L.length}</div><div class="sl">${jt('건수','Count')}</div></div></div>
@@ -834,7 +834,7 @@ function vOrders(){
   return head('<i class="bi bi-pencil-square"></i> '+jt('수주 관리','Orders'), jt('수주 → 생산 → 선적 → 납품(매출 전환)','Order → Production → Shipping → Delivered'),
     `<button class="btn btn-sm" onclick="csvOrders()"><i class="bi bi-download"></i> CSV</button><button class="btn btn-primary" onclick="mOrder()">+ ${jt('수주','Order')}</button>`)
     +`<div class="grid actkpi" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
-      <div class="statcard${fOrdFilter==='backlog'?' on':''}" style="border-top:3px solid #4f46e5" onclick="fOrdFilter=fOrdFilter==='backlog'?'':'backlog';render()"><div class="sv">${fmS(backAmt)}</div><div class="sl">${jt('진행 수주 잔고','Open backlog')} · ${back.length}${jt('건','')}</div></div>
+      <div class="statcard${fOrdFilter==='backlog'?' on':''}" style="border-top:3px solid #2563eb" onclick="fOrdFilter=fOrdFilter==='backlog'?'':'backlog';render()"><div class="sv">${fmS(backAmt)}</div><div class="sl">${jt('진행 수주 잔고','Open backlog')} · ${back.length}${jt('건','')}</div></div>
       <div class="statcard${fOrdFilter==='due'?' on':''}" style="border-top:3px solid #f59e0b" onclick="fOrdFilter=fOrdFilter==='due'?'':'due';render()"><div class="sv" style="color:${dueThis.length?'var(--warn)':'var(--ink)'}">${dueThis.length}</div><div class="sl">${jt('이달 납품 예정','Due this month')} · ${fmS(dueThis.reduce((a,o)=>a+(+o.amt||0),0))}</div></div>
       <div class="statcard${fOrdFilter==='late'?' on':''}" style="border-top:3px solid #dc2626" onclick="fOrdFilter=fOrdFilter==='late'?'':'late';render()"><div class="sv" style="color:${lateN?'var(--bad)':'var(--ink)'}">${lateN}</div><div class="sl">${jt('납기 지연','Overdue')}</div></div></div>
     <div class="card" style="margin-bottom:14px"><div class="sect"><span><i class="bi bi-truck"></i> ${jt('진행 단계','Pipeline')}</span></div><div style="display:flex;gap:8px;flex-wrap:wrap">${pipe}</div></div>
@@ -893,7 +893,7 @@ function vClients(){
     +'<select class="sel" onchange="fCliSort=this.value;render()"><option value="sale"'+(fCliSort==='sale'?' selected':'')+'>'+jt('매출순','By sales')+'</option><option value="out"'+(fCliSort==='out'?' selected':'')+'>'+jt('미수순','By AR')+'</option></select>'
     +'<button class="btn btn-primary" onclick="mClient()">+ '+jt('고객사','Account')+'</button>')
     +'<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">'
-    +'<div class="statcard'+(!fCliArOnly&&fCliSort==='sale'?' on':'')+'" style="border-top:3px solid #4f46e5" onclick="fCliArOnly=false;fCliSort=\'sale\';render()"><div class="sv">'+total+'</div><div class="sl">'+jt('거래처','Clients')+'</div></div>'
+    +'<div class="statcard'+(!fCliArOnly&&fCliSort==='sale'?' on':'')+'" style="border-top:3px solid #2563eb" onclick="fCliArOnly=false;fCliSort=\'sale\';render()"><div class="sv">'+total+'</div><div class="sl">'+jt('거래처','Clients')+'</div></div>'
     +'<div class="statcard'+(!fCliArOnly&&fCliSort==='sale'?' on':'')+'" style="border-top:3px solid #16a34a" onclick="fCliArOnly=false;fCliSort=\'sale\';render()"><div class="sv">'+fmS(totSale)+'</div><div class="sl">'+jt('누적 매출','Total sales')+'</div></div>'
     +'<div class="statcard'+(fCliArOnly?' on':'')+'" style="border-top:3px solid #dc2626" onclick="fCliArOnly=!fCliArOnly;if(fCliArOnly)fCliSort=\'out\';render()"><div class="sv" style="color:'+(withOut?'var(--bad)':'var(--ink)')+'">'+withOut+'</div><div class="sl">'+jt('미수 거래처','With AR')+'</div></div>'
     +'<div class="statcard'+(!fCliArOnly&&fCliSort==='out'?' on':'')+'" style="border-top:3px solid #f59e0b" onclick="fCliArOnly=false;fCliSort=\'out\';render()"><div class="sv">'+fmS(totOut)+'</div><div class="sl">'+jt('총 미수','Total AR')+'</div></div></div>'
@@ -1006,7 +1006,7 @@ function vInv(){
     (_needsBoncheCleanup()?`<button class="btn" style="color:var(--warn)" onclick="cleanupBoncheNames()"><i class="bi bi-eraser"></i> ${jt('이름에서 "본체" 제거','Strip "본체" from names')}</button>`:'')
     +`<button class="btn" onclick="setView('psi')"><i class="bi bi-bar-chart-line"></i> ${jt('PSI 보기','View PSI')}</button><button class="btn" onclick="mItem()">+ ${jt('품목','Item')}</button><button class="btn" style="color:#15803d;font-weight:700" onclick="mMove(null,{type:'입고'})"><i class="bi bi-box-arrow-in-down"></i> ${jt('입고','Receive')}</button><button class="btn btn-primary" onclick="mMove(null,{type:'출고'})"><i class="bi bi-box-arrow-up"></i> ${jt('출고','Ship')}</button>`)
     +`<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
-      <div class="statcard${fInvFilter===''?' on':''}" style="border-top:3px solid #4f46e5" onclick="fInvFilter='';render()"><div class="sv">${items.length}</div><div class="sl">${jt('등록 품목','Items')}</div></div>
+      <div class="statcard${fInvFilter===''?' on':''}" style="border-top:3px solid #2563eb" onclick="fInvFilter='';render()"><div class="sv">${items.length}</div><div class="sl">${jt('등록 품목','Items')}</div></div>
       <div class="statcard${fInvFilter==='low'?' on':''}" style="border-top:3px solid #dc2626" onclick="fInvFilter=fInvFilter==='low'?'':'low';render()"><div class="sv" style="color:${low.length?'var(--bad)':'var(--ink)'}">${low.length}</div><div class="sl">${jt('안전재고 미달','Low stock')}</div></div>
       <div class="statcard${fInvFilter==='in'?' on':''}" style="border-top:3px solid #16a34a" onclick="fInvFilter=fInvFilter==='in'?'':'in';render()"><div class="sv" style="color:var(--ok)">+${inM.toLocaleString()}</div><div class="sl">${jt('이번달 입고','IN this mo.')}</div></div>
       <div class="statcard${fInvFilter==='out'?' on':''}" style="border-top:3px solid #f59e0b" onclick="fInvFilter=fInvFilter==='out'?'':'out';render()"><div class="sv" style="color:var(--warn)">-${outM.toLocaleString()}</div><div class="sl">${jt('이번달 출고','OUT this mo.')}</div></div></div>
@@ -1138,7 +1138,7 @@ function _shipSection(){
   var recent=done.slice(0,4).map(function(s){var d=s.recvQty!=null&&(+s.recvQty)!==(+s.qty);return '<div onclick="mShip(\''+s.id+'\')" style="display:flex;gap:9px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12px;cursor:pointer"><span class="chip c-green" style="font-size:10px">'+jt('입고완료','DONE')+'</span><b style="color:var(--ink)">'+esc(s.shipRef||'-')+'</b><span style="flex:1;color:var(--body)">'+trUser(s.item)+' ×'+(+s.qty||0)+'</span>'+(d?'<span class="chip c-red" style="font-size:10px">'+jt('차이','DIFF')+' '+((+s.recvQty)-(+s.qty)>0?'+':'')+((+s.recvQty)-(+s.qty))+'</span>':'')+'<span class="muted" style="font-size:11px">'+(s.receivedDate||'')+'</span></div>';}).join('');
   return '<div class="sect" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span><i class="bi bi-truck"></i> '+jt('본사 선적 · 입고 대사','HQ Shipments · Receiving')+' <span class="muted" style="font-weight:500;font-size:11px">'+jt('본사 발송 → 법인 입고 매칭','HQ sent → local received')+'</span></span><button class="btn btn-sm" onclick="mShip()">+ '+jt('선적 등록','New shipment')+'</button></div>'
     +'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">'
-      +'<div class="statcard" style="border-top:3px solid #6366f1"><div class="sv">'+qShip.toLocaleString()+'</div><div class="sl">'+jt('본사 발송 (누계)','HQ sent total')+'</div></div>'
+      +'<div class="statcard" style="border-top:3px solid #3b82f6"><div class="sv">'+qShip.toLocaleString()+'</div><div class="sl">'+jt('본사 발송 (누계)','HQ sent total')+'</div></div>'
       +'<div class="statcard" style="border-top:3px solid #16a34a;cursor:pointer" onclick="openShipList(\'done\')"><div class="sv" style="color:var(--ok)">'+qRecv.toLocaleString()+'</div><div class="sl">'+jt('법인 입고완료','Received')+'</div></div>'
       +'<div class="statcard" style="border-top:3px solid #f59e0b"><div class="sv" style="color:'+(qTransit?'var(--warn)':'var(--ink)')+'">'+qTransit.toLocaleString()+'</div><div class="sl">'+jt('운송중 (미착)','In transit')+(late?' · <span style="color:var(--bad)">'+jt('지연','late')+' '+late+'</span>':'')+'</div></div>'
       +'<div class="statcard" style="border-top:3px solid '+(disc?'#dc2626':'#94a3b8')+';cursor:pointer" onclick="openShipList(\'mismatch\')"><div class="sv" style="color:'+(disc?'var(--bad)':'var(--ink)')+'">'+disc+'</div><div class="sl">'+jt('수량 불일치','Qty mismatch')+'</div></div></div>'
@@ -1214,12 +1214,12 @@ function vAsset(){
   var rows=L.length?L.map(function(e){var col=ASSET_ST[e.status]||'#64748b';var loc=e.status==='재고'?jt('<i class="bi bi-building"></i> 창고','<i class="bi bi-building"></i> Warehouse'):(e.client?('<i class="bi bi-hospital"></i> '+trUser(e.client)):jt('출고됨','shipped'));
     return '<tr onclick="openAsset(\''+e.id+'\')" style="cursor:pointer"><td class="l"><b style="color:var(--ink)"><i class="bi bi-bookmark"></i> '+esc(e.serial)+'</b></td><td class="l">'+trUser(e.item)+'</td><td class="l"><span class="chip" style="background:'+col+'1a;color:'+col+';font-weight:700">'+jt(e.status,ASSET_ST_EN[e.status]||e.status)+'</span></td><td class="l">'+loc+'</td><td class="l muted">'+(e.inDate||'-')+'</td><td class="l muted">'+(e.outDate||'-')+'</td></tr>';
   }).join(''):'<tr><td colspan="6" class="empty">'+jt('장비가 없습니다 — 입고 시 시리얼을 입력하면 자동 등록됩니다','No equipment — enter serials on receipt to auto-register')+'</td></tr>';
-  var stChips=['','재고','출고','설치','AS','반품'].map(function(s){var on=fAssetSt===s;var c=s?ASSET_ST[s]:'#4f46e5';return '<button onclick="setAssetF(\'st\',\''+s+'\')" style="padding:5px 12px;border-radius:999px;border:1px solid '+(on?c:'var(--line)')+';background:'+(on?c:'#fff')+';color:'+(on?'#fff':'var(--body)')+';font-size:12px;font-weight:'+(on?'700':'500')+';cursor:pointer">'+(s===''?jt('전체','All'):jt(s,ASSET_ST_EN[s]))+'</button>';}).join('');
+  var stChips=['','재고','출고','설치','AS','반품'].map(function(s){var on=fAssetSt===s;var c=s?ASSET_ST[s]:'#2563eb';return '<button onclick="setAssetF(\'st\',\''+s+'\')" style="padding:5px 12px;border-radius:999px;border:1px solid '+(on?c:'var(--line)')+';background:'+(on?c:'#fff')+';color:'+(on?'#fff':'var(--body)')+';font-size:12px;font-weight:'+(on?'700':'500')+';cursor:pointer">'+(s===''?jt('전체','All'):jt(s,ASSET_ST_EN[s]))+'</button>';}).join('');
   var itemOpts='<option value="">'+jt('전체 품목','All items')+'</option>'+itemsU.map(function(i){return '<option '+(fAssetItem===i?'selected':'')+'>'+esc(i)+'</option>';}).join('');
   return head('<i class="bi bi-tools"></i> '+jt('장비 이력','Equipment Registry'), jt('시리얼 단위 장비 추적 · 입고 → 출고 → 고객사 · 행 클릭 → 전체 이력','Serial-level asset tracking · receipt → shipment → client · click a row for full lifecycle'),
     '<button class="btn btn-sm" onclick="setView(\'psi\')"><i class="bi bi-bar-chart-line"></i> '+jt('PSI 보기','View PSI')+'</button><button class="btn btn-sm" onclick="mAsset()">+ '+jt('장비','Unit')+'</button>')
     +'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">'
-      +'<div class="statcard'+(fAssetSt===''?' on':'')+'" style="border-top:3px solid #4f46e5" onclick="assetCardF(\'\')"><div class="sv">'+all.length+'</div><div class="sl">'+jt('총 장비','Total units')+'</div></div>'
+      +'<div class="statcard'+(fAssetSt===''?' on':'')+'" style="border-top:3px solid #2563eb" onclick="assetCardF(\'\')"><div class="sv">'+all.length+'</div><div class="sl">'+jt('총 장비','Total units')+'</div></div>'
       +'<div class="statcard'+(fAssetSt==='재고'?' on':'')+'" style="border-top:3px solid #64748b" onclick="assetCardF(\'재고\')"><div class="sv">'+inStock+'</div><div class="sl">'+jt('창고 재고','In stock')+'</div></div>'
       +'<div class="statcard'+(JSON.stringify(fAssetSt)===JSON.stringify(['출고','설치','AS'])?' on':'')+'" style="border-top:3px solid #16a34a" onclick=\'assetCardF(["출고","설치","AS"])\'><div class="sv" style="color:var(--ok)">'+atClient+'</div><div class="sl">'+jt('고객사 보유','At clients')+'</div></div>'
       +'<div class="statcard'+(JSON.stringify(fAssetSt)===JSON.stringify(['AS','반품'])?' on':'')+'" style="border-top:3px solid #f59e0b" onclick=\'assetCardF(["AS","반품"])\'><div class="sv" style="color:'+(svc?'var(--warn)':'var(--ink)')+'">'+svc+'</div><div class="sl">'+jt('AS · 반품','Service/return')+'</div></div></div>'
@@ -1283,7 +1283,7 @@ function vFunds(){
   const inn=L.filter(f=>f.kind==='입금').reduce((a,f)=>a+(+f.amt||0),0);
   const out=L.filter(f=>f.kind==='출금').reduce((a,f)=>a+(+f.amt||0),0);
   const accCards=(D.accounts||[]).map(a=>{const b=fundsBalAcc(a.name);
-    return `<div class="statcard${fFundAcc===a.name?' on':''}" style="border-top:3px solid #4f46e5" onclick="fFundAcc=fFundAcc==='${esc(a.name).replace(/'/g,"&#39;")}'?'':'${esc(a.name).replace(/'/g,"&#39;")}';render()">
+    return `<div class="statcard${fFundAcc===a.name?' on':''}" style="border-top:3px solid #2563eb" onclick="fFundAcc=fFundAcc==='${esc(a.name).replace(/'/g,"&#39;")}'?'':'${esc(a.name).replace(/'/g,"&#39;")}';render()">
       <div class="sv" style="color:${b<0?'var(--bad)':'var(--ink)'}">${fm(b)}</div><div class="sl">${esc(a.name)}</div><div class="s" style="font-size:11px;color:var(--muted);margin-top:4px">기초 ${fm(a.opening)} · ${fkrw(b)}</div></div>`;}).join('');
   const rows=L.length?L.map(f=>`<tr onclick="mFund('${f.id}')"><td class="l">${f.date}</td><td class="l">${f.kind==='입금'?'<span class="chip c-green">입금</span>':'<span class="chip c-red">출금</span>'}</td><td class="l">${esc(f.account||'주거래계좌')}</td><td class="l">${esc(f.category||'-')}</td><td><b style="color:${f.kind==='입금'?'var(--ok)':'var(--bad)'}">${f.kind==='입금'?'+':'-'}${fm(f.amt)}</b></td><td class="l muted">${trUser(f.memo||'')}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">자금 내역 없음</td></tr>';
   return head('<i class="bi bi-bank"></i> 자금 관리','계좌별 잔액 = 기초 + 입금 − 출금 · 계좌 카드 클릭 = 필터',
@@ -1489,7 +1489,7 @@ function vPipe(){
         <div class="prod">${esc(d.product)||''}${d.qty?' ×'+d.qty:''}</div>
         <div class="amt">${fm(d.amt)}</div>
         <div class="ft"><span class="owner">${esc(d.owner)||''}</span><span class="prob" style="background:${probColor(d.prob)}">${d.prob||0}%</span></div>
-        ${(()=>{const tn=(D.tasks||[]).filter(t=>t.dealId===d.id&&!t.done).length;return tn?`<div style="font-size:10px;color:#4f46e5;margin-top:5px;background:#eef2ff;border-radius:5px;padding:3px 6px"><i class="bi bi-check2-square"></i> ${jt('할일','Tasks')} ${tn}</div>`:'';})()}
+        ${(()=>{const tn=(D.tasks||[]).filter(t=>t.dealId===d.id&&!t.done).length;return tn?`<div style="font-size:10px;color:#2563eb;margin-top:5px;background:#eef2ff;border-radius:5px;padding:3px 6px"><i class="bi bi-check2-square"></i> ${jt('할일','Tasks')} ${tn}</div>`:'';})()}
         ${d.next?`<div style="font-size:10px;color:#059669;margin-top:5px;background:#ecfdf5;border-radius:5px;padding:3px 6px"><i class="bi bi-arrow-right-circle-fill"></i> ${trUser(d.next)}${d.nextDate?' · '+d.nextDate:''}${d.nextDate&&d.nextDate<today()?' ⚠':''}</div>`:''}
         ${d.expected?`<div class="due" style="${overdue?'color:#dc2626;font-weight:700':closingThis?'color:#d97706;font-weight:700':''}"><i class="bi bi-calendar3"></i> 예상 ${d.expected}${overdue?' ⚠️ 기한초과':closingThis?' · 이달마감':''}</div>`:''}
         ${(st==='협의중'||st==='견적발송')?`<div style="margin-top:6px"><button class="btn btn-sm" style="color:var(--ok);width:100%" onclick="event.stopPropagation();wonDeal('${d.id}')">✓ 성사 → 수주 생성</button></div>`:''}
@@ -1689,7 +1689,7 @@ function vActs(){
   return head('<i class="bi bi-telephone"></i> '+jt('활동 기록','Activities'), jt('콜·미팅·방문·AS 이력 + 후속조치','Calls, meetings, visits, service + follow-ups')+(fuAll.length?' · <span style="color:var(--bad);font-weight:600">'+jt('후속 지연 ','overdue ')+fuAll.length+'</span>':''),
     seg+filters+nav+'<button class="btn btn-primary" onclick="mAct()">+ '+jt('활동','Activity')+'</button>')
     +`<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
-      <div class="statcard${fActQuick===''?' on':''}" style="border-top:3px solid #4f46e5" onclick="fActQuick='';render()"><div class="sv">${(D.acts||[]).length}</div><div class="sl">${jt('전체 활동','All activities')}</div></div>
+      <div class="statcard${fActQuick===''?' on':''}" style="border-top:3px solid #2563eb" onclick="fActQuick='';render()"><div class="sv">${(D.acts||[]).length}</div><div class="sl">${jt('전체 활동','All activities')}</div></div>
       <div class="statcard${fActQuick==='month'?' on':''}" style="border-top:3px solid #2563eb" onclick="fActQuick=fActQuick==='month'?'':'month';render()"><div class="sv">${mCnt}</div><div class="sl">${jt('이번달','This month')}</div></div>
       <div class="statcard${fActQuick==='fu-week'?' on':''}" style="border-top:3px solid #16a34a" onclick="fActQuick=fActQuick==='fu-week'?'':'fu-week';render()"><div class="sv" style="color:${up.length?'#16a34a':'var(--ink)'}">${up.length}</div><div class="sl">${jt('이번주 예정 후속','Follow-ups this wk')}</div></div>
       <div class="statcard${fActQuick==='fu-late'?' on':''}" style="border-top:3px solid #dc2626" onclick="fActQuick=fActQuick==='fu-late'?'':'fu-late';render()"><div class="sv" style="color:${fuAll.length?'var(--bad)':'var(--ink)'}">${fuAll.length}</div><div class="sl">${jt('지연 후속','Overdue')}</div></div>
@@ -1789,7 +1789,7 @@ function vPerf(){
   const totPipe=stat.reduce((a,s)=>a+s.wPipe,0), totWon=stat.reduce((a,s)=>a+s.wonAmt,0), totOpen=stat.reduce((a,s)=>a+s.open,0);
   return head('<i class="bi bi-trophy"></i> '+jt('영업 성과','Sales Performance'), jt('담당자별 파이프라인·성사·전환율 리더보드 · 카드 클릭 → 해당 담당 딜','Rep leaderboard · click to see their deals'),'')
     +'<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">'
-    +'<div class="statcard" style="border-top:3px solid #4f46e5"><div class="sv">'+owners.length+'</div><div class="sl">'+jt('영업 담당','Reps')+'</div></div>'
+    +'<div class="statcard" style="border-top:3px solid #2563eb"><div class="sv">'+owners.length+'</div><div class="sl">'+jt('영업 담당','Reps')+'</div></div>'
     +'<div class="statcard" style="border-top:3px solid #2563eb"><div class="sv">'+totOpen+'</div><div class="sl">'+jt('진행 딜','Open deals')+'</div></div>'
     +'<div class="statcard" style="border-top:3px solid #7c3aed"><div class="sv" style="color:var(--brand)">'+fmS(totPipe)+'</div><div class="sl">'+jt('가중 파이프라인','Weighted Pipeline')+'</div></div>'
     +'<div class="statcard" style="border-top:3px solid #16a34a"><div class="sv" style="color:var(--ok)">'+fmS(totWon)+'</div><div class="sl">'+jt('누적 성사액','Total Won')+'</div></div></div>'
@@ -1851,7 +1851,7 @@ function vReport(){
 
 // ── 일정 / 할일 (통합 캘린더) ──
 let schMode='today', schRef=new Date();
-const SCH_KIND={'할일':{c:'#4f46e5',i:'✅',en:'Task'},'딜':{c:'#7c3aed',i:'<i class="bi bi-bullseye"></i>',en:'Deal action'},'후속':{c:'#ea580c',i:'<i class="bi bi-telephone"></i>',en:'Follow-up'},'납기':{c:'#0891b2',i:'<i class="bi bi-truck"></i>',en:'Order ETA'}};
+const SCH_KIND={'할일':{c:'#2563eb',i:'✅',en:'Task'},'딜':{c:'#7c3aed',i:'<i class="bi bi-bullseye"></i>',en:'Deal action'},'후속':{c:'#ea580c',i:'<i class="bi bi-telephone"></i>',en:'Follow-up'},'납기':{c:'#0891b2',i:'<i class="bi bi-truck"></i>',en:'Order ETA'}};
 function schWeekDays(ref){const x=new Date(ref);const day=(x.getDay()+6)%7;x.setHours(0,0,0,0);x.setDate(x.getDate()-day);const a=[];for(let i=0;i<7;i++){const d=new Date(x);d.setDate(d.getDate()+i);a.push(d);}return a;}
 function fmtD(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function schItems(){
@@ -2041,14 +2041,14 @@ function vHQ(){
     var grid=[0,25,50,75,100].map(function(g){var y=yScale(g);return '<line x1="0" y1="'+y+'" x2="100" y2="'+y+'" stroke="#eef1f5" stroke-width="0.5" vector-effect="non-scaling-stroke"/>';}).join('');
     var yaxis=[100,50,0].map(function(g){return '<div style="flex:1;font-size:9px;color:#cbd5e1">'+g+'%</div>';}).join('');
     var last=snaps[snaps.length-1];
-    var lastLbl='<div style="position:absolute;top:6px;right:8px;font-size:11px"><span style="color:#4f46e5;font-weight:700">'+jt('목표','Tgt')+' '+(last.achv||0).toFixed(0)+'%</span> &nbsp; <span style="color:#16a34a;font-weight:700">'+jt('수금','Col')+' '+(last.payRate||0).toFixed(0)+'%</span></div>';
+    var lastLbl='<div style="position:absolute;top:6px;right:8px;font-size:11px"><span style="color:#2563eb;font-weight:700">'+jt('목표','Tgt')+' '+(last.achv||0).toFixed(0)+'%</span> &nbsp; <span style="color:#16a34a;font-weight:700">'+jt('수금','Col')+' '+(last.payRate||0).toFixed(0)+'%</span></div>';
     var months='<div style="display:flex;margin-left:26px">'+snaps.map(function(s){return '<span style="flex:1;text-align:center;font-size:10.5px;color:var(--muted)">'+(+s.ym.slice(5))+jt('월','')+'</span>';}).join('')+'</div>';
     // 월별 표
     var rows=snaps.slice().reverse().map(function(s){return `<tr><td class="l">${s.ym}</td><td>${fmS(s.sale)}</td><td>${(s.achv||0).toFixed(0)}%</td><td>${(s.payRate||0).toFixed(0)}%</td><td>${fmS(s.out)}</td><td>${fmS(s.bal)}</td></tr>`;}).join('');
     trend=`<div class="card"><div class="sect"><span><i class="bi bi-graph-up-arrow"></i> ${jt('건전성 추이','Health Trend')}</span><button class="btn btn-sm" onclick="saveSnapshot()"><i class="bi bi-camera"></i> ${jt('이번달 스냅샷','Snapshot')}</button></div>
       <div style="position:relative;display:flex;gap:6px">
         <div style="display:flex;flex-direction:column;justify-content:space-between;height:150px;padding:2px 0">${yaxis}</div>
-        <div style="flex:1;position:relative">${lastLbl}<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:150px">${grid}${mk('achv','#4f46e5',true)}${mk('payRate','#16a34a',false)}</svg></div>
+        <div style="flex:1;position:relative">${lastLbl}<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:150px">${grid}${mk('achv','#2563eb',true)}${mk('payRate','#16a34a',false)}</svg></div>
       </div>${months}
       <div style="margin-top:14px;overflow:auto"><table style="font-size:12px"><thead><tr><th class="l">${jt('월말','Month')}</th><th>${jt('누적매출','YTD Rev')}</th><th>${jt('달성','Achv')}</th><th>${jt('수금률','Coll%')}</th><th>${jt('미수','AR')}</th><th>${jt('자금','Cash')}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   } else {
