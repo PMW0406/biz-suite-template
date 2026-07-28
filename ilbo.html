@@ -761,7 +761,7 @@ window.addEventListener('load',function(){ _sb.auth.getSession().then(function(r
 <button id="pdf-fab" onclick="printPDF()" title="이 페이지를 PDF로 추출">📄 PDF</button>
 <script>
 /* 서비스워커 등록: 일반 새로고침(F5)에도 항상 최신 HTML(network-first) — 하드리프레시 불필요 */
-if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});}).catch(function(){}); } if(window.caches&&caches.keys){ caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k);});}).catch(function(){}); }
 </script>
 </body>
 </html>

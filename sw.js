@@ -1,10 +1,11 @@
-/* wontech 앱 서비스워커 — 일반 새로고침에도 항상 최신 HTML을 받도록(network-first).
-   페이지 요청을 캐시 무시하고 새로 받고, 네트워크 실패 시에만 폴백. 앱 자원 미캐싱(옛 버전 고착 함정 회피). */
+/* 자기소멸 서비스워커 — 예전 cache-first 워커가 오래된 HTML을 계속 서빙하는 문제 제거.
+   설치 즉시 활성화 → 모든 캐시 삭제 → 스스로 등록 해제 → 열린 탭을 새로 로드(최신 HTML 수신). */
 self.addEventListener('install', function(e){ self.skipWaiting(); });
-self.addEventListener('activate', function(e){ e.waitUntil(self.clients.claim()); });
-self.addEventListener('fetch', function(e){
-  var req = e.request;
-  if(req.mode === 'navigate'){
-    e.respondWith(fetch(req, {cache: 'reload'}).catch(function(){ return fetch(req); }));
-  }
+self.addEventListener('activate', function(e){
+  e.waitUntil((async function(){
+    try{ var keys = await caches.keys(); await Promise.all(keys.map(function(k){ return caches.delete(k); })); }catch(_){}
+    try{ await self.registration.unregister(); }catch(_){}
+    try{ var cs = await self.clients.matchAll({type:'window'}); cs.forEach(function(c){ try{ c.navigate(c.url); }catch(_){} }); }catch(_){}
+  })());
 });
+/* fetch 핸들러 없음 — 요청을 가로채지 않으므로 항상 네트워크에서 최신 HTML을 받음 */
