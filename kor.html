@@ -324,7 +324,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 .lc-card{display:flex;align-items:center;gap:14px;padding:15px 18px;cursor:pointer;border-bottom:1px solid #f1f4f8;transition:background .14s ease}
 .lc-card:last-child{border-bottom:none}
 .lc-card:hover{background:#f7f9fc}
-.lc-ico{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#475569}
+.lc-ico{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#475569;font-size:19px;line-height:1}
 .lc-ico i{font-size:18px;line-height:1}
 .lc-main{flex:1;min-width:0}
 .lc-title{font-size:14.5px;font-weight:700;color:#0f172a;letter-spacing:-.2px;line-height:1.3}
@@ -2720,7 +2720,7 @@ function _buildLauncherCardsHTML(access) {
           ? `(async()=>{const {data:{session:s}}=await _sb.auth.getSession();let u='${s.url}';if(s)u+='#at='+encodeURIComponent(s.access_token)+'&rt='+encodeURIComponent(s.refresh_token);location.href=u;})()`
           : `location.href='${s.url}'`);
     return `<div class="lc-card" style="--gf:${s.grad_from};--ac:${s.accent_color}" onclick="${onclick.replace(/"/g,'&quot;')}">
-      <div class="lc-ico" style="background:${s.accent_color}14;color:${s.accent_color}"><i class="bi ${s.icon||'bi-grid-1x2-fill'}"></i></div>
+      <div class="lc-ico" style="background:${s.accent_color}14">${s.icon||'📦'}</div>
       <div class="lc-main"><div class="lc-title">${s.title}</div><div class="lc-body">${s.body_html}</div></div>
       <i class="bi bi-chevron-right lc-chev"></i>
     </div>`;
