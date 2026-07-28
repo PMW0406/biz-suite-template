@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <meta name="color-scheme" content="light">
 <title>노바진단 · 태국법인 ERP</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇹🇭</text></svg>">
@@ -10,10 +13,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--line:#e8ebf0;--line2:#f1f3f5;--ink:#0f172a;--body:#475569;--muted:#94a3b8;--brand:#b45309;--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05)}
+:root{--bg:#f6f7f9;--card:#fff;--line:#e8ebf0;--line2:#f1f3f5;--ink:#0f172a;--body:#475569;--muted:#94a3b8;--brand:#2563eb;--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05)}
 *{box-sizing:border-box;margin:0;padding:0}
 html{color-scheme:light}
-body{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;background:var(--bg);color:var(--body);font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-.1px;font-variant-numeric:tabular-nums}
+body{font-family:'Noto Sans KR','Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;background:var(--bg);color:var(--body);font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-.1px;font-variant-numeric:tabular-nums}
 button{font-family:inherit;cursor:pointer}input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
 .hidden{display:none!important}
 #boot-ov{position:fixed;inset:0;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;z-index:200}
@@ -23,7 +26,7 @@ button{font-family:inherit;cursor:pointer}input,select,textarea{font-family:inhe
 .brand .lg{width:32px;height:32px;border-radius:9px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:17px}
 .brand b{color:#fff;font-size:14px}.brand small{display:block;color:#64748b;font-size:10.5px}
 .nav{flex:1;padding:14px 12px;overflow:auto}
-.nav .grp{font-size:10.5px;font-weight:700;color:#475569;letter-spacing:.08em;padding:6px 12px 8px;text-transform:uppercase}
+.nav .grp{font-size:10.5px;font-weight:700;color:#94a3b8;letter-spacing:.08em;padding:6px 12px 8px;text-transform:uppercase}
 .nav a{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:9px;color:#cbd5e1;font-weight:500;margin-bottom:2px;cursor:pointer}
 .nav a:hover{background:rgba(255,255,255,.06);color:#fff}.nav a.active{background:rgba(255,255,255,.1);color:#fff;font-weight:600}
 .nav .ico{width:18px;text-align:center}
@@ -704,7 +707,7 @@ function vAsset(){
       <div class="kpi"><div class="v" style="color:var(--ok)">${atClient}</div><div class="l">고객사 보유</div></div>
       <div class="kpi"><div class="v" style="color:${svc?'var(--bad)':'var(--ink)'}">${svc}</div><div class="l">AS · 반품</div></div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div style="display:flex;gap:5px;flex-wrap:wrap">${stChips}</div><select onchange="setAssetF('item',this.value)" style="margin-left:auto">${itemOpts}</select><input placeholder="시리얼·고객사 검색" value="${esc(fAssetQ)}" oninput="fAssetQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:160px"></div>
-    <div class="card" style="padding:0;overflow:auto"><table style="width:auto"><thead><tr><th class="l">시리얼</th><th class="l">품목</th><th class="l">상태</th><th class="l">현재 위치</th><th class="l">메모</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <div class="card" style="padding:0;overflow:auto"><table style="width:100%"><thead><tr><th class="l">시리얼</th><th class="l">품목</th><th class="l">상태</th><th class="l">현재 위치</th><th class="l">메모</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function openAsset(id){
   const e=(D.equipment||[]).find(x=>x.id===id);if(!e)return;

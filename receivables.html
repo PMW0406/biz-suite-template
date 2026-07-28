@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <meta name="color-scheme" content="light">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>미수금 관리 · 국내</title>
@@ -12,10 +15,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--line:#e8ebf0;--line2:#f1f3f5;--ink:#0f172a;--body:#475569;--muted:#94a3b8;--brand:#b45309;--ok:#15803d;--bad:#b91c1c;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05)}
+:root{--bg:#f6f7f9;--card:#fff;--line:#e8ebf0;--line2:#f1f3f5;--ink:#0f172a;--body:#475569;--muted:#94a3b8;--brand:#2563eb;--ok:#15803d;--bad:#b91c1c;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05)}
 *{box-sizing:border-box;margin:0;padding:0}
 html{color-scheme:light}
-body{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;background:var(--bg);color:var(--body);font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-.1px;font-variant-numeric:tabular-nums}
+body{font-family:'Noto Sans KR','Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;background:var(--bg);color:var(--body);font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-.1px;font-variant-numeric:tabular-nums}
 button{font-family:inherit;cursor:pointer}
 input,select,textarea{font-family:inherit}
 .hidden{display:none!important}
@@ -637,7 +640,7 @@ async function woSet(ridv,st){
   if(res.error){toast('저장 실패: '+res.error.message);return;}
   applyEdits();render();toast(st?(WO_ST[st].l+' 지정'):'상태 해제');
 }
-function woChip(st){if(!st)return '<span class="chip" style="background:#f8fafc;color:#94a3b8;border:1px dashed #cbd5e1">미검토</span>';const m=WO_ST[st];return `<span class="chip" style="background:${m.bg};color:${m.c}">${m.l}</span>`;}
+function woChip(st){if(!st)return '<span class="chip" style="background:#f8fafc;color:#64748b;border:1px dashed #cbd5e1">미검토</span>';const m=WO_ST[st];return `<span class="chip" style="background:${m.bg};color:${m.c}">${m.l}</span>`;}
 function viewWo(){
   const cands=woCands();
   const cf=cands.filter(x=>{const w=woOf(x.r);return w&&w.st==='confirm';});

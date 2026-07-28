@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <meta name="color-scheme" content="light">
 <title>노바진단 · 미국법인 ERP</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇺🇸</text></svg>">
@@ -10,10 +13,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--line:#e8ebf0;--line2:#f1f3f5;--ink:#0f172a;--body:#475569;--muted:#94a3b8;--brand:#1e3a8a;--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05)}
+:root{--bg:#f6f7f9;--card:#fff;--line:#e8ebf0;--line2:#f1f3f5;--ink:#0f172a;--body:#475569;--muted:#94a3b8;--brand:#2563eb;--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05)}
 *{box-sizing:border-box;margin:0;padding:0}
 html{color-scheme:light}
-body{font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;background:var(--bg);color:var(--body);font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-.1px;font-variant-numeric:tabular-nums}
+body{font-family:'Noto Sans KR','Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;background:var(--bg);color:var(--body);font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-.1px;font-variant-numeric:tabular-nums}
 button{font-family:inherit;cursor:pointer}input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
 .hidden{display:none!important}
 #boot-ov{position:fixed;inset:0;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;z-index:200}
@@ -23,7 +26,7 @@ button{font-family:inherit;cursor:pointer}input,select,textarea{font-family:inhe
 .brand .lg{width:32px;height:32px;border-radius:9px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:17px}
 .brand b{color:#fff;font-size:14px}.brand small{display:block;color:#64748b;font-size:10.5px}
 .nav{flex:1;padding:14px 12px;overflow:auto}
-.nav .grp{font-size:10.5px;font-weight:700;color:#475569;letter-spacing:.08em;padding:6px 12px 8px;text-transform:uppercase}
+.nav .grp{font-size:10.5px;font-weight:700;color:#94a3b8;letter-spacing:.08em;padding:6px 12px 8px;text-transform:uppercase}
 .nav a{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:9px;color:#cbd5e1;font-weight:500;margin-bottom:2px;cursor:pointer}
 .nav a:hover{background:rgba(255,255,255,.06);color:#fff}.nav a.active{background:rgba(255,255,255,.1);color:#fff;font-weight:600}
 .nav .ico{width:18px;text-align:center}
@@ -148,7 +151,7 @@ tbody tr{cursor:pointer}tbody tr:hover td{background:#f8f9ff}
 .kcard .prob{color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700}
 .kcard .due{font-size:10px;color:#9ca3af;margin-top:5px}
 .kcard .days{border-radius:6px;padding:1px 6px;font-size:10px;font-weight:700}
-.kbempty{text-align:center;padding:24px 0;color:#d1d5db;font-size:12px}
+.kbempty{text-align:center;padding:24px 0;color:#94a3b8;font-size:12px}
 .c-violet{background:#ede9fe;color:#6d28d9}
 /* 드로어 *//* 드로어 */
 #dwbg{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;z-index:45}
@@ -254,7 +257,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     <div style="padding:4px 12px 6px"><button onclick="openSearch()" style="width:100%;background:#1e293b;border:1px solid #334155;border-radius:9px;padding:8px 11px;color:#94a3b8;font-size:12.5px;text-align:left;display:flex;align-items:center;gap:8px;cursor:pointer"><i class="bi bi-search"></i><span class="lbl">검색</span><span class="lbl" style="margin-left:auto;font-size:10px;opacity:.55">Ctrl K</span></button></div>
     <div class="switch-wrap"><button class="switch-btn" onclick="document.getElementById('swdd').classList.toggle('open')"><i class="bi bi-grid-3x3-gap"></i><span style="flex:1;text-align:left;font-weight:600">사이트 이동</span><i class="bi bi-chevron-up" style="font-size:10px"></i></button>
       <div class="switch-dd" id="swdd">
-        <div class="sw-item cur"><span class="sw-badge" style="background:#1e3a8a">US</span><span style="flex:1">미국법인 관리</span><i class="bi bi-check2"></i></div>
+        <div class="sw-item cur"><span class="sw-badge" style="background:#2563eb">US</span><span style="flex:1">미국법인 관리</span><i class="bi bi-check2"></i></div>
       </div></div>
   </aside>
   <main id="main"><div id="view"></div></main>
