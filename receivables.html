@@ -290,7 +290,7 @@ async function changePw(){const np=prompt('새 비밀번호 (6자 이상)');if(n
 /* 자동 로그아웃: 30분 무동작(마스터 제외) */
 (function(){var IDLE_MS=30*60*1000,_it;
   function _logout(){try{_sb.auth.signOut().then(function(){location.href=CENTRAL;});}catch(e){location.href=CENTRAL;}}
-  function _fire(){try{_sb.auth.getSession().then(function(r){var s=r&&r.data&&r.data.session;var _noAutoLogout=['admin@demo.local','manager@demo.local','user@demo.local'];if(s&&s.user&&_noAutoLogout.indexOf(s.user.email)>=0){_arm();return;}if(s)_logout();else _arm();}).catch(function(){_logout();});}catch(e){_logout();}}
+  function _fire(){try{_sb.auth.getSession().then(function(r){var s=r&&r.data&&r.data.session;var _noAutoLogout=['admin@demo.local','manager@demo.local','user@demo.local'];if(s&&s.user&&(_noAutoLogout.indexOf(s.user.email)>=0||/@demo\.local$/i.test(s.user.email||""))){_arm();return;}if(s)_logout();else _arm();}).catch(function(){_logout();});}catch(e){_logout();}}
   function _arm(){clearTimeout(_it);_it=setTimeout(_fire,IDLE_MS);}
   ['mousemove','mousedown','keydown','touchstart','scroll','click','wheel'].forEach(function(ev){document.addEventListener(ev,_arm,{passive:true,capture:true});});
   _arm();})();
