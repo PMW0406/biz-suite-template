@@ -6603,9 +6603,7 @@ function renderCDUReport(vs){
   var kpiBand='<div class="cdud-bt">방문 관리 현황 <u>· 이번 기간 활동량·매출·리스크 요약 · 클릭 상세</u></div>'
     +'<div class="cdud-kpis">'
     +'<div class="cdud-hero" onclick="_cduDrillAll()"><span class="l">방문 관리 병원</span><b>'+nHosp+'개처</b><span class="s">방문 '+nVisit+'건 · 영업일수 '+days.size+'일</span></div>'
-    +fact('올해 팁매출',_cduWon(visitedRev),(visitedRevPrev>0?'전년 동기 '+_cduWon(visitedRevPrev):'관리처 팁매출'),'','_cduDrillVip()')
-    +fact('리스크 감지',churn.length+'개처',(churn.length?'선제 대응 진행 중':'감지 리스크 없음'),(churn.length?'rd':''),'_cduDrillChurn()')
-    +fact('평균 검사수가',(avg?avg+'천':'-'),(prices.length?mn+'~'+mx+' · '+prices.length+'개처 파악':'미파악'),'',prices.length?'_cduDrillBand(0)':'')
+    +fact('올해 팁매출',_cduWon(visitedRev),(visitedRevPrev>0?'전년 동기 '+_cduWon(visitedRevPrev):'관리처 팁매출'),'','_cduDrillVip()')    +fact('평균 검사수가',(avg?avg+'천':'-'),(prices.length?mn+'~'+mx+' · '+prices.length+'개처 파악':'미파악'),'',prices.length?'_cduDrillBand(0)':'')
   +'</div>';
   var focusBand='<div class="cdud-bt">집중관리 분석 <u>· 이 기간 방문이 휴면·급감 공략으로 이어졌는가 · 클릭 상세</u></div>'
     +'<div class="cdud-band">'
