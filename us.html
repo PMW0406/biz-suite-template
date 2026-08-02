@@ -219,6 +219,17 @@ document.getElementById('wt-fb-send').onclick=function(){var t=document.getEleme
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',wtFb);}else{wtFb();}
 })();</script>
+<style>
+/* == WT-DESIGN-POLISH-v1 : 공통 디자인 정제(안전 패스) == */
+.card,.kpi-card,.stat-card{border-radius:16px!important;box-shadow:none!important;border:1px solid var(--line,#e6e9ef)!important} /*WT-DEEP-v2*/
+.modal-content{border-radius:18px}
+table{font-variant-numeric:tabular-nums}
+.kpi-value,.kpi-num,.stat-num,.stat-value,.big-num,.num-lg{font-variant-numeric:tabular-nums;letter-spacing:-.015em}
+.form-control:focus,.form-select:focus{border-color:var(--brand,#2563eb);box-shadow:0 0 0 3px rgba(37,99,235,.12);outline:none}
+.btn{border-radius:8px}
+/* WT-DEEP-v3 프리미엄 타이포 일관 */
+.kpi-value,.lux-num,.stat-num,.stat-value,.metric-value,.metric-num,.big-num,.num-lg,.hero-num,.summary-num,.card-num{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
+</style>
 </head>
 <body>
 <div id="boot-ov"><i class="bi bi-arrow-repeat" style="margin-right:8px"></i>불러오는 중…</div>
@@ -2220,5 +2231,41 @@ boot();
 /* 서비스워커 등록: 일반 새로고침(F5)에도 항상 최신 HTML(network-first) — 하드리프레시 불필요 */
 if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});}).catch(function(){}); } if(window.caches&&caches.keys){ caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k);});}).catch(function(){}); }
 </script>
+<script>/* WT_FORCEPW_V1 — 임시비번 강제변경 (자동주입 스니펫, 개별 수정 금지) */
+(function(){
+var MASTER='pmw0406@gmail.com';var shown=false;
+function ov(){if(document.getElementById('wtfpw'))return document.getElementById('wtfpw');
+var d=document.createElement('div');d.id='wtfpw';
+d.style.cssText='position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#0f172a,#1e2140);display:none;align-items:center;justify-content:center;font-family:inherit';
+d.innerHTML='<div style="background:#fff;border-radius:20px;padding:34px 30px;width:min(340px,92vw);box-shadow:0 25px 60px rgba(0,0,0,.4)"><div style="text-align:center;margin-bottom:16px"><div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#fff;font-size:24px">\uD83D\uDD12</div><div style="font-size:19px;font-weight:800;color:#111827">\uBE44\uBC00\uBC88\uD638 \uBCC0\uACBD \uD544\uC694</div><div style="font-size:12px;color:#6b7280;margin-top:6px;line-height:1.5">\uBCF4\uC548\uC744 \uC704\uD574 \uC784\uC2DC \uBE44\uBC00\uBC88\uD638\uB97C<br>\uBCF8\uC778\uB9CC \uC544\uB294 \uBE44\uBC00\uBC88\uD638\uB85C \uBCC0\uACBD\uD574\uC8FC\uC138\uC694.</div></div><input id="wtfpw-a" type="password" placeholder="\uC0C8 \uBE44\uBC00\uBC88\uD638 (6\uC790 \uC774\uC0C1)" style="width:100%;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 12px;font-size:14px;color:#111827;margin-bottom:10px;box-sizing:border-box"><input id="wtfpw-b" type="password" placeholder="\uC0C8 \uBE44\uBC00\uBC88\uD638 \uD655\uC778" style="width:100%;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 12px;font-size:14px;color:#111827;margin-bottom:12px;box-sizing:border-box"><div id="wtfpw-e" style="font-size:12px;color:#dc2626;margin-bottom:10px;display:none"></div><button id="wtfpw-btn" style="width:100%;background:#0d9488;color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30</button><div style="text-align:center;margin-top:12px"><span id="wtfpw-out" style="font-size:12px;color:#9ca3af;cursor:pointer">\uB098\uC911\uC5D0 \uD558\uAE30 (\uB85C\uADF8\uC544\uC6C3)</span></div></div>';
+document.body.appendChild(d);
+d.querySelector('#wtfpw-btn').onclick=submit;
+d.querySelector('#wtfpw-out').onclick=function(){try{_sb.auth.signOut();}catch(e){}location.reload();};
+d.querySelector('#wtfpw-b').onkeydown=function(ev){if(ev.key===String.fromCharCode(69,110,116,101,114))submit();};
+return d;}
+async function submit(){var a=document.getElementById('wtfpw-a').value,b=document.getElementById('wtfpw-b').value,e=document.getElementById('wtfpw-e');e.style.display='none';
+if(a.length<6){e.textContent='\uBE44\uBC00\uBC88\uD638\uB294 6\uC790 \uC774\uC0C1\uC774\uC5B4\uC57C \uD569\uB2C8\uB2E4.';e.style.display='block';return;}
+if(a!==b){e.textContent='\uBE44\uBC00\uBC88\uD638\uAC00 \uC77C\uCE58\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.';e.style.display='block';return;}
+var btn=document.getElementById('wtfpw-btn');btn.disabled=true;btn.textContent='\uBCC0\uACBD \uC911...';
+try{var r=await _sb.auth.updateUser({password:a});if(r.error){btn.disabled=false;btn.textContent='\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30';e.textContent='\uC624\uB958: '+r.error.message;e.style.display='block';return;}
+var s=(await _sb.auth.getSession()).data.session;if(s)await _sb.from('crm_profiles').update({temp_pw:null}).eq('id',s.user.id);location.reload();
+}catch(ex){btn.disabled=false;btn.textContent='\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30';e.textContent='\uC624\uB958: '+ex;e.style.display='block';}}
+async function chk(){if(shown)return;try{var s=(await _sb.auth.getSession()).data.session;if(!s||!s.user)return;if(s.user.email===MASTER)return;
+var r=await _sb.from('crm_profiles').select('temp_pw').eq('id',s.user.id).single();
+if(r.data&&r.data.temp_pw&&String(r.data.temp_pw).trim()){shown=true;ov().style.display='flex';setTimeout(function(){var i=document.getElementById('wtfpw-a');if(i)i.focus();},100);}}catch(e){}}
+function boot(){if(typeof _sb==='undefined'||!_sb||!_sb.auth){setTimeout(boot,300);return;}chk();try{_sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_IN')setTimeout(chk,300);});}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();</script>
+<script>/* WT_UPDATE_V1 — 새 버전 감지 시 상단 새로고침 바 (전 사이트 공통 스니펫, 개별 수정 금지) */
+(function(){var base=null;
+function bar(){if(document.getElementById('wt-upd'))return;var d=document.createElement('div');d.id='wt-upd';
+d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:2147483000;background:#16324f;color:#fff;font-family:inherit;font-size:13px;display:flex;gap:10px;align-items:center;justify-content:center;padding:9px 14px;box-shadow:0 2px 10px rgba(0,0,0,.25)';
+d.innerHTML='<i class="bi bi-arrow-clockwise"></i><span>새 버전이 배포되었습니다.</span><button onclick="location.reload()" style="background:#fff;color:#16324f;border:none;border-radius:7px;padding:4px 14px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit">지금 새로고침</button><button onclick="this.parentNode.remove()" style="background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:7px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit">나중에</button>';
+document.body.appendChild(d);}
+function et(){return fetch(location.pathname+'?uchk='+Date.now(),{method:'HEAD',cache:'no-store'}).then(function(r){return r.headers.get('etag')||r.headers.get('last-modified')||'';}).catch(function(){return null;});}
+function chk(){et().then(function(e){if(e==null||e==='')return;if(base===null){base=e;return;}if(e!==base)bar();});}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)chk();});
+setInterval(chk,5*60*1000);chk();
+})();</script>
 </body>
 </html>
