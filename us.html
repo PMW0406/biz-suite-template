@@ -246,6 +246,7 @@ table{font-variant-numeric:tabular-nums}
       <a data-v="sched"><span class="ico"><i class="bi bi-calendar-week"></i></span><span class="lbl">일정 · 할일</span></a>
       <div class="grp">CRM 영업</div>
       <a data-v="pipe"><span class="ico"><i class="bi bi-kanban"></i></span><span class="lbl">딜 파이프라인</span></a>
+      <a data-v="fcast"><span class="ico"><i class="bi bi-graph-up-arrow"></i></span><span class="lbl">영업 예측</span></a>
       <a data-v="accounts"><span class="ico"><i class="bi bi-building"></i></span><span class="lbl">고객사 관리</span></a>
       <a data-v="acts"><span class="ico"><i class="bi bi-chat-left-text"></i></span><span class="lbl">활동 기록</span></a>
       <div class="grp">영업 · 채권</div>
@@ -291,6 +292,9 @@ const KEY='corp_us_erp', SYM='$', CUR='USD';
 const ORD_ST={'수주':'c-blue','생산중':'c-amber','선적중':'c-cyan','납품완료':'c-green','취소':'c-gray'};
 const DEAL_ST={'리드':'#94a3b8','상담중':'#2563eb','견적발송':'#d97706','협의중':'#7c3aed','계약완료':'#15803d','실패':'#cbd5e1'};
 const DEAL_OPEN=['리드','상담중','견적발송','협의중'];
+const LEAD_SRC=['Trade Show','Cold Call','Web Research','External Referral','Employee Referral','재구매','기타'];
+const COMMIT_CAT={'Commit':'#15803d','Best Case':'#2563eb','Pipeline':'#94a3b8'};
+const DEAL_GRADE={'A':'#dc2626','B':'#d97706','C':'#94a3b8'};
 const ACT_T={'콜':'c-blue','미팅':'c-violet','이메일':'c-gray','방문':'c-green','AS':'c-amber'};
 const GRADE_C={'A':'c-red','B':'c-amber','C':'c-gray'};
 let ME='',curView='dash',D=null,LOCAL=false;
@@ -548,7 +552,7 @@ function fundsBal(){return (D.accounts||[]).reduce((a,x)=>a+fundsBalAcc(x.name),
 function itemQty(name){const it=(D.items||[]).find(i=>i.name===name);let q=it?(+it.qty0||0):0;(D.moves||[]).forEach(m=>{if(m.item===name)q+=(m.type==='입고'?1:-1)*(+m.qty||0);});return q;}
 
 // ── 라우팅 ──
-const VIEWS_KEYS=['dash','report','perf','sched','pipe','accounts','acts','sales','ar','orders','clients','psi','inv','asset','funds','hq'];
+const VIEWS_KEYS=['dash','report','perf','sched','pipe','fcast','accounts','acts','sales','ar','orders','clients','psi','inv','asset','funds','hq'];
 function setView(v,noPush){curView=v;document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));render();window.scrollTo(0,0);try{sessionStorage.setItem('us_view',v);}catch(e){}if(!noPush&&!(history.state&&history.state.v===v)){try{history.pushState({v:v},'','#'+v);}catch(e){}}}
 window.addEventListener('popstate',function(e){
   // 오버레이(모달/드로어/모바일사이드바) 열려 있으면 닫기만 하고 소모된 엔트리 복구
@@ -566,7 +570,7 @@ window.addEventListener('pageshow',function(e){ if(e.persisted){ _sb.auth.getSes
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('mob-ov').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mob-ov').classList.remove('show');}
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{setView(a.dataset.v);closeSidebar();}));
-function render(){if(curView==='perf'&&!_canPerf)curView='dash';if(curView==='hq'&&!_canHQ)curView='dash';const f={dash:vDash,hq:vHQ,report:vReport,perf:vPerf,sched:vSched,pipe:vPipe,accounts:vAccounts,acts:vActs,sales:vSales,ar:vAR,orders:vOrders,clients:vClients,psi:vPsi,inv:vInv,asset:vAsset,funds:vFunds}[curView];document.getElementById('view').innerHTML=f();if(curView==='pipe')bindKb();applyLang();applyUserTr();}
+function render(){if(curView==='perf'&&!_canPerf)curView='dash';if(curView==='hq'&&!_canHQ)curView='dash';const f={dash:vDash,hq:vHQ,report:vReport,perf:vPerf,sched:vSched,pipe:vPipe,fcast:vForecast,accounts:vAccounts,acts:vActs,sales:vSales,ar:vAR,orders:vOrders,clients:vClients,psi:vPsi,inv:vInv,asset:vAsset,funds:vFunds}[curView];document.getElementById('view').innerHTML=f();if(curView==='pipe')bindKb();applyLang();applyUserTr();}
 function head(t,d,acts){return `<div class="topbar"><div><h2>${t}</h2><div class="desc">${d}</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${acts||''}</div></div><div class="wrap">`;}
 function isEmpty(){return !(D.sales||[]).length&&!(D.orders||[]).length&&!(D.funds||[]).length&&!(D.items||[]).length;}
 
@@ -1495,9 +1499,13 @@ function vPipe(){
       const daysBadge=`<span class="days" style="background:${staleDanger?'#dc2626':staleWarn?'#f59e0b':'#e5e7eb'};color:${staleDanger||staleWarn?'#fff':'#6b7280'}">${days}일째</span>`;
       const closingThis=d.expected&&d.expected.slice(0,7)===thisYm&&!isWon;
       const overdue=d.expected&&d.expected<today()&&!isWon;
+      const gc=DEAL_GRADE[d.grade]||'';
+      const gBadge=gc?`<span style="flex-shrink:0;width:16px;height:16px;border-radius:4px;background:${gc};color:#fff;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center" title="${jt('등급','Grade')} ${d.grade}">${d.grade}</span>`:'';
+      const stale=!isWon?dealStale(d):0;
       return `<div class="kcard" draggable="true" data-id="${d.id}" onclick="openDeal('${d.id}')" style="border-left:3px solid ${c}${closingThis?';box-shadow:0 0 0 2px #f59e0b40':overdue?';box-shadow:0 0 0 2px #dc262640':''}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px"><div class="t">${esc(d.client)}</div>${daysBadge}</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px"><div style="display:flex;align-items:center;gap:5px;min-width:0">${gBadge}<div class="t">${esc(d.client)}</div></div>${daysBadge}</div>
         <div class="prod">${esc(d.product)||''}${d.qty?' ×'+d.qty:''}</div>
+        ${(d.source||d.commit==='Commit'||stale>=21)?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${d.commit==='Commit'?`<span style="font-size:9.5px;font-weight:700;color:#15803d;background:#dcfce7;border-radius:4px;padding:1px 5px">✓ ${jt('확약','Commit')}</span>`:''}${stale>=21?`<span style="font-size:9.5px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:4px;padding:1px 5px"><i class="bi bi-bell-slash"></i> ${jt('정체','Stalled')} ${stale}${jt('일','d')}</span>`:''}${d.source?`<span style="font-size:9.5px;color:#64748b;background:#f1f5f9;border-radius:4px;padding:1px 5px">${esc(d.source)}</span>`:''}</div>`:''}
         <div class="amt">${fm(d.amt)}</div>
         <div class="ft"><span class="owner">${esc(d.owner)||''}</span><span class="prob" style="background:${probColor(d.prob)}">${d.prob||0}%</span></div>
         ${(()=>{const tn=(D.tasks||[]).filter(t=>t.dealId===d.id&&!t.done).length;return tn?`<div style="font-size:10px;color:#2563eb;margin-top:5px;background:#eef2ff;border-radius:5px;padding:3px 6px"><i class="bi bi-check2-square"></i> ${jt('할일','Tasks')} ${tn}</div>`:'';})()}
@@ -1540,17 +1548,72 @@ function bindKb(){
       if(d.stage==='계약완료'&&!d.orderId&&confirm(jt('성사! 수주를 자동 생성할까요?','Won! Create an order automatically?')))_dealToOrder(d);
       await saveAll('단계 이동: '+d.stage);});});
 }
-function mDeal(id){const d=id?(D.deals||[]).find(x=>x.id===id):{client:'',product:'',qty:'',amt:'',stage:'리드',prob:30,expected:'',memo:'',owner:ME.split('@')[0]};
+function mDeal(id){const d=id?(D.deals||[]).find(x=>x.id===id):{client:'',product:'',qty:'',amt:'',stage:'리드',prob:30,expected:'',memo:'',owner:ME.split('@')[0],source:'',grade:'B',commit:'Pipeline',competitor:'',contact:'',contactPhone:''};
   openM(id?'딜 수정':'딜 등록',dlist()+
-    `<div class="fr"><div class="fld"><label>고객사</label><input id="f-client" list="dl-clients" value="${esc(d.client)}"></div><div class="fld"><label>단계</label><select id="f-st">${Object.keys(DEAL_ST).map(x=>`<option ${d.stage===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
+    `<div class="fr"><div class="fld"><label>고객사</label><input id="f-client" list="dl-clients" value="${esc(d.client)}"></div><div class="fld"><label>단계</label><select id="f-st" onchange="_dealStChg()">${Object.keys(DEAL_ST).map(x=>`<option ${d.stage===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
     <div class="fr3"><div class="fld"><label>제품</label><input id="f-prod" value="${esc(d.product)}"></div><div class="fld"><label>수량</label><input id="f-qty" type="number" value="${d.qty||''}"></div><div class="fld"><label>예상금액(USD)</label><input id="f-amt" type="number" value="${d.amt||''}"></div></div>
     <div class="fr3"><div class="fld"><label>성사 확률(%)</label><input id="f-prob" type="number" min="0" max="100" value="${d.prob||30}"></div><div class="fld"><label>예상 마감일</label><input id="f-exp" type="date" value="${d.expected||''}"></div><div class="fld"><label>담당</label><input id="f-owner" value="${esc(d.owner||'')}"></div></div>
+    <div class="fr3"><div class="fld"><label>등급</label><select id="f-grade">${['A','B','C'].map(x=>`<option ${d.grade===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="fld"><label>확약 구분</label><select id="f-commit">${Object.keys(COMMIT_CAT).map(c=>`<option ${d.commit===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="fld"><label>유입경로</label><select id="f-src"><option value="">-</option>${LEAD_SRC.map(s=>`<option ${d.source===s?'selected':''}>${s}</option>`).join('')}</select></div></div>
+    <div class="fr"><div class="fld"><label>연락처(담당자)</label><input id="f-contact" value="${esc(d.contact||'')}" placeholder="이름 · 직책"></div><div class="fld"><label>연락처 전화</label><input id="f-cphone" value="${esc(d.contactPhone||'')}"></div></div>
     <div class="fr"><div class="fld"><label>다음 액션</label><input id="f-next" value="${esc(d.next||'')}" placeholder="예: 데모 일정 확정"></div><div class="fld"><label>다음 액션 기한</label><input id="f-nextd" type="date" value="${d.nextDate||''}"></div></div>
+    <div class="fr"><div class="fld"><label>경쟁사</label><input id="f-comp" value="${esc(d.competitor||'')}" placeholder="예: 경쟁 진단업체"></div><div class="fld" id="f-lostrow" style="display:${d.stage==='실패'?'block':'none'}"><label>실패 사유</label><input id="f-lost" value="${esc(d.lostReason||'')}" placeholder="가격/경쟁사/보류 등"></div></div>
     <div class="fld"><label>메모</label><input id="f-memo" value="${esc(d.memo||'')}"></div>`,
-    async()=>{const g=x=>document.getElementById(x).value;const rec={id:id||uid(),client:g('f-client').trim(),product:g('f-prod').trim(),qty:Number(g('f-qty'))||0,amt:Number(g('f-amt'))||0,stage:g('f-st'),prob:Number(g('f-prob'))||0,expected:g('f-exp'),owner:g('f-owner').trim(),next:g('f-next').trim(),nextDate:g('f-nextd'),memo:g('f-memo').trim(),created:(id&&d.created)||today(),stageAt:(id&&d.stage===g('f-st'))?d.stageAt:today(),orderId:(id&&d.orderId)||null};
+    async()=>{const g=x=>{var e=document.getElementById(x);return e?e.value:'';};const rec={id:id||uid(),client:g('f-client').trim(),product:g('f-prod').trim(),qty:Number(g('f-qty'))||0,amt:Number(g('f-amt'))||0,stage:g('f-st'),prob:Number(g('f-prob'))||0,expected:g('f-exp'),owner:g('f-owner').trim(),grade:g('f-grade'),commit:g('f-commit'),source:g('f-src'),contact:g('f-contact').trim(),contactPhone:g('f-cphone').trim(),competitor:g('f-comp').trim(),lostReason:g('f-lost').trim(),next:g('f-next').trim(),nextDate:g('f-nextd'),memo:g('f-memo').trim(),created:(id&&d.created)||today(),stageAt:(id&&d.stage===g('f-st'))?d.stageAt:today(),orderId:(id&&d.orderId)||null};
       if(!rec.client){toast('고객사를 입력하세요');return false;}
       const i=(D.deals||[]).findIndex(x=>x.id===rec.id);if(i>=0)D.deals[i]=rec;else D.deals.push(rec);return await saveAll();},
     id?async()=>{D.deals=D.deals.filter(x=>x.id!==id);await saveAll('삭제됨');}:null);
+}
+function _dealStChg(){var st=document.getElementById('f-st'),r=document.getElementById('f-lostrow');if(st&&r)r.style.display=(st.value==='실패')?'block':'none';}
+// ── CRM 헬퍼: 딜 최근활동일 · 정체일수 ──
+function dealLastAct(d){var acts=(D.acts||[]).filter(function(a){return a.client===d.client;});var last=d.stageAt||d.created||'';acts.forEach(function(a){if((a.date||'')>last)last=a.date;});return last;}
+function dealStale(d){var la=dealLastAct(d);if(!la)return 999;return daysBetween(la,today());}
+function vForecast(){
+  var deals=(D.deals||[]);
+  var open=deals.filter(function(d){return DEAL_OPEN.indexOf(d.stage)>=0;});
+  var sum=function(a){return a.reduce(function(x,d){return x+(+d.amt||0);},0);};
+  var commitV=sum(open.filter(function(d){return d.commit==='Commit';}));
+  var bestV=sum(open.filter(function(d){return d.commit==='Best Case';}));
+  var pipeV=sum(open);
+  var weighted=open.reduce(function(a,d){return a+(+d.amt||0)*(+d.prob||0)/100;},0);
+  var cm=curYm();
+  var won=deals.filter(function(d){return d.stage==='계약완료';});
+  var wonMo=won.filter(function(d){return String(d.stageAt||d.created||'').slice(0,7)===cm;});
+  var lost=deals.filter(function(d){return d.stage==='실패';});
+  var winRate=(won.length+lost.length)?Math.round(won.length/(won.length+lost.length)*100):0;
+  var closing=open.filter(function(d){return String(d.expected||'').slice(0,7)===cm;}).sort(function(a,b){return (a.expected||'').localeCompare(b.expected||'');});
+  var stalled=open.filter(function(d){return dealStale(d)>=21;}).sort(function(a,b){return dealStale(b)-dealStale(a);});
+  var bySrc={};open.forEach(function(d){var s=d.source||'(미지정)';bySrc[s]=(bySrc[s]||0)+(+d.amt||0);});
+  var srcArr=Object.keys(bySrc).map(function(k){return [k,bySrc[k]];}).sort(function(a,b){return b[1]-a[1];});var maxSrc=Math.max(1,...srcArr.map(function(x){return x[1];}));
+  var byOwn={};open.forEach(function(d){var o=d.owner||'(미지정)';(byOwn[o]=byOwn[o]||{op:0,w:0,won:0});byOwn[o].op+=(+d.amt||0);byOwn[o].w+=(+d.amt||0)*(+d.prob||0)/100;});
+  won.forEach(function(d){var o=d.owner||'(미지정)';(byOwn[o]=byOwn[o]||{op:0,w:0,won:0});byOwn[o].won+=(+d.amt||0);});
+  var ownArr=Object.keys(byOwn).map(function(k){return [k,byOwn[k]];}).sort(function(a,b){return b[1].op-a[1].op;});
+  var gd=function(g){return DEAL_GRADE[g]||'#94a3b8';};
+  var dealRow=function(d,extra){return '<div onclick="openDeal(\''+d.id+'\')" style="display:flex;gap:9px;align-items:center;padding:8px 2px;border-bottom:1px dashed var(--line);font-size:12.5px;cursor:pointer">'
+    +'<span class="chip" style="background:'+DEAL_ST[d.stage]+'1a;color:'+DEAL_ST[d.stage]+';flex-shrink:0">'+d.stage+'</span>'
+    +'<span style="width:14px;flex-shrink:0;text-align:center;font-weight:800;color:'+gd(d.grade)+'">'+(d.grade||'')+'</span>'
+    +'<div style="flex:1;min-width:0"><div style="font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(d.client)+'</div><div class="muted" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(esc(d.product)||'-')+(d.owner?' · '+esc(d.owner):'')+'</div></div>'
+    +'<b style="flex-shrink:0">'+fm(d.amt)+'</b>'+(extra||'')+'</div>';};
+  return head('<i class="bi bi-graph-up-arrow"></i> '+jt('영업 예측','Forecast'), jt('확약(Commit)·가중예측·정체딜·채널·담당자 — 영업 규율 한눈에','Commit / weighted / stalled / source / rep'),
+      '<button class="btn btn-sm btn-primary" onclick="mDeal()">+ '+jt('딜','Deal')+'</button>')
+    +'<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px">'
+      +'<div class="statcard" style="border-top:3px solid #15803d"><div class="sv" style="color:#15803d">'+fm(commitV)+'</div><div class="sl">'+jt('확약 (Commit)','Commit')+'</div></div>'
+      +'<div class="statcard" style="border-top:3px solid #2563eb"><div class="sv" style="color:#2563eb">'+fm(bestV)+'</div><div class="sl">'+jt('베스트 케이스','Best Case')+'</div></div>'
+      +'<div class="statcard" style="border-top:3px solid #7c3aed"><div class="sv" style="color:#7c3aed">'+fm(weighted)+'</div><div class="sl">'+jt('가중 예측','Weighted')+'</div></div>'
+      +'<div class="statcard" style="border-top:3px solid #94a3b8"><div class="sv">'+fm(pipeV)+'</div><div class="sl">'+jt('파이프라인 총액','Pipeline')+' · '+open.length+jt('건','')+'</div></div>'
+      +'<div class="statcard" style="border-top:3px solid #16a34a"><div class="sv" style="color:var(--ok)">'+fm(sum(wonMo))+'</div><div class="sl">'+jt('이번달 성사','Won this mo.')+' · '+wonMo.length+jt('건','')+'</div></div>'
+      +'<div class="statcard" style="border-top:3px solid #0891b2"><div class="sv">'+winRate+'%</div><div class="sl">'+jt('성사율','Win rate')+' · '+won.length+'/'+(won.length+lost.length)+'</div></div></div>'
+    +'<div class="grid" style="grid-template-columns:1.3fr 1fr;gap:16px;align-items:start">'
+      +'<div class="card"><div class="sect"><span><i class="bi bi-exclamation-triangle"></i> '+jt('정체 딜','Stalled deals')+' <span class="muted" style="font-weight:400;font-size:11px">'+jt('21일+ 무활동 · 클릭 → 딜','21d+ no activity')+'</span></span><span class="chip '+(stalled.length?'c-red':'c-green')+'">'+stalled.length+jt('건','')+'</span></div>'
+        +(stalled.length?stalled.slice(0,10).map(function(d){return dealRow(d,'<span class="chip c-red" style="flex-shrink:0">'+dealStale(d)+jt('일','d')+'</span>');}).join(''):'<div class="empty">'+jt('정체된 딜이 없습니다 ✓','No stalled deals ✓')+'</div>')+'</div>'
+      +'<div class="card"><div class="sect"><span><i class="bi bi-calendar-check"></i> '+jt('이달 마감 예정','Closing this month')+'</span><span class="chip c-amber">'+closing.length+jt('건','')+'</span></div>'
+        +(closing.length?closing.slice(0,10).map(function(d){return dealRow(d,'<span class="muted" style="font-size:11px;flex-shrink:0">'+(d.expected||'').slice(5)+'</span>');}).join(''):'<div class="empty">'+jt('이달 마감 예정 없음','None')+'</div>')+'</div></div>'
+    +'<div class="grid" style="grid-template-columns:1fr 1.3fr;gap:16px;align-items:start;margin-top:16px">'
+      +'<div class="card"><div class="sect"><span><i class="bi bi-megaphone"></i> '+jt('유입경로별 파이프라인','Pipeline by lead source')+'</span></div>'
+        +(srcArr.length?srcArr.map(function(s){return '<div style="display:flex;align-items:center;gap:9px;padding:5px 2px;font-size:12.5px"><span style="width:104px;flex-shrink:0;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(s[0])+'</span><div style="flex:1;background:#eef2f6;border-radius:5px;height:14px;overflow:hidden"><i style="display:block;height:100%;width:'+(s[1]/maxSrc*100)+'%;background:#2563eb"></i></div><b style="width:64px;text-align:right;font-size:12px">'+fm(s[1])+'</b></div>';}).join(''):'<div class="empty">'+jt('유입경로 데이터 없음 — 딜 등록 시 입력','No source data')+'</div>')+'</div>'
+      +'<div class="card" style="padding:0;overflow:auto"><div class="sect" style="padding:15px 18px 4px"><span><i class="bi bi-trophy"></i> '+jt('담당자별 파이프라인·실적','By rep')+'</span></div>'
+        +'<table><thead><tr><th class="l">'+jt('담당','Owner')+'</th><th>'+jt('오픈','Open')+'</th><th>'+jt('가중','Weighted')+'</th><th>'+jt('성사','Won')+'</th></tr></thead><tbody>'
+        +(ownArr.length?ownArr.map(function(o){return '<tr><td class="l"><b style="color:var(--ink)">'+esc(o[0])+'</b></td><td>'+fm(o[1].op)+'</td><td class="muted">'+fm(o[1].w)+'</td><td style="color:var(--ok);font-weight:700">'+fm(o[1].won)+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">'+jt('데이터 없음','No data')+'</td></tr>')
+        +'</tbody></table></div></div>';
 }
 function _dealToOrder(d){const o={id:uid(),date:today(),client:d.client,product:d.product,qty:d.qty,amt:d.amt,status:'수주',eta:d.expected||'',memo:'딜 성사 전환'};D.orders.push(o);d.orderId=o.id;}
 async function wonDeal(id){const d=(D.deals||[]).find(x=>x.id===id);if(!d)return;
@@ -1946,20 +2009,34 @@ function openDeal(id){
     return `<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px"><input type="checkbox" ${t.done?'checked':''} onclick="toggleTaskDrawer('${t.id}','${id}')" style="cursor:pointer"><span style="flex:1;${t.done?'text-decoration:line-through;color:var(--muted)':''}">${trUser(t.title)}</span>${t.date?`<span class="muted" style="font-size:11px;${late?'color:var(--bad);font-weight:700':''}">${t.date}${late?' ⚠':''}</span>`:''}<button class="btn btn-sm" style="color:var(--bad);padding:2px 7px" onclick="delTaskDrawer('${t.id}','${id}')">×</button></div>`;}).join(''):`<div class="empty" style="padding:8px">${jt('등록된 할일이 없습니다','No tasks yet')}</div>`;
   const actHtml=acts.length?acts.map(a=>`<div style="padding:6px 0;border-bottom:1px dashed var(--line);font-size:12px"><span class="chip ${ACT_T[a.type]||'c-gray'}">${jt(a.type,EN[a.type]||a.type)}</span> <span class="muted">${a.date}</span> ${trUser(a.content||'')}${a.next&&!a.doneNext?` <span class="chip ${a.nextDate&&a.nextDate<today()?'c-red':'c-amber'}">→ ${trUser(a.next)}</span>`:''}</div>`).join(''):`<div class="empty" style="padding:8px">${jt('활동 기록 없음','No activities')}</div>`;
   const canWin=(d.stage==='협의중'||d.stage==='견적발송');
+  const gc=DEAL_GRADE[d.grade]||'';
+  const stale=dealStale(d), lastA=dealLastAct(d);
+  const badges=[
+    gc?`<span style="font-weight:800;color:#fff;background:${gc};border-radius:5px;padding:2px 8px;font-size:11px">${jt('등급','Grade')} ${d.grade}</span>`:'',
+    d.commit?`<span class="chip" style="background:${(COMMIT_CAT[d.commit]||'#94a3b8')}1a;color:${COMMIT_CAT[d.commit]||'#94a3b8'}">${jt(d.commit==='Commit'?'확약':d.commit==='Best Case'?'베스트':'파이프','')||d.commit}</span>`:'',
+    d.source?`<span class="chip c-gray">${esc(d.source)}</span>`:'',
+    (DEAL_OPEN.indexOf(d.stage)>=0&&stale>=21)?`<span class="chip c-red"><i class="bi bi-bell-slash"></i> ${jt('정체','Stalled')} ${stale}${jt('일','d')}</span>`:''
+  ].filter(Boolean).join(' ');
   openDw(jt('딜','Deal')+' · '+jt(d.stage,EN[d.stage]||d.stage), esc(d.client),
-    `<div class="dwcard"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+    `<div class="dwcard">${badges?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${badges}</div>`:''}<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
       <div><div class="muted" style="font-size:11px">${jt('제품','Product')}</div><b style="color:var(--ink)">${esc(d.product)||'-'}${d.qty?' × '+d.qty:''}</b></div>
       <div><div class="muted" style="font-size:11px">${jt('예상 금액','Amount')}</div><b style="color:var(--ink)">${fm(d.amt)}</b> <span class="muted" style="font-size:11px">${fkrw(d.amt)}</span></div>
       <div><div class="muted" style="font-size:11px">${jt('성사 확률','Probability')}</div><b style="color:var(--ink)">${d.prob||0}%</b></div>
       <div><div class="muted" style="font-size:11px">${jt('예상 마감','Expected close')}</div><b style="color:${d.expected&&d.expected<today()?'var(--bad)':'var(--ink)'}">${d.expected||'-'}</b></div>
-      <div><div class="muted" style="font-size:11px">${jt('담당','Owner')}</div><b style="color:var(--ink)">${esc(d.owner)||'-'}</b></div></div>
+      <div><div class="muted" style="font-size:11px">${jt('담당','Owner')}</div><b style="color:var(--ink)">${esc(d.owner)||'-'}</b></div>
+      <div><div class="muted" style="font-size:11px">${jt('연락처','Contact')}</div><b style="color:var(--ink)">${esc(d.contact)||'-'}</b>${d.contactPhone?` <a href="tel:${esc(d.contactPhone)}" class="muted" style="font-size:11px;text-decoration:none"><i class="bi bi-telephone"></i> ${esc(d.contactPhone)}</a>`:''}</div>
+      ${d.competitor?`<div><div class="muted" style="font-size:11px">${jt('경쟁사','Competitor')}</div><b style="color:var(--ink)">${esc(d.competitor)}</b></div>`:''}
+      <div><div class="muted" style="font-size:11px">${jt('최근 활동','Last activity')}</div><b style="color:${stale>=21?'var(--bad)':'var(--ink)'}">${lastA?lastA+' ('+stale+jt('일 전',' d ago')+')':jt('없음','none')}</b></div></div>
+      ${(d.stage==='실패'&&d.lostReason)?`<div style="margin-top:11px;font-size:12px;background:#fef2f2;color:#b91c1c;border-radius:7px;padding:8px 10px"><b>${jt('실패 사유','Lost reason')}:</b> ${trUser(d.lostReason)}</div>`:''}
       <div style="margin-top:13px"><div class="muted" style="font-size:11px;margin-bottom:6px">${jt('단계 · 클릭하여 이동','Stage · click to move')}</div><div style="display:flex;gap:5px;flex-wrap:wrap">${stageBar}</div></div>
       ${d.memo?`<div class="muted" style="margin-top:11px;font-size:12px;background:#f8fafc;border-radius:7px;padding:8px 10px">${trUser(d.memo)}</div>`:''}</div>
     <div class="dwcard"><div class="sect"><span>✅ ${jt('할일 · 다음 액션','Tasks · Next actions')}</span></div>
       ${d.next?`<div style="font-size:12px;color:#059669;background:#ecfdf5;border-radius:7px;padding:7px 9px;margin-bottom:9px">▸ ${trUser(d.next)}${d.nextDate?' · '+d.nextDate+(d.nextDate<today()?' ⚠':''):''}</div>`:''}
       ${taskHtml}
       <div style="display:flex;gap:6px;margin-top:10px"><input id="ndt-title" placeholder="${jt('할 일 추가 후 Enter','Add task, then Enter')}" onkeydown="if(event.key==='Enter')addDealTask('${id}')" style="flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px"><input id="ndt-date" type="date" value="${today()}" style="width:135px;padding:8px 10px;border:1px solid var(--line);border-radius:8px"><button class="btn btn-sm btn-primary" onclick="addDealTask('${id}')">+</button></div></div>
-    <div class="dwcard"><div class="sect"><span><i class="bi bi-telephone"></i> ${jt('활동','Activities')}</span><button class="btn btn-sm" onclick="closeDw();mAct(null,'${esc(d.client).replace(/'/g,"&#39;")}')">+ ${jt('활동','Activity')}</button></div>${actHtml}</div>
+    <div class="dwcard"><div class="sect"><span><i class="bi bi-telephone"></i> ${jt('활동','Activities')} <span class="muted" style="font-weight:400;font-size:11px">${acts.length}${jt('건','')}</span></span><button class="btn btn-sm" onclick="closeDw();mAct(null,'${esc(d.client).replace(/'/g,"&#39;")}')">+ ${jt('상세','Detail')}</button></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px"><select id="qa-type" class="sel" style="width:82px">${['콜','미팅','이메일','방문','AS'].map(t=>`<option value="${t}">${jt(t,EN[t]||t)}</option>`).join('')}</select><input id="qa-text" placeholder="${jt('활동 기록 후 Enter','Log activity, Enter')}" onkeydown="if(event.key==='Enter')addDealActQuick('${id}')" style="flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px"><button class="btn btn-sm btn-primary" onclick="addDealActQuick('${id}')">${jt('기록','Log')}</button></div>
+      ${actHtml}</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-sm" onclick="closeDw();mDeal('${id}')"><i class="bi bi-pencil"></i> ${jt('상세 수정','Edit deal')}</button>
       ${canWin?`<button class="btn btn-sm" style="color:var(--ok)" onclick="closeDw();wonDeal('${id}')">✓ ${jt('성사 → 수주','Win → Order')}</button>`:''}
@@ -1974,6 +2051,12 @@ async function addDealTask(id){const d=(D.deals||[]).find(x=>x.id===id);if(!d)re
   if(!ti){toast(jt('할 일을 입력하세요','Enter a task'));return;}
   D.tasks.push({id:uid(),title:ti,date:da||today(),time:'',owner:d.owner||'',memo:'',done:false,dealId:id,client:d.client});
   await saveAll(jt('할일 추가됨','Task added'));openDeal(id);}
+async function addDealActQuick(id){const d=(D.deals||[]).find(x=>x.id===id);if(!d)return;
+  const ty=(document.getElementById('qa-type')||{}).value||'콜';
+  const tx=((document.getElementById('qa-text')||{}).value||'').trim();
+  if(!tx){toast(jt('내용을 입력하세요','Enter a note'));return;}
+  D.acts=D.acts||[];D.acts.push({id:uid(),client:d.client,type:ty,date:today(),content:tx,next:'',nextDate:'',owner:d.owner||''});
+  await saveAll(jt('활동 기록됨','Logged'));openDeal(id);}
 async function toggleTaskDrawer(tid,did){const t=(D.tasks||[]).find(x=>x.id===tid);if(t)t.done=!t.done;await saveAll();openDeal(did);}
 async function delTaskDrawer(tid,did){D.tasks=(D.tasks||[]).filter(x=>x.id!==tid);await saveAll(jt('삭제됨','Deleted'));openDeal(did);}
 async function delDealDrawer(id){if(!confirm(jt('이 딜을 삭제할까요?','Delete this deal?')))return;D.deals=(D.deals||[]).filter(x=>x.id!==id);await saveAll(jt('삭제됨','Deleted'));closeDw();}
