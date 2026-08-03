@@ -349,6 +349,8 @@ function ready(){document.getElementById('boot-ov').style.display='none';documen
   try{sessionStorage.setItem('us_view',curView);}catch(e){}
   try{history.replaceState({v:curView},'','#'+curView);}catch(e){}  // seed: 여분 엔트리 없이 현재 엔트리에 state 심기
   render();try{_wtRenderSwitcher();}catch(e){}}
+let _usSaving=false;   // 금융/저장 액션 중복 클릭(이중 등록) 방지 락
+let _dbT; function _dbRender(){ clearTimeout(_dbT); _dbT=setTimeout(function(){ try{render();}catch(e){} },180); }  // 검색 실시간 필터(디바운스)
 async function saveAll(msg){
   if(LOCAL){render();toast(msg||'저장됨 (로컬 테스트)');return true;}
   const{error}=await _sb.from('cons_cache').upsert({key:KEY,data:D});
@@ -744,7 +746,7 @@ function vSales(){
   var rows=L.length?L.map(function(s){var o=outAmt(s);var b=agingBucket(s);
     return `<tr onclick="dwSale('${s.id}')"><td class="l">${s.date}</td><td class="l" onclick="event.stopPropagation();openClient('${esc(s.client).replace(/'/g,'&#39;')}')" style="cursor:pointer"><b style="color:var(--ink);border-bottom:1px dotted #cbd5e1">${esc(s.client)}</b></td><td class="l" onclick="event.stopPropagation();openProduct('${esc(s.product).replace(/'/g,'&#39;')}')" style="cursor:pointer">${esc(s.product)||'-'}</td><td>${s.qty||'-'}</td><td><b>${fm(s.amt)}</b></td><td style="color:var(--ok)">${colSum(s)?fm(colSum(s)):'-'}</td><td>${o>0?`<b style="color:var(--bad)">${fm(o)}</b>${b&&b!=='30내'?` <span class="chip c-${b==='90+'?'red':'amber'}">${b}</span>`:''}`:'<span class="chip c-green">'+jt('완납','Paid')+'</span>'}</td><td>${o>0?`<button class="btn btn-sm" onclick="event.stopPropagation();quickCollect('${s.id}')">＋${jt('수금','collect')}</button>`:''}</td></tr>`;}).join(''):'<tr><td colspan="8" class="empty">'+jt('매출 기록이 없습니다','No sales yet')+'</td></tr>';
   return head('<i class="bi bi-receipt"></i> '+jt('매출 · 수금','Sales & Collections'), jt('매출인식 기준 · 행 클릭 → 수금내역 · ＋수금 = 잔액 전액 오늘','Recognition basis · row → collections · +collect = full today'),
-    `<input class="sel" placeholder="<i class="bi bi-search"></i> ${jt('거래처·제품','client·product')}" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value" onkeydown="if(event.key==='Enter')render()" style="width:150px">`
+    `<input class="sel" placeholder="<i class="bi bi-search"></i> ${jt('거래처·제품','client·product')}" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value;_dbRender()" onkeydown="if(event.key==='Enter')render()" style="width:150px">`
     +`<select class="sel" onchange="fSalesYm=this.value;render()"><option value="">${jt('전체 기간','All periods')}</option>${yms.map(m=>`<option ${fSalesYm===m?'selected':''}>${m}</option>`).join('')}</select>`
     +`<button class="btn btn-sm" onclick="csvSales()"><i class="bi bi-download"></i> CSV</button><button class="btn btn-primary" onclick="mSale()">+ ${jt('매출','Sale')}</button>`)
     +`<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
@@ -765,8 +767,8 @@ function mSale(id,pre){const s=id?(D.sales||[]).find(x=>x.id===id):Object.assign
       const i=(D.sales||[]).findIndex(x=>x.id===rec.id);if(i>=0)D.sales[i]=rec;else D.sales.push(rec);return await saveAll();},
     id?async()=>{D.sales=D.sales.filter(x=>x.id!==id);await saveAll('삭제됨');}:null);
 }
-async function quickCollect(id){const s=(D.sales||[]).find(x=>x.id===id);if(!s)return;const o=outAmt(s);if(o<=0)return;
-  s.collections.push({id:uid(),date:today(),amt:o,ref:'전액 수금'});await saveAll('수금 처리: '+fm(o));}
+async function quickCollect(id){if(_usSaving)return;const s=(D.sales||[]).find(x=>x.id===id);if(!s)return;const o=outAmt(s);if(o<=0)return;
+  _usSaving=true;try{s.collections.push({id:uid(),date:today(),amt:o,ref:'전액 수금'});await saveAll('수금 처리: '+fm(o));}finally{_usSaving=false;}}
 function csvSales(){
   const rows=[['인식일','거래처','제품','수량','매출','수금','미수','수금내역']];
   (D.sales||[]).forEach(s=>rows.push([s.date,s.client,s.product,s.qty,s.amt,colSum(s),outAmt(s),(s.collections||[]).map(c=>c.date+':'+c.amt).join(' | ')]));
@@ -866,11 +868,14 @@ function mOrder(id){const o=id?(D.orders||[]).find(x=>x.id===id):{date:today(),c
       const i=(D.orders||[]).findIndex(x=>x.id===rec.id);if(i>=0)D.orders[i]=rec;else D.orders.push(rec);return await saveAll();},
     id?async()=>{D.orders=D.orders.filter(x=>x.id!==id);await saveAll('삭제됨');}:null);
 }
-async function convertOrder(id){const o=(D.orders||[]).find(x=>x.id===id);if(!o)return;
+async function convertOrder(id){if(_usSaving)return;const o=(D.orders||[]).find(x=>x.id===id);if(!o)return;
+  if(o.status==='납품완료'||o.saleId){toast('이미 납품완료 처리된 수주입니다');return;}
   if(!confirm(jt(`'${o.client}' 납품완료 처리하고 매출(${fm(o.amt)})을 생성할까요?`,`Mark '${o.client}' delivered and create a sale (${fm(o.amt)})?`)))return;
-  const sale={id:uid(),date:today(),client:o.client,product:o.product,qty:o.qty,amt:o.amt,memo:'수주 전환 ('+o.date+' 수주)',collections:[]};
-  D.sales.push(sale);o.status='납품완료';o.saleId=sale.id;
-  await saveAll('납품완료 + 매출 생성됨');}
+  _usSaving=true;try{
+    const sale={id:uid(),date:today(),client:o.client,product:o.product,qty:o.qty,amt:o.amt,memo:'수주 전환 ('+o.date+' 수주)',collections:[]};
+    D.sales.push(sale);o.status='납품완료';o.saleId=sale.id;
+    await saveAll('납품완료 + 매출 생성됨');
+  }finally{_usSaving=false;}}
 function csvOrders(){const rows=[['수주일','거래처','제품','수량','금액','상태','납기']];(D.orders||[]).forEach(o=>rows.push([o.date,o.client,o.product,o.qty,o.amt,o.status,o.eta]));dlCsv('orders_corp_us_erp.csv',rows);}
 
 // ── 거래처 분석 ──
@@ -904,7 +909,7 @@ function vClients(){
       +'<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:11px">'+spark+'<div style="font-size:10px;color:var(--muted);text-align:right;line-height:1.5">'+(lastAct[c]?jt('최근활동 ','last ')+lastAct[c].slice(5):(v.last?jt('최근매출 ','sale ')+v.last.slice(5):''))+(v.ord?'<br>'+jt('진행수주 ','order ')+fmS(v.ord):'')+'</div></div></div>';
   }).join(''):'<div class="card"><div class="empty">'+jt('거래처 데이터 없음','No client data')+'</div></div>';
   return head('<i class="bi bi-building"></i> '+jt('거래처 분석','Clients'), jt('거래처별 매출·미수·활동 · 카드 클릭 → 360° 상세','Sales, AR & activity · click for 360°'),
-    '<input class="sel" placeholder="<i class="bi bi-search"></i> '+jt('거래처 검색','Search')+'" value="'+esc(fCliQ)+'" oninput="fCliQ=this.value" onkeydown="if(event.key===\'Enter\')render()" style="width:160px">'
+    '<input class="sel" placeholder="<i class="bi bi-search"></i> '+jt('거래처 검색','Search')+'" value="'+esc(fCliQ)+'" oninput="fCliQ=this.value;_dbRender()" onkeydown="if(event.key===\'Enter\')render()" style="width:160px">'
     +'<select class="sel" onchange="fCliSort=this.value;render()"><option value="sale"'+(fCliSort==='sale'?' selected':'')+'>'+jt('매출순','By sales')+'</option><option value="out"'+(fCliSort==='out'?' selected':'')+'>'+jt('미수순','By AR')+'</option></select>'
     +'<button class="btn btn-primary" onclick="mClient()">+ '+jt('고객사','Account')+'</button>')
     +'<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">'
@@ -1238,7 +1243,7 @@ function vAsset(){
       +'<div class="statcard'+(fAssetSt==='재고'?' on':'')+'" style="border-top:3px solid #64748b" onclick="assetCardF(\'재고\')"><div class="sv">'+inStock+'</div><div class="sl">'+jt('창고 재고','In stock')+'</div></div>'
       +'<div class="statcard'+(JSON.stringify(fAssetSt)===JSON.stringify(['출고','설치','AS'])?' on':'')+'" style="border-top:3px solid #16a34a" onclick=\'assetCardF(["출고","설치","AS"])\'><div class="sv" style="color:var(--ok)">'+atClient+'</div><div class="sl">'+jt('고객사 보유','At clients')+'</div></div>'
       +'<div class="statcard'+(JSON.stringify(fAssetSt)===JSON.stringify(['AS','반품'])?' on':'')+'" style="border-top:3px solid #f59e0b" onclick=\'assetCardF(["AS","반품"])\'><div class="sv" style="color:'+(svc?'var(--warn)':'var(--ink)')+'">'+svc+'</div><div class="sl">'+jt('AS · 반품','Service/return')+'</div></div></div>'
-    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div style="display:flex;gap:5px;flex-wrap:wrap">'+stChips+'</div><select onchange="setAssetF(\'item\',this.value)" style="margin-left:auto">'+itemOpts+'</select><input placeholder="'+jt('시리얼·고객사 검색','Search serial/client')+'" value="'+esc(fAssetQ)+'" oninput="fAssetQ=this.value" onkeydown="if(event.key===\'Enter\')render()" style="min-width:160px"></div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div style="display:flex;gap:5px;flex-wrap:wrap">'+stChips+'</div><select onchange="setAssetF(\'item\',this.value)" style="margin-left:auto">'+itemOpts+'</select><input placeholder="'+jt('시리얼·고객사 검색','Search serial/client')+'" value="'+esc(fAssetQ)+'" oninput="fAssetQ=this.value;_dbRender()" onkeydown="if(event.key===\'Enter\')render()" style="min-width:160px"></div>'
     +'<div class="card" style="padding:0;overflow:auto"><table><thead><tr><th class="l">'+jt('시리얼','Serial')+'</th><th class="l">'+jt('품목','Item')+'</th><th class="l">'+jt('상태','Status')+'</th><th class="l">'+jt('현재 위치','Location')+'</th><th class="l">'+jt('입고일','In')+'</th><th class="l">'+jt('출고일','Out')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function openAsset(id){
@@ -1523,7 +1528,7 @@ function vPipe(){
   const w=open.reduce((a,d)=>a+(+d.amt||0)*(+d.prob||0)/100,0);
   const closing=open.filter(d=>d.expected&&d.expected.slice(0,7)===thisYm);
   return head('<i class="bi bi-bullseye"></i> 딜 파이프라인','카드를 끌어 단계 이동 · 성사 시 수주 자동 생성 · 클릭 → 수정',
-    `<input class="sel" placeholder="<i class="bi bi-search"></i> 고객사·제품·담당" value="${esc(fPipeQ)}" oninput="fPipeQ=this.value" onkeydown="if(event.key==='Enter')render()" style="width:170px">`+
+    `<input class="sel" placeholder="<i class="bi bi-search"></i> 고객사·제품·담당" value="${esc(fPipeQ)}" oninput="fPipeQ=this.value;_dbRender()" onkeydown="if(event.key==='Enter')render()" style="width:170px">`+
     `<select class="sel" onchange="fPipeOwner=this.value;render()"><option value="">담당 전체</option>${owners.map(o=>`<option ${fPipeOwner===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`+
     `${(fPipeOwner||fPipeQ)?'<button class="btn btn-sm" onclick="fPipeOwner=\'\';fPipeQ=\'\';render()">초기화</button>':''}`+
     `<button class="btn btn-sm" onclick="csvDeals()"><i class="bi bi-download"></i> CSV</button><button class="btn btn-primary" onclick="mDeal()">+ 딜 등록</button>`)
