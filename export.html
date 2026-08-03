@@ -328,6 +328,27 @@ table{font-variant-numeric:tabular-nums}
 /* amber 대형 숫자는 가독 위해 한 톤 진하게(의미색 유지) */
 [style*="color:#f59e0b"]{color:#c2760a!important}
 </style>
+<style id="wt-mobile-v1">
+/* 가로 넘침 방지(모바일/데스크톱) — 배경·테마·기능 무변경, 축소·내부스크롤만 허용 */
+/* 2단 리스트: fr 트랙의 auto 최소치 때문에 칼럼이 min-content(770px)로 부풀던 문제 */
+.cdud .cdud-two{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+@media(max-width:1000px){.cdud .cdud-two{grid-template-columns:minmax(0,1fr)}}
+.cdud .cdud-two>*{min-width:0}
+.cdud-st{min-width:0;flex-wrap:wrap}
+.sec-scroll{min-width:0}
+@media(max-width:760px){
+  /* 인라인 repeat(5,1fr) KPI 타일 → 폭에 맞춰 접힘 */
+  .kgrid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))!important}
+  .ktile{min-width:0;padding:11px 12px}
+  .ktile>div{min-width:0}
+  .ktile .kl,.ktile .kv,.ktile .ks{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  /* 탭/필터 스트립: 페이지가 아니라 스트립 내부만 가로 스크롤 */
+  .flt{flex-wrap:wrap}
+  .flt>span{min-width:0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .flt>span::-webkit-scrollbar{height:0}
+  .flt input,.flt select{max-width:100%}
+}
+</style>
 </head>
 <body>
 <div id="login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#0e2a3a);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">

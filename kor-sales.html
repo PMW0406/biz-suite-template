@@ -261,6 +261,18 @@ table{font-variant-numeric:tabular-nums}
 /* amber 대형 숫자는 가독 위해 한 톤 진하게(의미색 유지) */
 [style*="color:#f59e0b"]{color:#c2760a!important}
 </style>
+<style id="wt-mobile-v1">
+/* 가로 넘침 방지 — 배경·테마·기능 무변경 */
+/* 상단바: 브랜드+유틸(146px)+검색(150px)이 한 줄에 안 들어가 431px로 넘치던 문제.
+   모바일에서만 2행으로 접고 탭 스트립은 폭을 확보해 내부 가로 스크롤 */
+@media(max-width:820px){
+  .wt-top{flex-wrap:wrap;height:auto;padding:5px 10px;row-gap:4px}
+  .wt-top .util{margin-left:auto;min-width:0}
+  .wt-top .gsearch{order:8;flex:0 0 132px;width:132px;margin:0;min-width:0}
+  .wt-top .gsearch input{min-width:0;width:100%}
+  .wt-top nav{order:9;flex:1 1 auto;min-width:0}
+}
+</style>
 </head>
 <body>
 
