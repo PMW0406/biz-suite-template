@@ -319,6 +319,15 @@ table{font-variant-numeric:tabular-nums}
 /* WT-DEEP-v3 프리미엄 타이포 일관 */
 .kpi-value,.lux-num,.stat-num,.stat-value,.metric-value,.metric-num,.big-num,.num-lg,.hero-num,.summary-num,.card-num{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
 </style>
+<style id="wt-contrast-v1">
+/* 저대비 텍스트 판독성 보정(WCAG 3:1 목표). 배경/레이아웃 무변경, 글자색만 상향 */
+[style*="color:#cbd5e1"],[style*="color:#d1d5db"],[style*="color:#e5e7eb"],[style*="color:#c9d2dd"],[style*="color:#dfe5ec"]{color:#8a97a8!important}
+[style*="color:#b3bdcc"],[style*="color:#9aa7b8"]{color:#68758a!important}
+[style*="color:#94a3b8"]{color:#6b7a90!important}
+.muted,.hint,.s,.sub,.desc,.note{color:#64748b}
+/* amber 대형 숫자는 가독 위해 한 톤 진하게(의미색 유지) */
+[style*="color:#f59e0b"]{color:#c2760a!important}
+</style>
 </head>
 <body>
 <div id="login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#0e2a3a);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
