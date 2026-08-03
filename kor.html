@@ -814,15 +814,15 @@ table{font-variant-numeric:tabular-nums}
   <!-- 대시보드 -->
   <!-- 매출 종합 현황 -->
   <div id="page-sales-overview" class="page active">
-    <div class="page-header" style="border-bottom:2px solid #16324f;padding-bottom:14px;align-items:flex-end">
+    <div class="wt-mast">
       <div>
-        <div style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#94a3b8">노바진단 · SALES OVERVIEW</div>
-        <h5 style="margin-top:4px;font-size:22px;font-weight:800;letter-spacing:-.01em"><i class="bi bi-bar-chart-line me-2" style="color:#2563eb"></i>소모품·제품 종합 매출현황</h5>
+        <div class="kick">노바진단 · SALES OVERVIEW</div>
+        <div class="t"><i class="bi bi-bar-chart-line me-2" style="color:#2563eb"></i>소모품·제품 종합 매출현황</div>
       </div>
-      <div style="font-size:12px;color:#64748b;text-align:right" id="overview-updated"></div>
+      <div class="wt-mast-meta" id="overview-updated"></div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-      <span style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap">📅 조회 기간</span>
+    <div class="wt-filter">
+      <span class="wt-filter-lbl"><i class="bi bi-calendar3"></i>조회 기간</span>
       <span id="ov-simple" style="display:none">
       <select id="ov-year-sel" class="form-select form-select-sm" style="width:84px"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
       <select id="ov-from-sel" class="form-select form-select-sm" style="width:70px"><option value="1" selected>1월</option></select>
@@ -834,7 +834,7 @@ table{font-variant-numeric:tabular-nums}
     <div class="row g-3 mb-3" id="ov-kpi"></div>
     <!-- 월별 통합 차트 -->
     <div class="card p-3 mb-3">
-      <div class="fw-bold mb-2" style="font-size:13px"><i class="bi bi-graph-up-arrow me-1" style="color:#374151"></i>월별 매출 추이 <span style="font-size:11px;font-weight:400;color:#64748b">막대=소모품·제품·미반영 · 점선=작년 합계 · 단위 억원</span></div>
+      <div class="wt-ct"><i class="bi bi-graph-up-arrow me-1" style="color:#374151"></i>월별 매출 추이 <span style="font-size:11px;font-weight:400;color:#64748b">막대=소모품·제품·미반영 · 점선=작년 합계 · 단위 억원</span></div>
       <div style="position:relative;height:220px"><canvas id="ov-chart-monthly"></canvas></div>
       <div id="ov-month-table" class="mt-3"></div>
     </div>
@@ -842,13 +842,13 @@ table{font-variant-numeric:tabular-nums}
     <div class="row g-3">
       <div class="col-md-6">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-2" style="font-size:13px;color:#16a34a"><i class="bi bi-box-seam me-1"></i>장비 상세</div>
+          <div class="wt-ct" style="color:#16a34a"><i class="bi bi-box-seam me-1"></i>장비 상세</div>
           <div id="ov-dev-prods"></div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-2" style="font-size:13px;color:#2563eb"><i class="bi bi-capsule me-1"></i>소모품 상세</div>
+          <div class="wt-ct" style="color:#2563eb"><i class="bi bi-capsule me-1"></i>소모품 상세</div>
           <div id="ov-cons-prods"></div>
         </div>
       </div>
@@ -914,7 +914,7 @@ table{font-variant-numeric:tabular-nums}
   </div></div></div>
 
   <!-- 지역별 분석 -->
-  <style id="ana-css">.ana-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.ana-tabs .anatab{border:1px solid #e0e0e0;background:#fff;border-radius:9999px;padding:7px 16px;font-size:13px;font-weight:600;color:#4b5563;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:border-color .15s,background .15s,color .15s}.ana-tabs .anatab:hover{border-color:#0066cc;color:#0066cc}.ana-tabs .anatab.on{background:#0066cc;border-color:#0066cc;color:#fff}.ana-tabs .anatab i{font-size:14px}</style>
+  <style id="ana-css">.ana-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.ana-tabs .anatab{border:1px solid #e4e8ef;background:#fff;border-radius:9999px;padding:7px 16px;font-size:13px;font-weight:600;color:#4b5563;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:border-color .15s,background .15s,color .15s}.ana-tabs .anatab:hover{border-color:#2563eb;color:#2563eb}.ana-tabs .anatab.on{background:#2563eb;border-color:#2563eb;color:#fff}.ana-tabs .anatab i{font-size:14px}</style>
   <div id="page-region" class="page">
     <div class="ana-tabs">
       <button class="anatab" data-sub="device-reps" onclick="showPage('device-reps')"><i class="bi bi-person-badge"></i>담당자별</button>
@@ -928,8 +928,8 @@ table{font-variant-numeric:tabular-nums}
         <button id="regv-map" type="button" class="btn btn-outline-primary" onclick="_regView('map',this)"><i class="bi bi-map me-1"></i>지도</button>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-      <span style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap">📅 조회 기간</span>
+    <div class="wt-filter">
+      <span class="wt-filter-lbl"><i class="bi bi-calendar3"></i>조회 기간</span>
       <span id="reg-simple" style="display:none">
       <select id="reg-year-sel" class="form-select form-select-sm" style="width:84px"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
       <select id="reg-from-sel" class="form-select form-select-sm" style="width:70px"><option value="1" selected>1월</option></select>
@@ -950,7 +950,7 @@ table{font-variant-numeric:tabular-nums}
       <div id="reg-map-legend" style="font-size:11px;color:#6b7280;margin-top:8px"></div>
     </div>
     <div class="card p-3" id="reg-table-card">
-      <div class="fw-bold mb-2" style="font-size:13px"><i class="bi bi-bar-chart-line me-1" style="color:#374151"></i>시도별 매출·성장 분석 <span style="font-size:11px;font-weight:400;color:#64748b">행 클릭 → 구군 → 병원까지 상세 조회</span></div>
+      <div class="wt-ct"><i class="bi bi-bar-chart-line me-1" style="color:#374151"></i>시도별 매출·성장 분석 <span style="font-size:11px;font-weight:400;color:#64748b">행 클릭 → 구군 → 병원까지 상세 조회</span></div>
       <div id="reg-list"></div>
     </div>
   </div>
@@ -1015,7 +1015,7 @@ table{font-variant-numeric:tabular-nums}
       <div class="col-md-7">
         <div class="card p-3 h-100">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="fw-bold" style="font-size:14px">월별 매출 현황</div>
+            <div class="wt-ct mb-0">월별 매출 현황</div>
             
           </div>
           <div style="position:relative;height:200px"><canvas id="chart-monthly"></canvas></div>
@@ -1023,7 +1023,7 @@ table{font-variant-numeric:tabular-nums}
       </div>
       <div class="col-md-5">
         <div class="card p-3">
-          <div class="fw-bold mb-2" style="font-size:14px">파이프라인 퍼널</div>
+          <div class="wt-ct">파이프라인 퍼널</div>
           <div id="dash-funnel"></div>
           <div id="dash-funnel-summary" class="mt-3 pt-3" style="border-top:1px solid #f3f4f6"></div>
         </div>
@@ -1035,7 +1035,7 @@ table{font-variant-numeric:tabular-nums}
     <div class="mb-4" id="dash-action-section">
       <div class="card p-0">
         <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-          <div class="fw-bold" style="font-size:14px"><i class="bi bi-bell-fill me-2" style="color:#ea580c"></i>다음 액션 <span style="font-size:11px;font-weight:400;color:#94a3b8">· 행 클릭 시 상세</span></div>
+          <div class="wt-ct mb-0"><i class="bi bi-bell-fill me-2" style="color:#ea580c"></i>다음 액션 <span style="font-size:11px;font-weight:400;color:#94a3b8">· 행 클릭 시 상세</span></div>
           <div class="d-flex gap-2">
             <span class="badge" style="background:#fef2f2;color:#dc2626;font-weight:600;font-size:11px" id="action-overdue-cnt"></span>
             <span class="badge" style="background:#fff7ed;color:#ea580c;font-weight:600;font-size:11px" id="action-today-cnt"></span>
@@ -1092,13 +1092,13 @@ table{font-variant-numeric:tabular-nums}
       <div class="row g-3 mb-3">
         <div class="col-md-7">
           <div class="card p-3 h-100">
-            <div class="fw-bold mb-2" style="font-size:14px">월별 계약 실적 (최근 12개월)</div>
+            <div class="wt-ct">월별 계약 실적 (최근 12개월)</div>
             <div style="position:relative;height:200px"><canvas id="chart-perf"></canvas></div>
           </div>
         </div>
         <div class="col-md-5">
           <div class="card p-3 h-100">
-            <div class="fw-bold mb-2" style="font-size:14px"><i class="bi bi-funnel-fill me-1" style="color:#2563eb"></i>Win Rate 퍼널</div>
+            <div class="wt-ct"><i class="bi bi-funnel-fill me-1" style="color:#2563eb"></i>Win Rate 퍼널</div>
             <div id="winrate-funnel"></div>
           </div>
         </div>
@@ -1205,7 +1205,7 @@ table{font-variant-numeric:tabular-nums}
 
   /* ═══ 모바일 콘텐츠 최적화 (컴포넌트 정의 뒤 → 소스순서상 우선) ═══ */
   @media(max-width:768px){
-    .main{padding:54px 10px 26px}
+    .main{padding:54px 10px calc(86px + env(safe-area-inset-bottom))}
     .page-header{margin-bottom:16px;flex-wrap:wrap;gap:8px}
     .page-header h5{font-size:15px;line-height:1.35}
     .page-header .btn,.btn-sm{font-size:12px;padding:6px 11px}
@@ -1234,7 +1234,7 @@ table{font-variant-numeric:tabular-nums}
     .cmp th,.cmp td{padding:9px 7px}
   }
   @media(max-width:480px){
-    .main{padding:52px 8px 24px}
+    .main{padding:52px 8px calc(84px + env(safe-area-inset-bottom))}
     .page-header h5{font-size:14px}
     .page-header h5 .text-muted{display:none}
     .kpi-value{font-size:1.1rem!important}
@@ -1518,7 +1518,7 @@ table{font-variant-numeric:tabular-nums}
   <div id="page-quotes" class="page">
     <div class="wt-mast"><div><div class="kick">노바진단 SALES</div><div class="t"><i class="bi bi-file-earmark-text me-2"></i>견적서</div></div><div class="d-flex align-items-center" style="gap:8px"><div class="btn-group btn-group-sm"><button class="btn btn-primary" type="button">견적서</button><button class="btn btn-outline-primary" type="button" onclick="showPage('roi')"><i class="bi bi-calculator me-1"></i>ROI 계산기</button></div><button class="btn btn-primary btn-sm" onclick="openModal('quote')"><i class="bi bi-plus-lg me-1"></i>견적서 작성</button></div></div>
     <div class="card"><div class="card-body p-0"><table class="table table-hover mb-0">
-      <thead class="table-light"><tr><th>견적번호</th><th>병원명</th><th>장비명</th><th>견적일</th><th>담당</th><th>합계</th><th></th></tr></thead>
+      <thead class="table-light"><tr><th>견적번호</th><th>병원명</th><th>장비명</th><th>견적일</th><th>담당</th><th class="text-end">합계</th><th></th></tr></thead>
       <tbody id="quote-list"></tbody>
     </table></div></div>
   </div>
@@ -1532,7 +1532,7 @@ table{font-variant-numeric:tabular-nums}
     </div>
     <div class="wt-mast"><div><div class="kick">노바진단 SALES</div><div class="t">고객사</div></div><span class="text-muted" style="font-size:12px"><i class="bi bi-info-circle me-1"></i>실제 매출 데이터 기반 · 병원 클릭 → 상세·정보수정</span></div>
     <!-- 보기 선택 카드 -->
-    <div class="row g-2 mb-3" id="cust-view-cards"></div>
+    <div class="row g-3 mb-3" id="cust-view-cards"></div>
     <div class="d-flex gap-2 mb-2 flex-wrap align-items-center">
       <input type="text" id="search-cust" class="form-control form-control-sm" style="max-width:280px" placeholder="병원명·지역·담당 검색..." oninput="renderCustomers()">
       <select id="cust-sales-filter" class="form-select form-select-sm" style="max-width:180px" onchange="renderCustomers()" title="담당 영업사원으로 콜스케줄 필터"><option value="">담당영업 전체</option></select>
@@ -1609,7 +1609,7 @@ table{font-variant-numeric:tabular-nums}
   <div id="page-products" class="page">
     <div class="wt-mast"><div><div class="kick">노바진단 SALES</div><div class="t">제품 목록</div></div><button class="btn btn-primary btn-sm" onclick="openModal('product')"><i class="bi bi-plus-lg me-1"></i>제품 추가</button></div>
     <div class="card"><div class="card-body p-0"><table class="table table-hover mb-0">
-      <thead class="table-light"><tr><th>제품코드</th><th>제품명</th><th>카테고리</th><th>정가</th><th>보증기간</th><th></th></tr></thead>
+      <thead class="table-light"><tr><th>제품코드</th><th>제품명</th><th>카테고리</th><th class="text-end">정가</th><th class="text-end">보증기간</th><th></th></tr></thead>
       <tbody id="product-list"></tbody>
     </table></div></div>
   </div>
@@ -1638,8 +1638,8 @@ table{font-variant-numeric:tabular-nums}
     </div>
 
     <!-- 기간 선택 필터 -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-      <span style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap">📅 조회 기간</span>
+    <div class="wt-filter">
+      <span class="wt-filter-lbl"><i class="bi bi-calendar3"></i>조회 기간</span>
       <span id="cons-simple" style="display:none">
       <select id="cons-year-sel" class="form-select form-select-sm" style="width:84px"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
       <select id="cons-from-sel" class="form-select form-select-sm" style="width:70px"><option value="1" selected>1월</option></select>
@@ -1681,19 +1681,19 @@ table{font-variant-numeric:tabular-nums}
     <div class="row g-3 mb-3">
       <div class="col-md-4">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-1" style="font-size:13px"><i class="bi bi-graph-up-arrow me-1" style="color:#374151"></i>애니젠 Tip 종합 <span style="font-size:10px;font-weight:400;color:#94a3b8">점선=2025 실선=2026</span></div>
+          <div class="wt-ct"><i class="bi bi-graph-up-arrow me-1" style="color:#374151"></i>애니젠 Tip 종합 <span style="font-size:10px;font-weight:400;color:#94a3b8">점선=2025 실선=2026</span></div>
           <div style="position:relative;height:250px"><canvas id="cons-chart-total"></canvas></div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-1" style="font-size:13px"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#2563eb;margin-right:6px;vertical-align:middle"></span>반려동물 Rapid (파보·디스템퍼)</div>
+          <div class="wt-ct"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#2563eb;margin-right:6px;vertical-align:middle"></span>반려동물 Rapid (파보·디스템퍼)</div>
           <div style="position:relative;height:250px"><canvas id="cons-chart-olig"></canvas></div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-1" style="font-size:13px"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#16324f;margin-right:6px;vertical-align:middle"></span>산업동물 Rapid (구제역·돼지열병)</div>
+          <div class="wt-ct"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#16324f;margin-right:6px;vertical-align:middle"></span>산업동물 Rapid (구제역·돼지열병)</div>
           <div style="position:relative;height:250px"><canvas id="cons-chart-xm"></canvas></div>
         </div>
       </div>
@@ -1703,13 +1703,13 @@ table{font-variant-numeric:tabular-nums}
     <div class="row g-3 mb-3">
       <div class="col-md-6">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-2" style="font-size:14px" id="cons-monthly-title"><i class="bi bi-calendar3 me-1" style="color:#2563eb;font-size:12px"></i>당월</div>
+          <div class="wt-ct" id="cons-monthly-title"><i class="bi bi-calendar3 me-1" style="color:#2563eb;font-size:12px"></i>당월</div>
           <div id="cons-detail-monthly"></div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-2" style="font-size:14px" id="cons-ytd-title"><i class="bi bi-pie-chart-fill me-1" style="color:#ff4500;font-size:12px"></i>누계</div>
+          <div class="wt-ct" id="cons-ytd-title"><i class="bi bi-pie-chart-fill me-1" style="color:#ff4500;font-size:12px"></i>누계</div>
           <div id="cons-detail-ytd"></div>
         </div>
       </div>
@@ -1744,8 +1744,8 @@ table{font-variant-numeric:tabular-nums}
     </div>
 
     <!-- 기간 선택 필터 -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-      <span style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap">📅 조회 기간</span>
+    <div class="wt-filter">
+      <span class="wt-filter-lbl"><i class="bi bi-calendar3"></i>조회 기간</span>
       <span id="dev-simple" style="display:none">
       <select id="dev-year-sel" class="form-select form-select-sm" style="width:84px" onchange="renderDeviceSales()">
         <option value="2026" selected>2026년</option>
@@ -1769,7 +1769,7 @@ table{font-variant-numeric:tabular-nums}
     <div class="row g-3 mb-3">
       <div class="col-12">
         <div class="card p-3">
-          <div class="fw-bold mb-2" style="font-size:14px"><i class="bi bi-graph-up-arrow me-1" style="color:#374151"></i>월별 제품 매출 추이 <span style="font-size:11px;font-weight:400;color:#64748b">점선=전년 실선=당해</span></div>
+          <div class="wt-ct"><i class="bi bi-graph-up-arrow me-1" style="color:#374151"></i>월별 제품 매출 추이 <span style="font-size:11px;font-weight:400;color:#64748b">점선=전년 실선=당해</span></div>
           <div style="position:relative;height:200px"><canvas id="dev-chart-monthly"></canvas></div>
         </div>
       </div>
@@ -1779,13 +1779,13 @@ table{font-variant-numeric:tabular-nums}
     <div class="row g-3 mb-3">
       <div class="col-md-6">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-2" style="font-size:14px" id="dev-monthly-title"><i class="bi bi-calendar3 me-1" style="color:#2563eb;font-size:12px"></i>당월</div>
+          <div class="wt-ct" id="dev-monthly-title"><i class="bi bi-calendar3 me-1" style="color:#2563eb;font-size:12px"></i>당월</div>
           <div id="dev-detail-monthly"></div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card p-3 h-100">
-          <div class="fw-bold mb-2" style="font-size:14px" id="dev-ytd-title"><i class="bi bi-pie-chart-fill me-1" style="color:#ff4500;font-size:12px"></i>누계</div>
+          <div class="wt-ct" id="dev-ytd-title"><i class="bi bi-pie-chart-fill me-1" style="color:#ff4500;font-size:12px"></i>누계</div>
           <div id="dev-detail-ytd"></div>
         </div>
       </div>
@@ -1812,8 +1812,8 @@ table{font-variant-numeric:tabular-nums}
     </div>
 
     <!-- 기간 선택 필터 -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-      <span style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap">📅 조회 기간</span>
+    <div class="wt-filter">
+      <span class="wt-filter-lbl"><i class="bi bi-calendar3"></i>조회 기간</span>
       <span id="hosp-simple" style="display:none">
       <select id="hosp-year-sel" class="form-select form-select-sm" style="width:84px"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
       <select id="hosp-from-sel" class="form-select form-select-sm" style="width:70px"><option value="1" selected>1월</option></select>
@@ -1833,10 +1833,10 @@ table{font-variant-numeric:tabular-nums}
 
     <!-- 이탈위험 패널 -->
     <div id="hosp-panel-risk">
-      <div class="row g-2 mb-2">
+      <div class="row g-3 mb-3">
         <div class="col-md-6">
-          <div class="card p-3" style="border-left:4px solid #dc2626">
-            <div class="fw-bold mb-1" style="font-size:13px;color:#dc2626"><i class="bi bi-x-circle-fill me-1"></i>이탈 — 2025 거래 있으나 2026 미구매</div>
+          <div class="card p-3 h-100" style="border-left:4px solid #dc2626">
+            <div class="wt-ct" style="color:#dc2626"><i class="bi bi-x-circle-fill me-1"></i>이탈 — 2025 거래 있으나 2026 미구매</div>
             <div style="font-size:11px;color:#64748b;margin-bottom:8px">우선순위 점수(매출·재구매시점·미연락) · 클릭시 상세</div>
             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
               <select id="risk-mgr-filter" class="form-select form-select-sm" style="max-width:210px" onchange="renderConsHospitals()"><option value="">👥 전체 조회</option></select>
@@ -1847,8 +1847,8 @@ table{font-variant-numeric:tabular-nums}
           </div>
         </div>
         <div class="col-md-6">
-          <div class="card p-3" style="border-left:4px solid #f59e0b">
-            <div class="fw-bold mb-1" style="font-size:13px;color:#d97706"><i class="bi bi-dash-circle-fill me-1"></i>감소 — 동기간 대비 매출 하락 (거래는 유지)</div>
+          <div class="card p-3 h-100" style="border-left:4px solid #f59e0b">
+            <div class="wt-ct" style="color:#d97706"><i class="bi bi-dash-circle-fill me-1"></i>감소 — 동기간 대비 매출 하락 (거래는 유지)</div>
             <div style="font-size:11px;color:#64748b;margin-bottom:8px">동기간 대비 매출 하락 · 클릭시 상세</div>
             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
               <select id="decline-mgr-filter" class="form-select form-select-sm" style="max-width:210px" onchange="renderConsHospitals()"><option value="">👥 전체 조회</option></select>
@@ -1863,17 +1863,17 @@ table{font-variant-numeric:tabular-nums}
 
     <!-- 성과분석 패널 -->
     <div id="hosp-panel-perf" style="display:none">
-      <div class="row g-2">
+      <div class="row g-3">
         <div class="col-md-6">
-          <div class="card p-3" style="border-left:4px solid #16a34a">
-            <div class="fw-bold mb-1" style="font-size:13px;color:#16a34a"><i class="bi bi-arrow-up-circle-fill me-1"></i>성장 병원 — 동기간 YoY 증가</div>
+          <div class="card p-3 h-100" style="border-left:4px solid #16a34a">
+            <div class="wt-ct" style="color:#16a34a"><i class="bi bi-arrow-up-circle-fill me-1"></i>성장 병원 — 동기간 YoY 증가</div>
             <div style="font-size:11px;color:#64748b;margin-bottom:8px">2025년 1–5월 대비 2026년 1–5월 증가율 상위</div>
             <div id="hosp-growth-list" style="max-height:calc(100vh - 300px);overflow-y:auto"></div>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="card p-3" style="border-left:4px solid #16324f">
-            <div class="fw-bold mb-1" style="font-size:13px;color:#2563eb"><i class="bi bi-star-fill me-1"></i>신규 거래처 — 2026년 첫 거래</div>
+          <div class="card p-3 h-100" style="border-left:4px solid #16324f">
+            <div class="wt-ct" style="color:#2563eb"><i class="bi bi-star-fill me-1"></i>신규 거래처 — 2026년 첫 거래</div>
             <div style="font-size:11px;color:#64748b;margin-bottom:8px">2025년 이전 거래 없는 신규 병원</div>
             <div id="hosp-new-list" style="max-height:calc(100vh - 300px);overflow-y:auto"></div>
           </div>
@@ -1886,12 +1886,12 @@ table{font-variant-numeric:tabular-nums}
       
       <!-- 등급별 4개 차트 -->
       <div class="row g-3 mb-3" id="grade-charts-row">
-        <div class="col-md-6"><div class="card p-3"><div class="fw-bold mb-2" style="font-size:12px;color:#9333ea"><span style="background:#f3e8ff;border-radius:4px;padding:1px 7px;margin-right:6px">S</span>S등급 월별 추이</div><canvas id="chart-grade-S" height="140"></canvas></div></div>
-        <div class="col-md-6"><div class="card p-3"><div class="fw-bold mb-2" style="font-size:12px;color:#dc2626"><span style="background:#fee2e2;border-radius:4px;padding:1px 7px;margin-right:6px">A</span>A등급 월별 추이</div><canvas id="chart-grade-A" height="140"></canvas></div></div>
-        <div class="col-md-6"><div class="card p-3"><div class="fw-bold mb-2" style="font-size:12px;color:#d97706"><span style="background:#fef3c7;border-radius:4px;padding:1px 7px;margin-right:6px">B</span>B등급 월별 추이</div><canvas id="chart-grade-B" height="140"></canvas></div></div>
-        <div class="col-md-6"><div class="card p-3"><div class="fw-bold mb-2" style="font-size:12px;color:#2563eb"><span style="background:#eff6ff;border-radius:4px;padding:1px 7px;margin-right:6px">C</span>C등급 월별 추이</div><canvas id="chart-grade-C" height="140"></canvas></div></div>
+        <div class="col-md-6"><div class="card p-3 h-100"><div class="wt-ct" style="color:#9333ea"><span style="background:#f3e8ff;border-radius:4px;padding:1px 7px;margin-right:6px">S</span>S등급 월별 추이</div><canvas id="chart-grade-S" height="140"></canvas></div></div>
+        <div class="col-md-6"><div class="card p-3 h-100"><div class="wt-ct" style="color:#dc2626"><span style="background:#fee2e2;border-radius:4px;padding:1px 7px;margin-right:6px">A</span>A등급 월별 추이</div><canvas id="chart-grade-A" height="140"></canvas></div></div>
+        <div class="col-md-6"><div class="card p-3 h-100"><div class="wt-ct" style="color:#d97706"><span style="background:#fef3c7;border-radius:4px;padding:1px 7px;margin-right:6px">B</span>B등급 월별 추이</div><canvas id="chart-grade-B" height="140"></canvas></div></div>
+        <div class="col-md-6"><div class="card p-3 h-100"><div class="wt-ct" style="color:#2563eb"><span style="background:#eff6ff;border-radius:4px;padding:1px 7px;margin-right:6px">C</span>C등급 월별 추이</div><canvas id="chart-grade-C" height="140"></canvas></div></div>
       </div>
-      <div class="col-12">
+      <div>
         <div class="card p-0">
           <div class="p-3 border-bottom fw-bold" style="font-size:13px"><i class="bi bi-table me-1"></i>등급별 상세 현황</div>
           <div style="overflow-x:auto">
@@ -1959,8 +1959,8 @@ table{font-variant-numeric:tabular-nums}
         <button class="btn btn-outline-success btn-sm" onclick="devRepExport()"><i class="bi bi-file-earmark-excel me-1"></i>내보내기</button>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-      <span style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap">📅 조회 기간</span>
+    <div class="wt-filter">
+      <span class="wt-filter-lbl"><i class="bi bi-calendar3"></i>조회 기간</span>
       <span id="devrep-simple" style="display:none">
       <select id="devrep-year-sel" class="form-select form-select-sm" style="width:84px"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
       <select id="devrep-from-sel" class="form-select form-select-sm" style="width:70px"><option value="1" selected>1월</option></select>
@@ -11283,7 +11283,7 @@ async function saveNewUser() {
 function renderProducts(){
   const el=document.getElementById('product-list');
   if(!DB.d.products.length){el.innerHTML='<tr><td colspan="6" class="text-center text-muted py-3">데이터 없음</td></tr>';return;}
-  el.innerHTML=DB.d.products.map(p=>`<tr><td>${p.code||''}</td><td><strong>${p.name||''}</strong></td><td>${p.category||''}</td><td>${p.price?Number(p.price).toLocaleString()+'원':''}</td><td>${p.warranty?p.warranty+'개월':''}</td><td><button class="btn btn-outline-primary" style="font-size:11px;padding:1px 6px" onclick='editProduct("${p.id}")'>수정</button></td></tr>`).join('');
+  el.innerHTML=DB.d.products.map(p=>`<tr><td>${p.code||''}</td><td><strong>${p.name||''}</strong></td><td>${p.category||''}</td><td class="text-end">${p.price?Number(p.price).toLocaleString()+'원':''}</td><td class="text-end">${p.warranty?p.warranty+'개월':''}</td><td><button class="btn btn-outline-primary" style="font-size:11px;padding:1px 6px" onclick='editProduct("${p.id}")'>수정</button></td></tr>`).join('');
 }
 
 function editProduct(id){
@@ -12586,5 +12586,139 @@ function chk(){et().then(function(e){if(e==null||e==='')return;if(base===null){b
 document.addEventListener('visibilitychange',function(){if(!document.hidden)chk();});
 setInterval(chk,5*60*1000);chk();
 })();</script>
+<style>
+/* ══════════════════════════════════════════════════════════════════════
+   WT-DESIGN-POLISH-v2 (2026-08-03) — 전 페이지 정렬·간격·위계 통일 레이어
+   · 배경/테마 무변경: --bg #f3f4f6, --sidebar-bg #f1f5f9, 카드 흰색 그대로
+   · 구조/기능 무변경: CSS 우선순위로만 덮음(문서 마지막 = 최종 승자)
+   · 토큰은 --wt-* 로 네임스페이스(기존 --line/--ink 등과 충돌 금지)
+   ══════════════════════════════════════════════════════════════════════ */
+:root{
+  --wt-r:16px;        /* 카드·밴드 라운드 */
+  --wt-r-ctl:9px;     /* 입력·버튼 라운드 */
+  --wt-gap:16px;      /* 섹션 간 기본 여백 */
+  --wt-ink:#182230;   /* 제목 */
+  --wt-ink2:#475569;  /* 부제 */
+  --wt-mut:#64748b;   /* 보조 */
+  --wt-line:#e4e8ef;  /* 테두리 */
+  --wt-line2:#eef2f7; /* 옅은 구분선 */
+  --wt-navy:#16324f;  /* 문서 헤드라인 룰 */
+}
+
+/* ── 1. 페이지 헤더: .wt-mast / .page-header / .dash-hero 3종을 같은 리듬으로 ── */
+.main .page-header{
+  border-bottom:2px solid var(--wt-navy);padding-bottom:13px;margin-bottom:18px;
+  align-items:flex-end;gap:10px;flex-wrap:wrap;
+}
+.main .page-header h5{font-size:22px;font-weight:800;color:var(--wt-ink);letter-spacing:-.01em;line-height:1.25}
+.main .page-header h5 .text-muted{font-size:12px;font-weight:400}
+.main .wt-mast{margin-bottom:18px;gap:12px}
+.main .wt-mast .t{line-height:1.25}
+.main .wt-mast-meta{font-size:12px;color:var(--wt-mut);text-align:right;line-height:1.5}
+.main .dash-hero{padding:2px 0 13px;border-bottom:2px solid var(--wt-navy);margin-bottom:18px}
+.main .dash-greeting{font-size:22px;font-weight:800;color:var(--wt-ink);letter-spacing:-.01em}
+
+/* ── 2. 조회기간 필터바: 6개 페이지에 흩어져 있던 인라인 스타일 → 공통 클래스 ── */
+.main .wt-filter{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 14px;margin-bottom:var(--wt-gap);
+  background:#f8fafc;border:1px solid #e8edf3;border-radius:12px;
+}
+.main .wt-filter-lbl{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--wt-ink2);white-space:nowrap}
+.main .wt-filter-lbl i{color:#2563eb;font-size:13px}
+.main .wt-filter .form-select-sm,.main .wt-filter .form-control-sm{min-height:32px;border-radius:var(--wt-r-ctl)}
+.main .wt-filter>span:last-child:empty{display:none}
+
+/* ── 3. 카드 섹션 제목(.wt-ct): 13/14px 혼용 → 단일 위계 ── */
+.main .wt-ct{
+  display:block;font-size:13px;font-weight:700;color:var(--wt-ink);
+  letter-spacing:-.01em;line-height:1.4;margin-bottom:10px;
+}
+.main .wt-ct.mb-0{margin-bottom:0}
+.main .card>.p-3.border-bottom{font-size:13px;color:var(--wt-ink);border-color:var(--wt-line2)!important}
+
+/* ── 4. 컨테이너 라운드·테두리 통일 (카드 16 / 밴드 12 혼재 해소) ── */
+.main .card,.main .kpi-card,.main .stat-card{border-radius:var(--wt-r)!important}
+.main .wt-band,.main .cdud{border-radius:var(--wt-r);border-color:var(--wt-line)}
+.main .wt-band{padding:18px 22px}
+/* 카드 내부 패딩을 밴드(18px)와 같은 리듬으로 — p-3(16px) 카드가 밴드보다 좁아 보이던 문제 */
+.main .card.p-3{padding:18px 20px!important}
+.main .pipeline-col,.main .deal-card{border-radius:12px}
+/* 히어로 숫자 색: .wt-band(파랑) / .cdud(먹색) 혼재 → 브랜드 블루로 통일 */
+.main .cdud .cdud-hero>b{color:#2563eb}
+.main .modal-content{border-radius:var(--wt-r)}
+/* 그리드 안 카드는 행 높이에 맞춰 정렬(행마다 아래끝이 들쭉날쭉하던 문제) */
+.main .page .row>[class*="col-"]>.card{height:100%}
+.main .page>.card:not(:last-child){margin-bottom:var(--wt-gap)}
+
+/* ── 5. 탭·칩 컴포넌트 5종(높이·패딩·라운드 제각각) 통일 ── */
+.main .pipe-chip,.main .dash-period-btn,.main .anatab,.main .wt-tab{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-height:30px;padding:6px 14px;border-radius:999px;
+  font-size:12.5px;font-weight:600;line-height:1;
+}
+.main .ana-tabs{margin-bottom:14px}
+/* 헤더·필터바 버튼 높이 정렬 */
+.main .wt-mast .btn-sm,.main .page-header .btn-sm,.main .wt-filter .btn-sm,
+.main .btn-group-sm>.btn{min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+.main .wt-mast .btn-group-sm>.btn,.main .page-header .btn-group-sm>.btn{white-space:nowrap}
+
+/* ── 6. 표: 세로 가운데 정렬 + 숫자열 자릿수 고정 + 행 hover 일관 ── */
+.main table th,.main table td{vertical-align:middle}
+.main .table td.text-end,.main .table th.text-end,
+.main table td[style*="text-align:right"],.main table th[style*="text-align:right"]{font-variant-numeric:tabular-nums}
+.main .card table:not(.table):not(.qed-tbl):not(.wkr-tb) tbody tr:hover>td{background:#f9fafb}
+
+/* ── 7. 긴 목록 표: 스크롤 컨테이너 + sticky 헤더(스크롤해도 열 이름 유지) ── */
+#page-equipments .card,#page-products .card,#page-quotes .card,#sales-tab-logs .card{overflow:hidden}
+#page-equipments .card>.card-body.p-0,
+#page-products .card>.card-body.p-0,
+#page-quotes .card>.card-body.p-0,
+#sales-tab-logs .card>.card-body.p-0{max-height:min(68vh,760px);overflow:auto}
+#page-equipments .card-body.p-0 .table thead th,
+#page-products .card-body.p-0 .table thead th,
+#page-quotes .card-body.p-0 .table thead th,
+#sales-tab-logs .card-body.p-0 .table thead th{position:sticky;top:0;z-index:3;background:#fafbfc}
+
+/* ── 8. 빈 상태(py-2~py-5 제각각) 통일 ── */
+.main .text-center.text-muted.py-2,.main .text-center.text-muted.py-3,
+.main .text-center.text-muted.py-4,.main .text-center.text-muted.py-5{
+  padding-top:30px!important;padding-bottom:30px!important;font-size:13px;
+}
+
+/* ── 9. 스크롤바(내부 스크롤 영역이 많아 기본 스크롤바가 두껍게 튀던 문제) ── */
+.main ::-webkit-scrollbar{width:10px;height:10px}
+.main ::-webkit-scrollbar-track{background:transparent}
+.main ::-webkit-scrollbar-thumb{background:#d7dee8;border:3px solid transparent;background-clip:content-box;border-radius:999px}
+.main ::-webkit-scrollbar-thumb:hover{background:#b6c2d1;border:3px solid transparent;background-clip:content-box}
+
+/* ── 10. 모바일(≤768px) 마무리 ── */
+@media(max-width:768px){
+  .main .wt-mast{gap:10px}
+  .main .wt-mast .t{font-size:17px}
+  .main .page-header h5{font-size:17px}
+  .main .dash-greeting{font-size:18px}
+  .main .wt-filter{padding:10px 12px}
+  .main .wt-filter .form-select-sm,.main .wt-filter .form-control-sm{min-height:38px}
+  /* 분석 탭바는 줄바꿈 대신 가로 스크롤(2줄로 밀려 헤더가 흔들리던 문제) */
+  .main .ana-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .main .ana-tabs .anatab{flex:0 0 auto}
+  /* 모바일은 페이지 스크롤 하나로 — 표 안 이중 스크롤 해제 */
+  #page-equipments .card>.card-body.p-0,#page-products .card>.card-body.p-0,
+  #page-quotes .card>.card-body.p-0,#sales-tab-logs .card>.card-body.p-0{max-height:none;overflow:visible}
+  .main .wt-band{padding:16px 14px}
+  .main .card.p-3{padding:14px!important}
+}
+@media(max-width:480px){
+  .main .card.p-3{padding:12px!important}
+  .main .wt-mast .t{font-size:16px}
+  .main .page-header h5{font-size:16px}
+}
+@media print{
+  .main .wt-filter{background:#fff}
+  #page-equipments .card>.card-body.p-0,#page-products .card>.card-body.p-0,
+  #page-quotes .card>.card-body.p-0,#sales-tab-logs .card>.card-body.p-0{max-height:none!important;overflow:visible!important}
+}
+</style>
 </body>
 </html>

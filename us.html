@@ -230,6 +230,130 @@ table{font-variant-numeric:tabular-nums}
 /* WT-DEEP-v3 프리미엄 타이포 일관 */
 .kpi-value,.lux-num,.stat-num,.stat-value,.metric-value,.metric-num,.big-num,.num-lg,.hero-num,.summary-num,.card-num{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
 </style>
+<style id="wt-align-v1">
+/* ══════════ WT-ALIGN-V1 · 정렬(오와 열) · 간격 · 위계 통일 레이어 ══════════
+   표현(CSS)만 다루는 마지막 캐스케이드 계층. 기능/데이터/마크업 로직 무관.
+   라이트 테마 유지 — 배경(--bg)·카드 흰색·브랜드 색 재정의 없음.            */
+
+/* ── 0. 형태 토큰: 라운드·그림자를 컴포넌트 전체에서 단일화 ───────────── */
+:root{
+  --r-card:14px; --r-ctl:10px;
+  --sh-card:0 1px 2px rgba(16,42,67,.06);
+  --sh-pop:0 18px 48px rgba(16,42,67,.20);
+  --gap-sec:16px;
+}
+.card,.kpi,.dwcard,.acard,.ccard,.statcard,.mcard,.lbcard,.kbcol{
+  border-radius:var(--r-card)!important;
+  box-shadow:var(--sh-card)!important}
+.card:not([style*="border:0"]),.kpi,.dwcard,.statcard,.mcard,.ccard,.lbcard{border:1px solid var(--line)!important}
+.kcard{border-radius:10px}
+.modal{border-radius:16px;box-shadow:var(--sh-pop)}
+.hero{border-radius:var(--r-card)}
+.btn{border-radius:var(--r-ctl)}
+.btn-sm{border-radius:9px}
+.sel{border-radius:var(--r-ctl)}
+
+/* ── 1. KPI/스탯 카드: 행 높이 + 라벨 baseline 정렬 ──────────────────── */
+.grid,.kpis,.mcards,.cgrid{align-items:stretch}
+.grid>*,.kpis>*,.mcards>*,.cgrid>*{min-width:0}
+.kpi,.mcard,.statcard{display:flex;flex-direction:column;height:100%}
+.kpi .v,.mcard .mval,.statcard .sv{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .v{font-size:22px}
+.kpi .l{margin-top:auto;padding-top:8px;font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.35}
+.kpi .s{margin-top:3px;font-size:11px;line-height:1.35}
+/* 보조문구(.s) 없는 카드도 같은 슬롯을 확보 → 라벨 baseline 한 줄로 정렬 */
+.kpi:not(:has(.s))::after{content:'';display:block;height:14.9px;margin-top:3px}
+.mcard .mtop{align-items:flex-start}
+.mcard .mlbl{min-height:2.4em;display:flex;align-items:center}
+.mcard .msub{margin-top:auto;padding-top:9px;min-height:1.9em;align-items:center}
+.statcard .sl{margin-top:auto;padding-top:9px;line-height:1.35}
+.mcards{grid-template-columns:repeat(auto-fit,minmax(174px,1fr))}
+
+/* ── 2. 표: 숫자 우측 · 텍스트 좌측 · thead/tbody 정렬 일치 ──────────── */
+th,td{vertical-align:middle}
+td{font-variant-numeric:tabular-nums}
+thead th{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--muted);
+  border-bottom:1px solid var(--line);padding-top:10px;padding-bottom:10px}
+td.l,th.l{text-align:left}
+td.c,th.c{text-align:center}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#f6f9ff}
+td .btn-sm{height:26px;padding:0 10px;display:inline-flex;align-items:center}
+/* 긴 표: 카드 내부 스크롤 + 헤더 고정 (데스크톱) */
+@media(min-width:821px){
+  .card[style*="overflow:auto"]{max-height:min(74vh,820px)}
+  .card[style*="overflow:auto"] thead th{position:sticky;top:0;z-index:3;
+    background:#fafbfc;box-shadow:inset 0 -1px 0 var(--line)}
+}
+
+/* ── 3. 타이포 위계: 페이지 제목 > 섹션 > 카드 라벨 > 본문 ───────────── */
+.topbar h2{font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.25}
+.topbar .desc{font-size:12px;line-height:1.45}
+.sect{font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.01em;
+  margin-bottom:12px;min-height:24px}
+.sect .muted{font-weight:500}
+.dwh h3{letter-spacing:-.02em}
+.hero .hv{letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+
+/* ── 4. 컨트롤 높이·간격 통일 (버튼/셀렉트/검색/세그먼트) ────────────── */
+.topbar .btn,.topbar .btn-sm,.topbar .sel,
+.filterbar .btn,.filterbar .btn-sm,.filterbar .sel{
+  height:34px;box-sizing:border-box;padding-top:0;padding-bottom:0;
+  display:inline-flex;align-items:center}
+.topbar .btn-sm,.filterbar .btn-sm{font-size:12.5px;padding-left:12px;padding-right:12px}
+.sel{height:34px;box-sizing:border-box;padding-top:0;padding-bottom:0}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.filterbar>div>button{height:30px;display:inline-flex;align-items:center}
+.pqchip{height:30px;display:inline-flex;align-items:center;border-radius:9px}
+.seg button{height:30px}
+input.srch{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2394a3b8'><path d='M11.74 10.34A6 6 0 1 0 10.34 11.74l3.46 3.46 1.4-1.4-3.46-3.46ZM6.5 10.5a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z'/></svg>");
+  background-repeat:no-repeat;background-position:10px center;background-size:13px;
+  padding-left:30px!important}
+
+/* ── 5. 빈 상태 통일 (아이콘 + 문구) ─────────────────────────────────── */
+.empty{padding:30px 16px;font-size:12.5px;line-height:1.6}
+td.empty{padding:38px 16px}
+td.empty::before,.card>.empty::before{content:'';display:block;width:34px;height:34px;
+  margin:0 auto 10px;border-radius:50%;border:2px dashed #dce3ec}
+
+/* ── 6. 섹션 간 여백 일관화 ──────────────────────────────────────────── */
+.wrap>.card,.wrap>.grid,.wrap>.hero{margin-bottom:var(--gap-sec)!important}
+.wrap>:last-child{margin-bottom:0!important}
+
+/* ── 7. 모달·드로어 정렬 ─────────────────────────────────────────────── */
+.dwb{padding:16px 22px 26px}
+.dwcard .sect{margin-bottom:10px}
+.mb .fld:last-child{margin-bottom:0}
+.mf{align-items:center}
+.fld input,.fld select{height:38px;border-radius:9px}
+
+/* ── 8. 반응형: 표·카드·모달 넘침 방지 ───────────────────────────────── */
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+}
+@media(max-width:640px){
+  .grid,.kpis{grid-template-columns:1fr!important}
+  .mcards{grid-template-columns:1fr 1fr}
+  .fr,.fr3{grid-template-columns:1fr}
+  .topbar{padding:14px 16px 12px}
+  .topbar h2{font-size:17px}
+  .wrap{padding-left:16px;padding-right:16px}
+  .hero{padding:18px 16px}
+  .hero .hv{font-size:26px}
+  #mbg{padding:12px}
+  .modal{max-height:94vh}
+  .dwb{padding:14px 16px 24px}
+  .card[style*="overflow:auto"] table{min-width:600px}
+  .kb{gap:10px}
+  .kbcol{min-width:74vw}
+}
+@media print{
+  .card[style*="overflow:auto"]{max-height:none!important;overflow:visible!important}
+  .card,.kpi,.mcard,.statcard{box-shadow:none!important}
+}
+</style>
 </head>
 <body>
 <div id="boot-ov"><i class="bi bi-arrow-repeat" style="margin-right:8px"></i>불러오는 중…</div>
@@ -746,7 +870,7 @@ function vSales(){
   var rows=L.length?L.map(function(s){var o=outAmt(s);var b=agingBucket(s);
     return `<tr onclick="dwSale('${s.id}')"><td class="l">${s.date}</td><td class="l" onclick="event.stopPropagation();openClient('${esc(s.client).replace(/'/g,'&#39;')}')" style="cursor:pointer"><b style="color:var(--ink);border-bottom:1px dotted #cbd5e1">${esc(s.client)}</b></td><td class="l" onclick="event.stopPropagation();openProduct('${esc(s.product).replace(/'/g,'&#39;')}')" style="cursor:pointer">${esc(s.product)||'-'}</td><td>${s.qty||'-'}</td><td><b>${fm(s.amt)}</b></td><td style="color:var(--ok)">${colSum(s)?fm(colSum(s)):'-'}</td><td>${o>0?`<b style="color:var(--bad)">${fm(o)}</b>${b&&b!=='30내'?` <span class="chip c-${b==='90+'?'red':'amber'}">${b}</span>`:''}`:'<span class="chip c-green">'+jt('완납','Paid')+'</span>'}</td><td>${o>0?`<button class="btn btn-sm" onclick="event.stopPropagation();quickCollect('${s.id}')">＋${jt('수금','collect')}</button>`:''}</td></tr>`;}).join(''):'<tr><td colspan="8" class="empty">'+jt('매출 기록이 없습니다','No sales yet')+'</td></tr>';
   return head('<i class="bi bi-receipt"></i> '+jt('매출 · 수금','Sales & Collections'), jt('매출인식 기준 · 행 클릭 → 수금내역 · ＋수금 = 잔액 전액 오늘','Recognition basis · row → collections · +collect = full today'),
-    `<input class="sel" placeholder="<i class="bi bi-search"></i> ${jt('거래처·제품','client·product')}" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value;_dbRender()" onkeydown="if(event.key==='Enter')render()" style="width:150px">`
+    `<input class="sel srch" placeholder="${jt('거래처·제품 검색','Search client/product')}" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value;_dbRender()" onkeydown="if(event.key==='Enter')render()" style="width:172px">`
     +`<select class="sel" onchange="fSalesYm=this.value;render()"><option value="">${jt('전체 기간','All periods')}</option>${yms.map(m=>`<option ${fSalesYm===m?'selected':''}>${m}</option>`).join('')}</select>`
     +`<button class="btn btn-sm" onclick="csvSales()"><i class="bi bi-download"></i> CSV</button><button class="btn btn-primary" onclick="mSale()">+ ${jt('매출','Sale')}</button>`)
     +`<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
@@ -909,7 +1033,7 @@ function vClients(){
       +'<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:11px">'+spark+'<div style="font-size:10px;color:var(--muted);text-align:right;line-height:1.5">'+(lastAct[c]?jt('최근활동 ','last ')+lastAct[c].slice(5):(v.last?jt('최근매출 ','sale ')+v.last.slice(5):''))+(v.ord?'<br>'+jt('진행수주 ','order ')+fmS(v.ord):'')+'</div></div></div>';
   }).join(''):'<div class="card"><div class="empty">'+jt('거래처 데이터 없음','No client data')+'</div></div>';
   return head('<i class="bi bi-building"></i> '+jt('거래처 분석','Clients'), jt('거래처별 매출·미수·활동 · 카드 클릭 → 360° 상세','Sales, AR & activity · click for 360°'),
-    '<input class="sel" placeholder="<i class="bi bi-search"></i> '+jt('거래처 검색','Search')+'" value="'+esc(fCliQ)+'" oninput="fCliQ=this.value;_dbRender()" onkeydown="if(event.key===\'Enter\')render()" style="width:160px">'
+    '<input class="sel srch" placeholder="'+jt('거래처 검색','Search clients')+'" value="'+esc(fCliQ)+'" oninput="fCliQ=this.value;_dbRender()" onkeydown="if(event.key===\'Enter\')render()" style="width:160px">'
     +'<select class="sel" onchange="fCliSort=this.value;render()"><option value="sale"'+(fCliSort==='sale'?' selected':'')+'>'+jt('매출순','By sales')+'</option><option value="out"'+(fCliSort==='out'?' selected':'')+'>'+jt('미수순','By AR')+'</option></select>'
     +'<button class="btn btn-primary" onclick="mClient()">+ '+jt('고객사','Account')+'</button>')
     +'<div class="grid actkpi" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">'
@@ -1243,7 +1367,7 @@ function vAsset(){
       +'<div class="statcard'+(fAssetSt==='재고'?' on':'')+'" style="border-top:3px solid #64748b" onclick="assetCardF(\'재고\')"><div class="sv">'+inStock+'</div><div class="sl">'+jt('창고 재고','In stock')+'</div></div>'
       +'<div class="statcard'+(JSON.stringify(fAssetSt)===JSON.stringify(['출고','설치','AS'])?' on':'')+'" style="border-top:3px solid #16a34a" onclick=\'assetCardF(["출고","설치","AS"])\'><div class="sv" style="color:var(--ok)">'+atClient+'</div><div class="sl">'+jt('고객사 보유','At clients')+'</div></div>'
       +'<div class="statcard'+(JSON.stringify(fAssetSt)===JSON.stringify(['AS','반품'])?' on':'')+'" style="border-top:3px solid #f59e0b" onclick=\'assetCardF(["AS","반품"])\'><div class="sv" style="color:'+(svc?'var(--warn)':'var(--ink)')+'">'+svc+'</div><div class="sl">'+jt('AS · 반품','Service/return')+'</div></div></div>'
-    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div style="display:flex;gap:5px;flex-wrap:wrap">'+stChips+'</div><select onchange="setAssetF(\'item\',this.value)" style="margin-left:auto">'+itemOpts+'</select><input placeholder="'+jt('시리얼·고객사 검색','Search serial/client')+'" value="'+esc(fAssetQ)+'" oninput="fAssetQ=this.value;_dbRender()" onkeydown="if(event.key===\'Enter\')render()" style="min-width:160px"></div>'
+    +'<div class="filterbar"><div style="display:flex;gap:5px;flex-wrap:wrap">'+stChips+'</div><select class="sel" onchange="setAssetF(\'item\',this.value)" style="margin-left:auto">'+itemOpts+'</select><input class="sel srch" placeholder="'+jt('시리얼·고객사 검색','Search serial/client')+'" value="'+esc(fAssetQ)+'" oninput="fAssetQ=this.value;_dbRender()" onkeydown="if(event.key===\'Enter\')render()" style="min-width:172px"></div>'
     +'<div class="card" style="padding:0;overflow:auto"><table><thead><tr><th class="l">'+jt('시리얼','Serial')+'</th><th class="l">'+jt('품목','Item')+'</th><th class="l">'+jt('상태','Status')+'</th><th class="l">'+jt('현재 위치','Location')+'</th><th class="l">'+jt('입고일','In')+'</th><th class="l">'+jt('출고일','Out')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function openAsset(id){
@@ -1528,7 +1652,7 @@ function vPipe(){
   const w=open.reduce((a,d)=>a+(+d.amt||0)*(+d.prob||0)/100,0);
   const closing=open.filter(d=>d.expected&&d.expected.slice(0,7)===thisYm);
   return head('<i class="bi bi-bullseye"></i> 딜 파이프라인','카드를 끌어 단계 이동 · 성사 시 수주 자동 생성 · 클릭 → 수정',
-    `<input class="sel" placeholder="<i class="bi bi-search"></i> 고객사·제품·담당" value="${esc(fPipeQ)}" oninput="fPipeQ=this.value;_dbRender()" onkeydown="if(event.key==='Enter')render()" style="width:170px">`+
+    `<input class="sel srch" placeholder="${jt('고객사·제품·담당 검색','Search account/product/owner')}" value="${esc(fPipeQ)}" oninput="fPipeQ=this.value;_dbRender()" onkeydown="if(event.key==='Enter')render()" style="width:170px">`+
     `<select class="sel" onchange="fPipeOwner=this.value;render()"><option value="">담당 전체</option>${owners.map(o=>`<option ${fPipeOwner===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`+
     `${(fPipeOwner||fPipeQ)?'<button class="btn btn-sm" onclick="fPipeOwner=\'\';fPipeQ=\'\';render()">초기화</button>':''}`+
     `<button class="btn btn-sm" onclick="csvDeals()"><i class="bi bi-download"></i> CSV</button><button class="btn btn-primary" onclick="mDeal()">+ 딜 등록</button>`)

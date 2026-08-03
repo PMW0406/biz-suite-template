@@ -11,6 +11,97 @@
 <title>미수금 관리 · 국내</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23b45309'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>₩</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script>
+/* ═══ Chart.js y축 눈금 최적화 (WT_YFIT) ══════════════════════════════
+   문제: 데이터가 25~30억 구간인데 y축이 0~35억 → 아래 절반이 빈 공간.
+   해결: 선/추이 차트는 데이터 min~max 기준 ±15% 패딩(0 강제 안 함),
+         막대·누적·혼합 차트는 면적 왜곡 방지를 위해 0 기준 유지 + 상단 12% 여백만.
+   사용: Chart 생성 시 설정 객체 전체를 _yFit( ... ) 으로 감싼다.
+   기존 ticks.callback(억/만원 포맷)·grid·stacked 등은 건드리지 않고
+   suggestedMin / suggestedMax 만 병합한다. (min·max가 명시된 축은 제외) */
+function _yNums(arr){
+  var o=[];
+  (arr||[]).forEach(function(v){
+    if(v&&typeof v==='object') v=(v.y!==undefined?v.y:v.value);
+    if(v===null||v===undefined||v==='') return;
+    var n=Number(v); if(isFinite(n)) o.push(n);
+  });
+  return o;
+}
+function _ySum(arrs){
+  var n=0; (arrs||[]).forEach(function(a){ if(a&&a.length>n) n=a.length; });
+  var out=[];
+  for(var i=0;i<n;i++){ var s=0; (arrs||[]).forEach(function(a){ var v=Number(a&&a[i]); if(isFinite(v)) s+=v; }); out.push(s); }
+  return out;
+}
+/* 선(line)·추이 차트용 — 0에서 시작하지 않고 데이터 범위에 맞춤 */
+function _yScale(datasets){
+  var a=[]; (datasets||[]).forEach(function(d){ a=a.concat(_yNums(d&&d.data?d.data:d)); });
+  if(!a.length) return {};
+  var mn=Math.min.apply(null,a), mx=Math.max.apply(null,a), rg=mx-mn, lo, hi;
+  if(rg>0){ lo=mn-rg*0.15; hi=mx+rg*0.15; }
+  else if(mx!==0){ var m=Math.abs(mx); lo=mn-m*0.1; hi=mx+m*0.1; }   // 전부 같은 값
+  else return {suggestedMin:0, suggestedMax:1};                       // 전부 0
+  if(mn>=0) lo=Math.max(0,lo);                                        // 양수 데이터는 음수로 안 내려감
+  if(!isFinite(lo)||!isFinite(hi)||hi<=lo) return {};
+  return {suggestedMin:Math.round(lo*1e4)/1e4, suggestedMax:Math.round(hi*1e4)/1e4};
+}
+/* 막대(bar)·누적·혼합 차트용 — 0 기준 유지, 상단 여백만 */
+function _yScale0(datasets){
+  var a=[]; (datasets||[]).forEach(function(d){ a=a.concat(_yNums(d&&d.data?d.data:d)); });
+  var o={beginAtZero:true};
+  if(!a.length) return o;
+  var mx=Math.max.apply(null,a), mn=Math.min.apply(null,a);
+  if(mx>0) o.suggestedMax=Math.round(mx*1.12*1e4)/1e4;
+  if(mn<0) o.suggestedMin=Math.round(mn*1.12*1e4)/1e4;
+  return o;
+}
+/* Chart 설정 객체를 받아 y축(y, y1, y2 …)마다 위 규칙을 적용해 그대로 반환 */
+function _yFit(cfg){
+  try{
+    if(!cfg||!cfg.data) return cfg;
+    var ds=cfg.data.datasets||[]; if(!ds.length) return cfg;
+    if(/^(doughnut|pie|polarArea|radar|bubble|scatter)$/.test(cfg.type||'')) return cfg;
+    cfg.options=cfg.options||{};
+    if((cfg.options.indexAxis||'x')!=='x') return cfg;                 // 가로막대는 대상 아님
+    cfg.options.scales=cfg.options.scales||{};
+    var sc=cfg.options.scales;
+    var keys=Object.keys(sc).filter(function(k){ return /^y/i.test(k); });
+    if(!keys.length){ sc.y={}; keys=['y']; }
+    keys.forEach(function(k){
+      var ax=sc[k]; if(!ax||typeof ax!=='object') return;
+      if(ax.min!==undefined||ax.max!==undefined) return;               // 명시 범위 존중
+      if(ax.type==='category'||ax.display===false) return;
+      var mine=ds.filter(function(d){ return (d.yAxisID||'y')===k; });
+      if(!mine.length) return;
+      var typeOf=function(d){ return d.type||cfg.type||'bar'; };
+      var hasBar=mine.some(function(d){ return typeOf(d)==='bar'; });
+      if(!hasBar){                                                     // 선 전용 축
+        var r=_yScale(mine);
+        if(ax.beginAtZero===true) delete ax.beginAtZero;
+        if(r.suggestedMin!==undefined&&ax.suggestedMin===undefined) ax.suggestedMin=r.suggestedMin;
+        if(r.suggestedMax!==undefined&&ax.suggestedMax===undefined) ax.suggestedMax=r.suggestedMax;
+        return;
+      }
+      // 막대 포함(혼합·누적) → 0 기준. 누적이면 스택 합계로 상단 여백 계산
+      var groups={}, uid=0;
+      mine.forEach(function(d){
+        var stacked = typeOf(d)==='bar' && ax.stacked!==false && (ax.stacked===true || d.stack!==undefined);
+        var key = stacked ? ('s:'+(d.stack||'_')) : ('u:'+(uid++));
+        (groups[key]=groups[key]||[]).push(d.data||[]);
+      });
+      var series=Object.keys(groups).map(function(key){
+        var g=groups[key]; return g.length>1?_ySum(g):g[0];
+      });
+      var r0=_yScale0(series);
+      if(ax.beginAtZero===undefined) ax.beginAtZero=true;
+      if(r0.suggestedMax!==undefined&&ax.suggestedMax===undefined) ax.suggestedMax=r0.suggestedMax;
+      if(r0.suggestedMin!==undefined&&ax.suggestedMin===undefined) ax.suggestedMin=r0.suggestedMin;
+    });
+  }catch(e){ }
+  return cfg;
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -507,10 +598,10 @@ function goListYear(y){_f={q:'',type:'',year:String(y),mgr:'',hasAr:false,sort:'
 function drawHomeCharts(){
   const w=(RAW.weekly||[]);
   const el1=document.getElementById('ch-trend');
-  if(el1&&w.length){_charts.push(new Chart(el1,{type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'미수잔액 '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false},ticks:{maxTicksLimit:10}}},maintainAspectRatio:false}}));}
+  if(el1&&w.length){_charts.push(new Chart(el1,_yFit({type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'미수잔액 '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false},ticks:{maxTicksLimit:10}}},maintainAspectRatio:false}})));}
   const ya=yearAgg(E);const ys=Object.keys(ya).sort();
   const el2=document.getElementById('ch-year');
-  if(el2){_charts.push(new Chart(el2,{type:'bar',data:{labels:ys,datasets:[{data:ys.map(y=>+(100*ya[y].ar/(ya[y].amt||1)).toFixed(1)),backgroundColor:'#2563eb',borderRadius:4,maxBarThickness:44}]},options:{onClick:function(e,els){if(els&&els.length){goListYear(ys[els[0].index]);}},onHover:function(e,els){if(e&&e.native&&e.native.target)e.native.target.style.cursor=(els&&els.length)?'pointer':'default';},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const y=ys[c.dataIndex],a=ya[y];return['미수율 '+c.parsed.y+'%','매출 '+eok(a.amt)+' · 미수 '+eok(a.ar)+' · '+a.cnt+'건'];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},maintainAspectRatio:false}}));}
+  if(el2){_charts.push(new Chart(el2,_yFit({type:'bar',data:{labels:ys,datasets:[{data:ys.map(y=>+(100*ya[y].ar/(ya[y].amt||1)).toFixed(1)),backgroundColor:'#2563eb',borderRadius:4,maxBarThickness:44}]},options:{onClick:function(e,els){if(els&&els.length){goListYear(ys[els[0].index]);}},onHover:function(e,els){if(e&&e.native&&e.native.target)e.native.target.style.cursor=(els&&els.length)?'pointer':'default';},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const y=ys[c.dataIndex],a=ya[y];return['미수율 '+c.parsed.y+'%','매출 '+eok(a.amt)+' · 미수 '+eok(a.ar)+' · '+a.cnt+'건'];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},maintainAspectRatio:false}})));}
 }
 
 // ═══ 채권 목록 ═══
@@ -737,20 +828,20 @@ function viewTrend(){
 function drawTrendChart(){
   const w=(RAW.weekly||[]);
   const el=document.getElementById('ch-trend2');
-  if(el&&w.length)_charts.push(new Chart(el,{type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:.25,fill:true}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const x=w[c.dataIndex];return['미수잔액 '+c.parsed.y+'억 ('+x.cnt+'건)','수금누계 '+eok(x.coll)];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}},maintainAspectRatio:false}}));
+  if(el&&w.length)_charts.push(new Chart(el,_yFit({type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:.25,fill:true}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const x=w[c.dataIndex];return['미수잔액 '+c.parsed.y+'억 ('+x.cnt+'건)','수금누계 '+eok(x.coll)];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}},maintainAspectRatio:false}})));
   const el2=document.getElementById('ch-risk');
   const risk=w.map(x=>{const t=x.types||{};return +(((t['지연채권']||{ar:0}).ar+(t['장기체납채권']||{ar:0}).ar)/1e8).toFixed(2);});
-  if(el2&&w.length)_charts.push(new Chart(el2,{type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:risk,borderColor:'#b45309',backgroundColor:'rgba(180,83,9,.08)',borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:.25,fill:true}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const t=w[c.dataIndex].types||{};const dl=t['지연채권']||{cnt:0,ar:0},lt=t['장기체납채권']||{cnt:0,ar:0};return['관리채권 '+c.parsed.y+'억','지연 '+dl.cnt+'건 '+eok2(dl.ar)+' · 장기체납 '+lt.cnt+'건 '+eok2(lt.ar)];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}},maintainAspectRatio:false}}));
+  if(el2&&w.length)_charts.push(new Chart(el2,_yFit({type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:risk,borderColor:'#b45309',backgroundColor:'rgba(180,83,9,.08)',borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:.25,fill:true}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const t=w[c.dataIndex].types||{};const dl=t['지연채권']||{cnt:0,ar:0},lt=t['장기체납채권']||{cnt:0,ar:0};return['관리채권 '+c.parsed.y+'억','지연 '+dl.cnt+'건 '+eok2(dl.ar)+' · 장기체납 '+lt.cnt+'건 '+eok2(lt.ar)];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}},maintainAspectRatio:false}})));
   // 월별 수금 vs 신규(변동이력 롤업) — 동일 단위 한 축, 2시리즈 범례
   const el3=document.getElementById('ch-month');
   const mm={};(RAW.changes||[]).forEach(c=>{const m=c.d.slice(0,7);mm[m]=mm[m]||{coll:0,neu:0};mm[m].coll+=c.sumColl;mm[m].neu+=c.sumNew;});
   const ms=Object.keys(mm).sort();
-  if(el3&&ms.length)_charts.push(new Chart(el3,{type:'bar',data:{labels:ms,datasets:[
+  if(el3&&ms.length)_charts.push(new Chart(el3,_yFit({type:'bar',data:{labels:ms,datasets:[
       {label:'수금',data:ms.map(m=>+(mm[m].coll/1e8).toFixed(2)),backgroundColor:'#2563eb',borderRadius:4,maxBarThickness:36},
       {label:'신규 미수',data:ms.map(m=>+(mm[m].neu/1e8).toFixed(2)),backgroundColor:'#b45309',borderRadius:4,maxBarThickness:36}]},
-    options:{plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:c=>c.dataset.label+' '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}},maintainAspectRatio:false}}));
+    options:{plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:c=>c.dataset.label+' '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}},maintainAspectRatio:false}})));
 }
 // ── 주간 변동 상세 모달 ──
 function openChange(i){

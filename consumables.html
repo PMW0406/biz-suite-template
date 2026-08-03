@@ -8,6 +8,97 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%2316a34a'/><g transform='translate(13,36) scale(0.144)' fill='%23fff'><rect width='110' height='110' rx='28'/><rect x='204' width='110' height='110' rx='28'/><rect x='408' width='110' height='110' rx='28'/><rect x='102' y='97' width='110' height='110' rx='28'/><rect x='306' y='97' width='110' height='110' rx='28'/></g></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script>
+/* ═══ Chart.js y축 눈금 최적화 (WT_YFIT) ══════════════════════════════
+   문제: 데이터가 25~30억 구간인데 y축이 0~35억 → 아래 절반이 빈 공간.
+   해결: 선/추이 차트는 데이터 min~max 기준 ±15% 패딩(0 강제 안 함),
+         막대·누적·혼합 차트는 면적 왜곡 방지를 위해 0 기준 유지 + 상단 12% 여백만.
+   사용: Chart 생성 시 설정 객체 전체를 _yFit( ... ) 으로 감싼다.
+   기존 ticks.callback(억/만원 포맷)·grid·stacked 등은 건드리지 않고
+   suggestedMin / suggestedMax 만 병합한다. (min·max가 명시된 축은 제외) */
+function _yNums(arr){
+  var o=[];
+  (arr||[]).forEach(function(v){
+    if(v&&typeof v==='object') v=(v.y!==undefined?v.y:v.value);
+    if(v===null||v===undefined||v==='') return;
+    var n=Number(v); if(isFinite(n)) o.push(n);
+  });
+  return o;
+}
+function _ySum(arrs){
+  var n=0; (arrs||[]).forEach(function(a){ if(a&&a.length>n) n=a.length; });
+  var out=[];
+  for(var i=0;i<n;i++){ var s=0; (arrs||[]).forEach(function(a){ var v=Number(a&&a[i]); if(isFinite(v)) s+=v; }); out.push(s); }
+  return out;
+}
+/* 선(line)·추이 차트용 — 0에서 시작하지 않고 데이터 범위에 맞춤 */
+function _yScale(datasets){
+  var a=[]; (datasets||[]).forEach(function(d){ a=a.concat(_yNums(d&&d.data?d.data:d)); });
+  if(!a.length) return {};
+  var mn=Math.min.apply(null,a), mx=Math.max.apply(null,a), rg=mx-mn, lo, hi;
+  if(rg>0){ lo=mn-rg*0.15; hi=mx+rg*0.15; }
+  else if(mx!==0){ var m=Math.abs(mx); lo=mn-m*0.1; hi=mx+m*0.1; }   // 전부 같은 값
+  else return {suggestedMin:0, suggestedMax:1};                       // 전부 0
+  if(mn>=0) lo=Math.max(0,lo);                                        // 양수 데이터는 음수로 안 내려감
+  if(!isFinite(lo)||!isFinite(hi)||hi<=lo) return {};
+  return {suggestedMin:Math.round(lo*1e4)/1e4, suggestedMax:Math.round(hi*1e4)/1e4};
+}
+/* 막대(bar)·누적·혼합 차트용 — 0 기준 유지, 상단 여백만 */
+function _yScale0(datasets){
+  var a=[]; (datasets||[]).forEach(function(d){ a=a.concat(_yNums(d&&d.data?d.data:d)); });
+  var o={beginAtZero:true};
+  if(!a.length) return o;
+  var mx=Math.max.apply(null,a), mn=Math.min.apply(null,a);
+  if(mx>0) o.suggestedMax=Math.round(mx*1.12*1e4)/1e4;
+  if(mn<0) o.suggestedMin=Math.round(mn*1.12*1e4)/1e4;
+  return o;
+}
+/* Chart 설정 객체를 받아 y축(y, y1, y2 …)마다 위 규칙을 적용해 그대로 반환 */
+function _yFit(cfg){
+  try{
+    if(!cfg||!cfg.data) return cfg;
+    var ds=cfg.data.datasets||[]; if(!ds.length) return cfg;
+    if(/^(doughnut|pie|polarArea|radar|bubble|scatter)$/.test(cfg.type||'')) return cfg;
+    cfg.options=cfg.options||{};
+    if((cfg.options.indexAxis||'x')!=='x') return cfg;                 // 가로막대는 대상 아님
+    cfg.options.scales=cfg.options.scales||{};
+    var sc=cfg.options.scales;
+    var keys=Object.keys(sc).filter(function(k){ return /^y/i.test(k); });
+    if(!keys.length){ sc.y={}; keys=['y']; }
+    keys.forEach(function(k){
+      var ax=sc[k]; if(!ax||typeof ax!=='object') return;
+      if(ax.min!==undefined||ax.max!==undefined) return;               // 명시 범위 존중
+      if(ax.type==='category'||ax.display===false) return;
+      var mine=ds.filter(function(d){ return (d.yAxisID||'y')===k; });
+      if(!mine.length) return;
+      var typeOf=function(d){ return d.type||cfg.type||'bar'; };
+      var hasBar=mine.some(function(d){ return typeOf(d)==='bar'; });
+      if(!hasBar){                                                     // 선 전용 축
+        var r=_yScale(mine);
+        if(ax.beginAtZero===true) delete ax.beginAtZero;
+        if(r.suggestedMin!==undefined&&ax.suggestedMin===undefined) ax.suggestedMin=r.suggestedMin;
+        if(r.suggestedMax!==undefined&&ax.suggestedMax===undefined) ax.suggestedMax=r.suggestedMax;
+        return;
+      }
+      // 막대 포함(혼합·누적) → 0 기준. 누적이면 스택 합계로 상단 여백 계산
+      var groups={}, uid=0;
+      mine.forEach(function(d){
+        var stacked = typeOf(d)==='bar' && ax.stacked!==false && (ax.stacked===true || d.stack!==undefined);
+        var key = stacked ? ('s:'+(d.stack||'_')) : ('u:'+(uid++));
+        (groups[key]=groups[key]||[]).push(d.data||[]);
+      });
+      var series=Object.keys(groups).map(function(key){
+        var g=groups[key]; return g.length>1?_ySum(g):g[0];
+      });
+      var r0=_yScale0(series);
+      if(ax.beginAtZero===undefined) ax.beginAtZero=true;
+      if(r0.suggestedMax!==undefined&&ax.suggestedMax===undefined) ax.suggestedMax=r0.suggestedMax;
+      if(r0.suggestedMin!==undefined&&ax.suggestedMin===undefined) ax.suggestedMin=r0.suggestedMin;
+    });
+  }catch(e){ }
+  return cfg;
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
@@ -554,7 +645,7 @@ function drawCharts(charts){
   if(!charts) return;
   charts.forEach(function(c,idx){
     var el=document.getElementById('chart-'+idx); if(!el) return;
-    var ch=new Chart(el, {
+    var ch=new Chart(el, _yFit({
       data:{ labels:_MON, datasets:[
         {type:'bar', label:'26년 실적', data:c.actual, backgroundColor:c.color||'#f97316', borderRadius:3, order:2},
         {type:'line', label:'26년 목표', data:c.target, borderColor:'#64748b', borderWidth:2, borderDash:[5,4], pointRadius:2, pointBackgroundColor:'#64748b', fill:false, order:1}
@@ -562,7 +653,7 @@ function drawCharts(charts){
       options:{responsive:true, maintainAspectRatio:false,
         plugins:{legend:{position:'top', labels:{boxWidth:12, font:{size:11}}}},
         scales:{y:{beginAtZero:true, ticks:{font:{size:10}}}, x:{ticks:{font:{size:10}}}}}
-    });
+    }));
     _chartInstances.push(ch);
   });
 }
