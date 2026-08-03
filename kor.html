@@ -427,171 +427,234 @@ table{font-variant-numeric:tabular-nums}
 
 <!-- 런처 화면 -->
 <style id="launcher-opt">
-/* ══ 런처 v3 — 단일 그리드 포털 · 무스크롤(1-viewport) 레이아웃 ══
-   구조: #launcher-screen(고정 오버레이) > #launcher-main(flex:1, column)
-         └ .lc-head(상단바: 브랜드+안내+액션)  └ #launcher-cards(flex:1,min-height:0)
-             └ .lc-tools(검색바)  └ .lc-grid(단일 그리드, 데스크톱 5열)
+/* ══ 런처 v4 — 임원용 엔터프라이즈 포털 · 응집형 무스크롤(1-viewport) 레이아웃 ══
+   설계 의도(v3 피드백 반영)
+     ① "구성이 따로 논다" → 상단 헤더를 하나의 패널(딥네이비 브랜드 바 + 흰 정보 스트립)로 묶고,
+        그 아래 섹션 타이틀 → 카드 그리드 → 푸터 라인이 끊김 없이 이어지도록 재배치.
+        #launcher-main 자체를 세로 중앙 정렬해 남는 공간을 위/아래로 균등 분산(헤더~카드 간격 60px대 고정).
+     ② "너무 세련됨(가벼움)" → 파스텔·글로우 제거. 네이비(#0f2544/#16324f/#1e3a5f) 기반의
+        묵직한 팔레트, 1px 실선 보더, 작은 라운드(8~12px), 절제된 그림자, 정보 밀도 상향(카드 하단 메타 라인).
+   구조: #launcher-screen(고정 오버레이) > #launcher-main(flex column, 중앙 정렬)
+         └ .lc-head(패널: .lc-head-top 네이비 바 + .lc-meta 정보 스트립)
+         └ #launcher-cards(.lc-tools 섹션타이틀·검색 + .lc-grid 데스크톱 5열)
+         └ .lc-footbar(하단 정보 라인)
    그룹(.lc-grp/.lc-grp-row)은 display:contents 로 그리드에 흡수 → 세로 누적 없이
    그룹명은 카드 안 .lc-cat 라벨로 표기. 앱 본문(라이트 테마)과 완전히 분리된 오버레이 전용 CSS. */
 #launcher-screen{
-  --lcw:#0f172a;                     /* 전경 */
-  --lcm:#64748b;                     /* 보조 텍스트 */
-  --lcl:rgba(15,23,42,.08);          /* 라인 */
-  padding:clamp(16px,2.4vh,26px) clamp(16px,3vw,40px);
+  --lcw:#0f2544;                     /* 전경(딥네이비) */
+  --lcm:#5f7086;                     /* 보조 텍스트 */
+  --lcl:#dfe5ee;                     /* 라인 */
+  padding:clamp(14px,2.2vh,26px) clamp(14px,2.6vw,34px);
   color:var(--lcw);
-  background:
-    radial-gradient(900px 520px at 6% -14%, rgba(56,189,248,.16), transparent 60%),
-    radial-gradient(780px 470px at 98% -4%, rgba(99,102,241,.13), transparent 60%),
-    radial-gradient(860px 620px at 52% 118%, rgba(13,148,136,.10), transparent 62%),
-    linear-gradient(180deg,#fbfcfe 0%,#eef1f6 100%);
+  background:linear-gradient(180deg,#f7f8fb 0%,#eaeef4 100%);
   -webkit-font-smoothing:antialiased;
   /* 관리자 패널이 화면보다 길 수 있으므로 상단 정렬 고정(상단 잘림 방지). 런처 본체는 아래 flex 로 꽉 채운다. */
   justify-content:flex-start!important;
 }
-/* 뷰포트를 정확히 채우는 1화면 컨테이너 — 내부에서만 높이를 배분하므로 페이지 스크롤이 생기지 않는다 */
-#launcher-main{flex:1 1 auto;min-height:0;width:100%;max-width:min(1340px,92vw);margin:0 auto}
+/* 뷰포트를 정확히 채우는 1화면 컨테이너 — 내부에서만 높이를 배분하므로 페이지 스크롤이 생기지 않는다.
+   헤더+카드+푸터를 한 덩어리로 세로 중앙 배치 → 헤더와 카드가 분리돼 보이던 v3 문제 해소 */
+#launcher-main{flex:1 1 auto;min-height:0;width:100%;max-width:min(1320px,94vw);margin:0 auto;justify-content:center}
 
-/* ── 상단 바(브랜드 + 안내 + 액션) ── */
-.lc-head{flex:0 0 auto;width:100%;display:flex;align-items:center;gap:14px;
-  padding:0 2px 14px;border-bottom:1px solid var(--lcl);margin-bottom:16px}
-.lc-brand{display:flex;align-items:center;gap:11px;min-width:0}
-.lc-mark{width:38px;height:38px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;
-  font-size:14px;font-weight:800;letter-spacing:-.03em;color:#fff;
-  background:linear-gradient(140deg,#38bdf8 0%,#3b82f6 46%,#6366f1 100%);
-  box-shadow:0 10px 24px -12px rgba(59,130,246,.85), inset 0 0 0 1px rgba(255,255,255,.18)}
+/* ── 헤더 패널(딥네이비 브랜드 바 + 흰 정보 스트립을 한 블록으로) ── */
+.lc-head{flex:0 0 auto;width:100%;background:#fff;border:1px solid #d7dfea;border-radius:12px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,37,68,.06), 0 18px 34px -30px rgba(15,37,68,.55);margin-bottom:14px}
+.lc-head-top{position:relative;display:flex;align-items:center;gap:14px;padding:14px 20px;
+  background:linear-gradient(135deg,#0f2544 0%,#16324f 58%,#1e3a5f 100%)}
+.lc-head-top::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;   /* 상단 accent 라인(격식) */
+  background:linear-gradient(90deg,#1e3a5f 0%,#3d7ab8 40%,#5c9ad6 58%,#2f6fb0 100%)}
+.lc-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.lc-mark{width:40px;height:40px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;
+  font-size:14px;font-weight:800;letter-spacing:-.02em;color:#fff;
+  background:linear-gradient(160deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.05) 100%);
+  border:1px solid rgba(255,255,255,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.20)}
 .lc-brandtx{text-align:left;min-width:0}
-.lc-kick{font-size:8.5px;font-weight:800;letter-spacing:.24em;color:#9aa7b8;line-height:1.4}
-.lc-h1{margin:1px 0 0;font-size:19px;font-weight:800;letter-spacing:-.035em;line-height:1.1;color:#0f172a}
-.lc-sub{margin:0 0 0 4px;padding-left:14px;border-left:1px solid var(--lcl);
-  font-size:12px;color:var(--lcm);letter-spacing:-.005em;white-space:nowrap}
+.lc-kick{font-size:8.5px;font-weight:700;letter-spacing:.26em;color:#8ea6c4;line-height:1.4}
+.lc-h1{margin:2px 0 0;font-size:18px;font-weight:800;letter-spacing:-.03em;line-height:1.15;color:#fff}
+.lc-sub{margin:0 0 0 4px;padding-left:15px;border-left:1px solid rgba(255,255,255,.18);
+  font-size:12px;color:#a9bdd6;letter-spacing:-.005em;white-space:nowrap}
 
-/* ── 카드 영역(남은 높이 전부) ── */
-/* 검색바+그리드를 한 덩어리로 묶어 남은 높이 안에서 세로 중앙 배치(빈 공간이 위아래 대칭) */
-#launcher-cards{flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;justify-content:center}
-.lc-tools{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
-.lc-searchwrap{position:relative;flex:0 1 320px;min-width:170px}
-.lc-searchwrap>i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#a3b0c2;pointer-events:none}
-.lc-search{width:100%;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,.86);border:1px solid #dde4ee;
-  border-radius:10px;color:#0f172a;font-family:inherit;font-size:12.5px;padding:8px 12px 8px 32px;outline:none;
-  transition:border-color .18s,background .18s,box-shadow .18s}
+/* 정보 스트립(오늘 날짜 · 접속 계정 · 시스템 수 · 상태) — 헤더와 카드 사이 빈 공간을 정보로 대체 */
+.lc-meta{display:flex;align-items:center;flex-wrap:wrap;background:#fff;border-top:1px solid #e5eaf2;padding:0 20px}
+.lc-meta-i{display:flex;align-items:center;gap:7px;padding:9px 15px;font-size:11.5px;color:var(--lcm);letter-spacing:-.01em;white-space:nowrap}
+.lc-meta-i:first-child{padding-left:0}
+.lc-meta-i+.lc-meta-i{border-left:1px solid #e8edf4}
+.lc-meta-i i{font-size:11.5px;color:#93a3b8}
+.lc-meta-i b{font-weight:700;color:#1c3454;font-variant-numeric:tabular-nums}
+.lc-meta-r{margin-left:auto;border-left:none!important;padding-right:0}
+.lc-dot{width:6px;height:6px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+
+/* ── 카드 영역 ── */
+#launcher-cards{flex:0 1 auto;min-height:0;width:100%;display:flex;flex-direction:column}
+.lc-tools{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:0 2px}
+.lc-sect{display:flex;align-items:baseline;gap:10px;min-width:0}
+.lc-sect-t{font-size:13.5px;font-weight:800;color:#0f2544;letter-spacing:-.02em;white-space:nowrap}
+.lc-sect-t::before{content:'';display:inline-block;width:3px;height:12px;margin-right:8px;vertical-align:-1px;
+  background:#1e3a5f;border-radius:1px}
+.lc-sect-d{font-size:11.5px;color:#7c8b9f;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lc-toolsr{display:flex;align-items:center;gap:9px;flex:0 1 auto;min-width:0}
+.lc-searchwrap{position:relative;flex:0 1 300px;min-width:170px}
+.lc-searchwrap>i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:12px;color:#9dabbd;pointer-events:none}
+.lc-search{width:100%;-webkit-appearance:none;appearance:none;background:#fff;border:1px solid #d5dee9;
+  border-radius:7px;color:#0f2544;font-family:inherit;font-size:12.5px;padding:7px 12px 7px 31px;outline:none;
+  transition:border-color .18s,box-shadow .18s}
 .lc-search::placeholder{color:#a3b0c2}
-.lc-search:focus{border-color:#3b82f6;background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.13)}
+.lc-search:focus{border-color:#1e3a5f;box-shadow:0 0 0 3px rgba(30,58,95,.12)}
 .lc-search::-webkit-search-cancel-button{opacity:.5}
 .lc-count{font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--lcm);white-space:nowrap;
-  background:rgba(255,255,255,.7);border:1px solid var(--lcl);border-radius:999px;padding:4px 11px;font-variant-numeric:tabular-nums}
+  background:#fff;border:1px solid var(--lcl);border-radius:6px;padding:5px 10px;font-variant-numeric:tabular-nums}
 .lc-hide{display:none!important}
 
 /* ── 단일 그리드(그룹은 display:contents 로 흡수) ── */
 .lc-grid{flex:0 1 auto;min-height:0;display:grid;
   grid-template-columns:repeat(auto-fit,minmax(214px,1fr));
-  grid-auto-rows:minmax(150px,max-content);
-  gap:15px;align-content:start;overflow-x:hidden;overflow-y:auto;padding:2px 2px 4px}
+  grid-auto-rows:minmax(178px,max-content);
+  gap:13px;align-content:start;overflow-x:hidden;overflow-y:auto;padding:1px}
 .lc-grp{display:contents}
 .lc-grp-row{display:contents}
 .lc-empty{grid-column:1/-1;align-self:center;padding:26px 16px;text-align:center;font-size:12.5px;color:var(--lcm);
-  border:1px dashed #cbd5e1;border-radius:14px;background:rgba(255,255,255,.6)}
+  border:1px dashed #c8d3e0;border-radius:10px;background:#fff}
 
-/* ── 카드 ── */
-.lc-card{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;
-  width:100%;max-width:330px;justify-self:center;
-  padding:17px 17px 18px;border-radius:17px;cursor:pointer;
-  background:rgba(255,255,255,.92);
-  border:1px solid #e6eaf1;
-  box-shadow:0 1px 2px rgba(16,24,40,.04), 0 10px 24px -20px rgba(16,24,40,.34);
-  transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s ease,box-shadow .22s ease,background .22s ease}
-.lc-card::before{content:'';position:absolute;z-index:-1;top:-92px;right:-76px;width:186px;height:186px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,var(--acs) 0%,transparent 68%);opacity:.42;transition:opacity .25s ease}
-.lc-card::after{content:'';position:absolute;left:0;right:0;top:0;height:2px;pointer-events:none;
-  background:linear-gradient(90deg,var(--gf),var(--gt));opacity:0;transition:opacity .22s ease}
-.lc-card:hover{transform:translateY(-3px);border-color:var(--acs);background:#fff;
-  box-shadow:0 2px 6px rgba(16,24,40,.06), 0 18px 34px -22px var(--ac)}
-.lc-card:hover::before{opacity:.85}
+/* ── 카드(흰 배경 + 1px 보더 + 절제된 그림자) ── */
+.lc-card{position:relative;overflow:hidden;display:flex;flex-direction:column;
+  width:100%;max-width:340px;justify-self:center;
+  padding:15px 16px 13px;border-radius:10px;cursor:pointer;
+  background:#fff;border:1px solid #d9e0ea;
+  box-shadow:0 1px 2px rgba(15,37,68,.05);
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.lc-card::after{content:'';position:absolute;left:0;right:0;top:0;height:3px;pointer-events:none;
+  background:var(--ac);opacity:0;transition:opacity .18s ease}
+.lc-card:hover{border-color:#9db2cc;box-shadow:0 2px 4px rgba(15,37,68,.07), 0 14px 26px -20px rgba(15,37,68,.55)}
 .lc-card:hover::after{opacity:1}
-.lc-card:focus-visible{outline:2px solid var(--gt);outline-offset:3px;transform:translateY(-3px)}
+.lc-card:focus-visible{outline:2px solid #1e3a5f;outline-offset:2px;border-color:#9db2cc}
 .lc-card:focus-visible::after{opacity:1}
-.lc-card:active{transform:translateY(-1px)}
-.lc-ico{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;
-  font-size:21px;line-height:1;text-align:center;overflow:hidden;
-  background:var(--acw);border:1px solid var(--acs);box-shadow:0 8px 16px -13px var(--ac)}
-.lc-ico i{font-size:19px;line-height:1;color:var(--gt)}
-.lc-badge{position:absolute;top:16px;right:16px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--lcm);
-  background:#f1f5f9;border:1px solid #e4e9f0;padding:2.5px 8px;border-radius:999px;white-space:nowrap;max-width:44%;
+.lc-card:active{background:#fbfcfe}
+.lc-ico{width:40px;height:40px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;
+  font-size:19px;line-height:1;text-align:center;overflow:hidden;color:#fff;
+  background-color:var(--ac);
+  background-image:linear-gradient(155deg,rgba(255,255,255,.16) 0%,rgba(4,14,30,.34) 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.lc-ico i{font-size:18px;line-height:1;color:#fff}
+.lc-badge{position:absolute;top:15px;right:16px;font-size:9.5px;font-weight:700;letter-spacing:.06em;color:#4a5d75;
+  background:#eef2f7;border:1px solid #dde5ee;padding:3px 7px;border-radius:4px;white-space:nowrap;max-width:44%;
   overflow:hidden;text-overflow:ellipsis}
-.lc-txt{flex:1;margin-top:13px;min-width:0}
-.lc-cat{font-size:9.5px;font-weight:800;letter-spacing:.14em;line-height:1.25;color:var(--ac);opacity:.82;
+.lc-txt{flex:1;margin-top:11px;min-width:0}
+.lc-cat{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:.13em;line-height:1.2;
+  color:#8494a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-cat::before{content:'';width:8px;height:2px;border-radius:1px;background:var(--ac);flex-shrink:0}
+.lc-title{margin-top:5px;font-size:15px;font-weight:700;color:#0f2544;letter-spacing:-.025em;line-height:1.25;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lc-title{margin-top:4px;font-size:15.5px;font-weight:700;color:#0f172a;letter-spacing:-.022em;line-height:1.25;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lc-body{margin-top:5px;font-size:12px;line-height:1.5;color:var(--lcm);padding-right:18px;
+.lc-body{margin-top:5px;font-size:11.5px;line-height:1.5;color:#6b7c91;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .lc-body br{display:none}
-.lc-go{position:absolute;right:15px;bottom:14px;font-size:13.5px;line-height:1;color:#c3cddb;
-  transition:color .2s ease,transform .25s cubic-bezier(.2,.7,.3,1)}
-.lc-card:hover .lc-go{color:var(--gt);transform:translateX(3px)}
+/* 카드 하단 메타 라인(정보 밀도 ↑ · 허전함 제거) */
+.lc-foot2{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:11px;padding-top:9px;border-top:1px solid #eaeef4;
+  font-size:10.5px;font-weight:600;letter-spacing:-.01em;color:#8a99ad}
+.lc-foot2 .lb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lc-go{display:inline-flex;align-items:center;gap:4px;flex-shrink:0;color:#33506f;font-weight:700;transition:color .18s ease}
+.lc-go i{font-size:11px;line-height:1;transition:transform .2s ease}
+.lc-card:hover .lc-go{color:#0f2544}
+.lc-card:hover .lc-go i{transform:translateX(2px)}
 
-/* ── 상단바 우측 액션(구 .lc-foot) ── */
+/* ── 헤더 우측 액션(네이비 바 위) ── */
 .lc-foot{margin-left:auto;display:flex;gap:8px;align-items:center;flex-shrink:0}
-.lc-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.86);border:1px solid #dde4ee;color:#475569;
-  font-size:12px;font-weight:600;font-family:inherit;padding:7px 14px;border-radius:9px;cursor:pointer;white-space:nowrap;
+.lc-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);
+  color:#dbe6f3;font-size:12px;font-weight:600;font-family:inherit;padding:7px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;
   transition:background .18s,color .18s,border-color .18s}
-.lc-btn:hover{background:#fff;border-color:#c7d2e0;color:#0f172a}
-.lc-btn.ghost{background:none;border-color:transparent;color:var(--lcm)}
-.lc-btn.ghost:hover{background:rgba(255,255,255,.8);color:#0f172a}
-.lc-btn:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
-.lc-note{width:100%;text-align:center;margin-top:10px;font-size:10.5px;letter-spacing:.04em;color:#9aa7b8}
+.lc-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.38);color:#fff}
+.lc-btn.ghost{background:transparent;border-color:rgba(255,255,255,.16);color:#a9bdd6}
+.lc-btn.ghost:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.30);color:#fff}
+.lc-btn:focus-visible{outline:2px solid #7fb2e8;outline-offset:2px}
+/* 하단 정보 라인 */
+.lc-footbar{flex:0 0 auto;width:100%;display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 2px 0;
+  border-top:1px solid var(--lcl);font-size:10.5px;letter-spacing:.02em;color:#93a2b5}
+.lc-footbar .r{margin-left:auto;text-align:right}
 
 /* 창이 낮으면 중앙정렬 대신 상단정렬(오버플로 시 윗줄 잘림 방지) */
-@media(max-height:640px){#launcher-cards{justify-content:flex-start}}
+@media(max-height:700px){#launcher-main{justify-content:flex-start}}
+/* 화면이 높으면 카드·헤더를 조금 키워 여백을 자연스럽게 흡수 */
+@media(min-height:880px){
+  .lc-grid{grid-auto-rows:minmax(192px,max-content);gap:15px}
+  .lc-head-top{padding:16px 22px}
+  .lc-meta-i{padding-top:10px;padding-bottom:10px}
+}
+@media(min-height:1040px){
+  .lc-grid{grid-auto-rows:minmax(206px,max-content);gap:16px}
+  .lc-head-top{padding:18px 24px}
+  .lc-mark{width:44px;height:44px}
+  .lc-h1{font-size:19px}
+}
 @media(max-width:1100px){.lc-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}}
 @media(max-width:860px){
   .lc-sub{display:none}
+  .lc-sect-d{display:none}
   .lc-grid{grid-template-columns:repeat(auto-fit,minmax(196px,1fr))}
 }
 @media(max-width:640px){
   /* 모바일은 세로 스크롤 허용 — 한 줄 리스트형 카드 */
-  #launcher-screen{padding:16px 12px 26px}
-  #launcher-main{flex:0 0 auto;max-width:none}
-  #launcher-cards{flex:0 0 auto;justify-content:flex-start}
-  .lc-head{flex-wrap:wrap;gap:10px;padding-bottom:12px;margin-bottom:13px}
-  .lc-h1{font-size:17px}
+  #launcher-screen{padding:14px 12px 24px}
+  #launcher-main{flex:0 0 auto;max-width:none;justify-content:flex-start}
+  #launcher-cards{flex:0 0 auto}
+  .lc-head{margin-bottom:12px;border-radius:10px}
+  .lc-head-top{flex-wrap:wrap;gap:10px;padding:12px 14px}
+  .lc-h1{font-size:16px}
+  .lc-mark{width:36px;height:36px;border-radius:8px}
+  .lc-meta{padding:0 14px}
+  .lc-meta-i{padding:8px 11px;font-size:11px}
+  .lc-meta-r{margin-left:0;padding-right:0;border-left:1px solid #e8edf4!important}
   .lc-foot{margin-left:auto}
   .lc-btn{padding:6px 11px;font-size:11.5px}
   .lc-tools{gap:8px}
+  .lc-toolsr{flex:1 1 auto}
   .lc-searchwrap{flex:1 1 auto}
   .lc-count{display:none}
   .lc-grid{flex:0 0 auto;min-height:auto;overflow:visible;align-content:start;grid-template-columns:1fr;
     grid-auto-rows:auto;gap:8px;padding:0}
-  .lc-card{flex-direction:row;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;max-width:none}
-  .lc-card:hover{transform:none}
-  .lc-ico{width:36px;height:36px;border-radius:10px;font-size:17px}
+  .lc-card{flex-direction:row;align-items:center;gap:12px;padding:11px 13px;border-radius:9px;max-width:none}
+  .lc-ico{width:36px;height:36px;border-radius:7px;font-size:17px}
   .lc-ico i{font-size:16px}
   .lc-badge{display:none}
   .lc-txt{margin-top:0}
   .lc-cat{display:none}
   .lc-title{font-size:13.5px;margin-top:0}
-  .lc-body{font-size:11px;padding-right:14px;-webkit-line-clamp:1;margin-top:2px}
-  .lc-go{position:static;margin-left:auto;font-size:14px;flex-shrink:0}
+  .lc-body{font-size:11px;-webkit-line-clamp:1;margin-top:2px}
+  .lc-foot2{margin-top:0;padding-top:0;border-top:none;margin-left:auto;width:auto}
+  .lc-foot2 .lb{display:none}
+  .lc-go .t{display:none}
+  .lc-footbar{flex-wrap:wrap;gap:4px 10px;font-size:10px}
 }
-@media(prefers-reduced-motion:reduce){.lc-card,.lc-card::before,.lc-card::after,.lc-go{transition:none!important}.lc-card:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.lc-card,.lc-card::after,.lc-go,.lc-go i{transition:none!important}}
 </style>
 <div id="launcher-screen" style="display:none;position:fixed;inset:0;z-index:9998;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto">
   <!-- 런처 메인 -->
   <div id="launcher-main" style="display:flex;flex-direction:column;align-items:center;width:100%">
     <div class="lc-head">
-      <div class="lc-brand">
-        <div class="lc-mark" aria-hidden="true">NV</div>
-        <div class="lc-brandtx">
-          <div class="lc-kick">MANAGEMENT SYSTEM</div>
-          <div class="lc-h1">노바진단</div>
+      <div class="lc-head-top">
+        <div class="lc-brand">
+          <div class="lc-mark" aria-hidden="true">NV</div>
+          <div class="lc-brandtx">
+            <div class="lc-kick">MANAGEMENT SYSTEM</div>
+            <div class="lc-h1">노바진단</div>
+          </div>
+        </div>
+        <div class="lc-sub">통합 업무 시스템 포털</div>
+        <div class="lc-foot">
+          <button id="launcher-admin-btn" class="lc-btn" onclick="enterAdmin()" style="display:none"><i class="bi bi-shield-lock"></i>관리자 페이지</button>
+          <button class="lc-btn ghost" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i>로그아웃</button>
         </div>
       </div>
-      <div class="lc-sub">접속할 시스템을 선택하세요</div>
-      <div class="lc-foot">
-        <button id="launcher-admin-btn" class="lc-btn" onclick="enterAdmin()" style="display:none"><i class="bi bi-shield-lock"></i>관리자 페이지</button>
-        <button class="lc-btn ghost" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i>로그아웃</button>
+      <div class="lc-meta">
+        <div class="lc-meta-i"><i class="bi bi-calendar3"></i><span id="lc-mdate">—</span></div>
+        <div class="lc-meta-i"><i class="bi bi-person-badge"></i>접속 계정 <b id="lc-muser">—</b></div>
+        <div class="lc-meta-i"><i class="bi bi-grid-1x2"></i>이용 가능 시스템 <b id="lc-mcnt">—</b></div>
+        <div class="lc-meta-i lc-meta-r"><span class="lc-dot" aria-hidden="true"></span>시스템 정상 운영 중</div>
       </div>
     </div>
     <div id="launcher-cards"></div>
+    <div class="lc-footbar">
+      <div>노바진단 경영관리시스템</div>
+      <div class="r">시스템 문의 · 경영지원팀</div>
+    </div>
   </div>
 
   <!-- 관리자 패널 -->
@@ -3126,6 +3189,22 @@ async function init() {
 const _LAUNCH_GRPS=[['매출 현황',['total','korea','kor_sales','intl','consumables']],['해외법인·수출',['us','th','export']],['영업전략 도구',['daily','ar']]];
 // 런처 전용 HTML 이스케이프(속성·표시 텍스트용). body_html 은 계약상 HTML이라 원문 유지.
 function _lcEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// 헤더 정보 스트립 채우기(오늘 날짜 · 접속 계정 · 이용 가능 시스템 수) — 표시 전용, 실패해도 런처는 그대로 동작
+function _lcFillMeta(n){
+  try{
+    const W=['일','월','화','수','목','금','토'], d=new Date();
+    const de=document.getElementById('lc-mdate');
+    if(de) de.textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${W[d.getDay()]})`;
+    const ue=document.getElementById('lc-muser');
+    if(ue){
+      let nm='';
+      const sn=document.getElementById('sidebar-user-name'); if(sn) nm=(sn.textContent||'').trim();
+      if(!nm){ try{ nm=currentUserName()||''; }catch(e){} }
+      ue.textContent=nm||'사용자';
+    }
+    const ce=document.getElementById('lc-mcnt'); if(ce) ce.textContent=(n||0)+'개';
+  }catch(e){}
+}
 function _buildLauncherCardsHTML(access) {
   // site_registry 기반 — 신규 사이트는 DB row 추가만으로 여기 자동 반영됨
   const card = (s, cat)=>{
@@ -3141,6 +3220,8 @@ function _buildLauncherCardsHTML(access) {
     // 아이콘은 이모지 또는 부트스트랩 아이콘 클래스(bi-…) 둘 다 허용
     const icoHTML = /^bi-[\w-]+$/.test(String(ico)) ? `<i class="bi ${_lcEsc(ico)}"></i>` : _lcEsc(ico);
     const badge = s.badge || s.short_label || '';
+    // 카드 하단 메타(담당 영역) — badge 와 중복되지 않는 값만 노출
+    const meta = (s.short_label && s.short_label !== badge) ? s.short_label : String(s.key||'').toUpperCase();
     const plain = (s.title||'')+' '+String(s.body_html||'').replace(/<[^>]*>/g,' ')+' '+(s.short_label||'')+' '+(s.badge||'')+' '+(s.key||'');
     return `<div class="lc-card" role="button" tabindex="0" aria-label="${_lcEsc(s.title)} 열기" data-s="${_lcEsc(plain.toLowerCase())}"
       style="--gf:${_lcEsc(gf)};--gt:${_lcEsc(gt)};--ac:${_lcEsc(ac)};--acw:${_lcEsc(ac)}1f;--acs:${_lcEsc(ac)}59"
@@ -3149,18 +3230,22 @@ function _buildLauncherCardsHTML(access) {
       <div class="lc-ico">${icoHTML}</div>
       ${badge?`<span class="lc-badge">${_lcEsc(badge)}</span>`:''}
       <div class="lc-txt">${cat?`<div class="lc-cat">${_lcEsc(cat)}</div>`:''}<div class="lc-title">${_lcEsc(s.title)}</div><div class="lc-body">${s.body_html||''}</div></div>
-      <i class="bi bi-arrow-right lc-go" aria-hidden="true"></i>
+      <div class="lc-foot2"><span class="lb">${_lcEsc(meta)}</span><span class="lc-go"><span class="t">바로가기</span><i class="bi bi-arrow-right" aria-hidden="true"></i></span></div>
     </div>`;
   };
   const vis=_siteRegistry.filter(s=>_siteVisible(s, access, _isAdmin));
   const used={};
   let html='';
-  // 사이트가 많아지면(6개 이상) 검색 바 노출 — 적을 땐 군더더기 없이 생략
-  if(vis.length>=6) html+=`<div class="lc-tools">
-      <div class="lc-searchwrap"><i class="bi bi-search"></i>
-        <input id="lc-q" class="lc-search" type="search" placeholder="시스템 검색 (이름 · 설명)" aria-label="시스템 검색"
-               autocomplete="off" oninput="_lcFilter(this.value)" onkeydown="_lcSearchKey(event)"></div>
-      <div class="lc-count">${vis.length}개 시스템</div>
+  _lcFillMeta(vis.length);   // 헤더 정보 스트립(날짜·계정·시스템 수) 갱신
+  // 섹션 타이틀은 항상 노출(헤더-그리드 시각적 연결), 검색 바는 사이트가 많을 때(6개 이상)만
+  html+=`<div class="lc-tools">
+      <div class="lc-sect"><span class="lc-sect-t">업무 시스템</span><span class="lc-sect-d">접속할 시스템을 선택하세요</span></div>
+      ${vis.length>=6?`<div class="lc-toolsr">
+        <div class="lc-searchwrap"><i class="bi bi-search"></i>
+          <input id="lc-q" class="lc-search" type="search" placeholder="시스템 검색 (이름 · 설명)" aria-label="시스템 검색"
+                 autocomplete="off" oninput="_lcFilter(this.value)" onkeydown="_lcSearchKey(event)"></div>
+        <div class="lc-count">${vis.length}개 시스템</div>
+      </div>`:''}
     </div>`;
   // 그룹은 세로 섹션 대신 display:contents 로 단일 그리드에 흡수(그룹명은 카드 내 .lc-cat 라벨) → 세로 스크롤 제거
   let grid='';
