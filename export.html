@@ -401,11 +401,7 @@ table{font-variant-numeric:tabular-nums}
         <i class="bi bi-grid-3x3-gap"></i><span style="flex:1">사이트 이동</span><i class="bi bi-chevron-up" style="font-size:10px"></i>
       </button>
       <div id="site-dropdown">
-        <div class="si" onclick="location.href='https://pmw0406.github.io/biz-suite-template/kor.html'"><span class="bd" style="background:#475569">홈</span><span style="flex:1">노바진단 런처</span></div>
-        <div class="si" onclick="goSite('https://pmw0406.github.io/biz-suite-template/kor.html','')"><span class="bd" style="background:#0891b2">KR</span><span style="flex:1">한국 영업</span></div>
-        <div class="si" onclick="goSite('https://pmw0406.github.io/biz-suite-template/intl.html','')"><span class="bd" style="background:#0d9488">INT</span><span style="flex:1">해외 영업</span></div>
-        <div class="si" onclick="location.href='https://pmw0406.github.io/biz-suite-template/total.html'"><span class="bd" style="background:#4f46e5">종합</span><span style="flex:1">전사 종합</span></div>
-        <div class="si" onclick="location.href='https://pmw0406.github.io/biz-suite-template/receivables.html'"><span class="bd" style="background:#f59e0b">AR</span><span style="flex:1">미수금 관리</span></div>
+        <div id="swdd-dyn"><!-- 사이트 목록은 _wtRenderSwitcher()가 site_registry 권한 기반으로 동적 렌더 --></div>
       </div>
     </div>
   </div>
@@ -635,6 +631,44 @@ function mkChart(id,cfg){if(charts[id])charts[id].destroy();var el=document.getE
 var valLabelPlugin={id:'vl',afterDatasetsDraw:function(c){var ctx=c.ctx;c.data.datasets.forEach(function(ds,di){var meta=c.getDatasetMeta(di);meta.data.forEach(function(bar,i){var v=ds.data[i];if(!v)return;ctx.save();ctx.font='600 10px "Noto Sans KR",sans-serif';ctx.fillStyle='#475569';ctx.textAlign='center';ctx.fillText((v/1e6).toFixed(1),bar.x,bar.y-4);ctx.restore();});});}};
 async function goSite(u,extra){try{var s=(await _sb.auth.getSession()).data.session;if(s)u+='#at='+encodeURIComponent(s.access_token)+'&rt='+encodeURIComponent(s.refresh_token)+(extra||'');}catch(e){}location.href=u;}
 
+/* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
+var _WT_MASTER='pmw0406@gmail.com';
+var _WT_OWN=["export"];                 /* 이 사이트 자신의 registry key(들) */
+var _WT_노바진단='https://pmw0406.github.io/novadx/kor.html';
+var _wtReg=null, _wtItems=[];
+async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
+function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!((function(){return false;}))(ac,ad); }catch(e){ return false; } } return false; }
+async function _wtGo(i){
+  var s=_wtItems[i]; if(!s) return;
+  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_노바진단:s.url;
+  var extra=s.key==='korea'?'&app=korea':(s.key==='admin'?'&app=admin':'');
+  var sess=null; try{ sess=(await _sb.auth.getSession()).data.session; }catch(e){}
+  if(sess && u.indexOf('#')<0) u+='#at='+encodeURIComponent(sess.access_token)+'&rt='+encodeURIComponent(sess.refresh_token);
+  u+=extra; location.href=u;
+}
+async function _wtRenderSwitcher(){
+  await _wtLoadReg();
+  var ac=[], ad=false;
+  try{ var ses=(await _sb.auth.getSession()).data.session;
+    if(ses&&ses.user){ if(ses.user.email===_WT_MASTER) ad=true;
+      var p=await _sb.from('crm_profiles').select('access,role').eq('id',ses.user.id).maybeSingle();
+      if(p&&p.data){ ac=(p.data.access||'').split(',').map(function(x){return x.trim();}).filter(Boolean); if(p.data.role==='admin') ad=true; }
+    }
+  }catch(e){}
+  var seen={};
+  _wtItems=_wtReg.filter(function(s){
+    if(_WT_OWN.indexOf(s.key)>=0) return false;
+    if(!_wtVis(s,ac,ad)) return false;
+    var dest=(s.key==='korea'||s.url==='LOCAL')?'central':s.url; if(seen[dest]) return false; seen[dest]=1;
+    return true;
+  }).sort(function(a,b){ return a.key==='total'?-1:(b.key==='total'?1:(a.sort_order-b.sort_order)); });
+  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_노바진단}); }
+  var box=document.getElementById('swdd-dyn'); if(!box) return;
+  box.innerHTML=_wtItems.map(function(s,i){
+    return '<div class="si" onclick="_wtGo('+i+')"><span class="bd" style="background:'+esc(s.grad_from||'#64748b')+'">'+esc(s.badge)+'</span><span style="flex:1">'+esc(s.title)+'</span><i class="bi bi-arrow-right" style="font-size:11px;opacity:.5"></i></div>';
+  }).join('');
+}
+
 /* ═══════════ 데이터 ═══════════ */
 var _sb=supabase.createClient('https://bdkurlqmfsswgeiujyev.supabase.co','sb_publishable_pOXTPRPFUESBxgXBAo9mBg_zaW5jID3');
 async function loadLive(){
@@ -721,6 +755,7 @@ async function _afterAuth(user){
     document.getElementById('uAv').textContent=(ME.name||'?').slice(0,1);
     var _su=document.querySelector('.sb-user');
     if(_su)_su.title=ME.name+(ME.pos?' '+ME.pos:'')+(ME.dept?' \u00b7 '+ME.dept:'')+'\n'+ME.email+(ME.admin?'\n(\uad00\ub9ac\uc790)':'');
+    try{_wtRenderSwitcher();}catch(e){}
     var pv=null;
     try{
       var m=location.hash.match(/v=([a-z]+)/); if(m)pv=m[1];
@@ -740,7 +775,7 @@ async function doLogin(){
   if(res.error){_showLogin('❌ 이메일 또는 비밀번호가 올바르지 않습니다');return;}
   await _afterAuth(res.data.user);
 }
-async function doLogout(){try{await _sb.auth.signOut();}catch(e){}location.href='https://pmw0406.github.io/biz-suite-template/kor.html';}
+async function doLogout(){try{await _sb.auth.signOut();}catch(e){}location.href='https://pmw0406.github.io/novadx/kor.html';}
 async function editProfile(){
   var nm=prompt('\ud83d\udc64 \uc774\ub984 (\uc608: \uae40\ud55c\uacb0)', ME.name||'');
   if(nm===null)return;
