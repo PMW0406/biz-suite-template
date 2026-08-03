@@ -71,7 +71,7 @@ async function doReset(){
 function siteVisible(s){
   if(_me.access.includes(s.key)) return true;
   if(s.admin_bypass && _me.isAdmin) return true;
-  if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(_me.access,_me.isAdmin); }catch(e){ return false; } }
+  if(s.extra_visible_rule){ try{ return !!((function(){return false;}))(_me.access,_me.isAdmin); }catch(e){ return false; } }
   return false;
 }
 function renderLauncher(){

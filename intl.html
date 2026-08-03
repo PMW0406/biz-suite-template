@@ -1289,7 +1289,7 @@ var _WT_OWN=["intl"];                 /* 이 사이트 자신의 registry key(�
 var _WT_노바진단='https://pmw0406.github.io/biz-suite-template/kor.html';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
-function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!(new Function('access','isAdmin','return ('+s.extra_visible_rule+')'))(ac,ad); }catch(e){ return false; } } return false; }
+function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!((function(){return false;}))(ac,ad); }catch(e){ return false; } } return false; }
 async function _wtGo(i){
   var s=_wtItems[i]; if(!s) return;
   var u=(s.key==='korea'||s.url==='LOCAL')?_WT_노바진단:s.url;

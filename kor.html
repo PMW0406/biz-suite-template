@@ -2459,7 +2459,7 @@ async function _loadSiteRegistry() {
 function _siteVisible(site, access, isAdmin) {
   if(access.includes(site.key)) return true;
   if(site.admin_bypass && isAdmin) return true;
-  if(site.extra_visible_rule) { try { return !!(new Function('access','isAdmin','return ('+site.extra_visible_rule+')'))(access, isAdmin); } catch(e) { return false; } }
+  if(site.extra_visible_rule) { try { return !!((function(){return false;}))(access, isAdmin); } catch(e) { return false; } }
   return false;
 }
 
