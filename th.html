@@ -419,7 +419,9 @@ function vDash(){
       <div class="card"><div class="sect"><span>🔔 알림 (납기·재고)</span></div>${alerts.length?alerts.join(''):'<div class="empty" style="color:var(--ok)">알림 없음</div>'}</div>
     </div></div>`;
 }
-async function setRate(){const v=prompt(CUR+' → KRW 환율:',D.rate||0);if(v===null)return;D.rate=Number(v)||0;await saveAll('환율 저장됨');}
+function setRate(){openM(CUR+' → KRW 환율',
+  `<div class="fld"><label>1 ${CUR} = ? KRW</label><input id="f-rate" type="number" step="0.01" value="${D.rate||0}" placeholder="예: 39.5"></div>`,
+  async()=>{D.rate=Number(document.getElementById('f-rate').value)||0;return await saveAll('환율 저장됨');},null);}
 function mTargets(){
   const yr=curYr();
   let rows='';for(let m=1;m<=12;m++){const k=yr+'-'+String(m).padStart(2,'0');rows+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="width:38px;font-size:12.5px;font-weight:600">${m}월</span><input id="tg-${m}" type="number" value="${D.targets[k]||''}" placeholder="0" style="flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fafbfc"></div>`;}
@@ -428,12 +430,13 @@ function mTargets(){
 }
 
 // ── 매출 · 수금 ──
-let fSalesYm='',fOutOnly=false;
+let fSalesYm='',fOutOnly=false,fSalesQ='';
 function vSales(){
   const yms=monthsOf(D.sales||[]);
   let L=(D.sales||[]).slice();
   if(fSalesYm)L=L.filter(s=>ym(s.date)===fSalesYm);
   if(fOutOnly)L=L.filter(s=>outAmt(s)>0);
+  if(fSalesQ){const q=fSalesQ.toLowerCase();L=L.filter(s=>((s.client||'')+' '+(s.product||'')).toLowerCase().indexOf(q)>=0);}
   L.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   const tot=L.reduce((a,s)=>a+(+s.amt||0),0), col=L.reduce((a,s)=>a+colSum(s),0), out=L.reduce((a,s)=>a+outAmt(s),0);
   const rows=L.length?L.map(s=>{const o=outAmt(s);const b=agingBucket(s);
@@ -442,6 +445,7 @@ function vSales(){
     <td>${o>0?`<b style="color:var(--bad)">${fm(o)}</b>${b&&b!=='30내'?` <span class="chip c-${b==='90+'?'red':'amber'}">${b}</span>`:''}`:'<span class="chip c-green">완납</span>'}</td>
     <td>${o>0?`<button class="btn btn-sm" onclick="event.stopPropagation();quickCollect('${s.id}')" title="잔액 전액 오늘 수금">＋수금</button>`:''}</td></tr>`;}).join(''):'<tr><td colspan="8" class="empty">매출 기록이 없습니다</td></tr>';
   return head('🧾 매출 · 수금','매출인식 기준 · 행 클릭 → 상세(수금내역) · ＋수금 = 잔액 전액 오늘 처리',
+    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`+
     `<select class="sel" onchange="fSalesYm=this.value;render()"><option value="">전체 기간</option>${yms.map(m=>`<option ${fSalesYm===m?'selected':''}>${m}</option>`).join('')}</select>`+
     `<button class="btn btn-sm ${fOutOnly?'btn-primary':''}" onclick="fOutOnly=!fOutOnly;render()">미수만</button>`+
     `<button class="btn btn-sm" onclick="csvSales()"><i class="bi bi-download"></i> CSV</button>`+
@@ -464,6 +468,7 @@ function mSale(id,pre){const s=id?(D.sales||[]).find(x=>x.id===id):Object.assign
     id?async()=>{D.sales=D.sales.filter(x=>x.id!==id);await saveAll('삭제됨');}:null);
 }
 async function quickCollect(id){const s=(D.sales||[]).find(x=>x.id===id);if(!s)return;const o=outAmt(s);if(o<=0)return;
+  if(!confirm(`'${s.client}' 잔액 ${fm(o)} 전액 오늘 수금 처리할까요?`))return;
   s.collections.push({id:uid(),date:today(),amt:o,ref:'전액 수금'});await saveAll('수금 처리: '+fm(o));}
 function csvSales(){
   const rows=[['인식일','거래처','제품','수량','매출','수금','미수','수금내역']];
@@ -503,10 +508,11 @@ async function delCol(sid,cid){const s=(D.sales||[]).find(x=>x.id===sid);if(!s)r
   if(await saveAll('수금 삭제'))dwSale(sid);}
 
 // ── 미수금 현황 ──
-let fAg='';
+let fAg='',fArQ='';
 function vAR(){
   let L=(D.sales||[]).filter(s=>outAmt(s)>0);
   if(fAg)L=L.filter(s=>agingBucket(s)===fAg);
+  if(fArQ){const q=fArQ.toLowerCase();L=L.filter(s=>((s.client||'')+' '+(s.product||'')).toLowerCase().indexOf(q)>=0);}
   L.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const tot=L.reduce((a,s)=>a+outAmt(s),0);
   const ag={'30내':0,'30+':0,'60+':0,'90+':0};
@@ -518,7 +524,7 @@ function vAR(){
     <td><span class="chip c-${b==='90+'?'red':b==='60+'?'amber':b==='30+'?'amber':'gray'}">${d}일</span></td>
     <td><button class="btn btn-sm" onclick="event.stopPropagation();quickCollect('${s.id}')">＋수금</button></td></tr>`;}).join(''):'<tr><td colspan="8" class="empty" style="color:var(--ok)">미수 채권이 없습니다 🎉</td></tr>';
   return head('⏳ 미수금 현황','받을 돈(매출−수금) · 경과일 필터 · 행 클릭 → 수금 처리',
-    chips+`<button class="btn btn-sm" onclick="csvAR()"><i class="bi bi-download"></i> CSV</button>`)
+    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fArQ)}" oninput="fArQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`+chips+`<button class="btn btn-sm" onclick="csvAR()"><i class="bi bi-download"></i> CSV</button>`)
     +`<div class="card" style="margin-bottom:14px;display:flex;gap:26px;align-items:center;flex-wrap:wrap">
       <div><div class="muted" style="font-size:12px">미수 합계${fAg?' ('+fAg+')':''}</div><div style="font-size:24px;font-weight:800;color:var(--bad)">${fm(tot)}</div><div class="muted" style="font-size:11.5px">${fkrw(tot)}</div></div>
       <div><div class="muted" style="font-size:12px">건수</div><div style="font-size:24px;font-weight:800;color:var(--ink)">${L.length}</div></div></div>
@@ -560,15 +566,18 @@ async function convertOrder(id){const o=(D.orders||[]).find(x=>x.id===id);if(!o)
 function csvOrders(){const rows=[['수주일','거래처','제품','수량','금액','상태','납기']];(D.orders||[]).forEach(o=>rows.push([o.date,o.client,o.product,o.qty,o.amt,o.status,o.eta]));dlCsv('orders_corp_th_erp.csv',rows);}
 
 // ── 거래처 분석 ──
+let fClientQ='';
 function vClients(){
   const agg={};
   (D.sales||[]).forEach(s=>{const c=s.client||'(미지정)';agg[c]=agg[c]||{sale:0,col:0,out:0,ord:0,last:''};agg[c].sale+=+s.amt||0;agg[c].col+=colSum(s);agg[c].out+=outAmt(s);if((s.date||'')>agg[c].last)agg[c].last=s.date;});
   (D.orders||[]).forEach(o=>{if(o.status==='납품완료'||o.status==='취소')return;const c=o.client||'(미지정)';agg[c]=agg[c]||{sale:0,col:0,out:0,ord:0,last:''};agg[c].ord+=+o.amt||0;});
-  const L=Object.entries(agg).sort((a,b)=>b[1].sale-a[1].sale);
+  let L=Object.entries(agg).sort((a,b)=>b[1].sale-a[1].sale);
+  if(fClientQ){const q=fClientQ.toLowerCase();L=L.filter(([c])=>c.toLowerCase().indexOf(q)>=0||(D.sales||[]).some(s=>s.client===c&&(s.product||'').toLowerCase().indexOf(q)>=0));}
   const rows=L.length?L.map(([c,v])=>`<tr onclick="openClient('${esc(c).replace(/'/g,"&#39;")}')"><td class="l"><b style="color:var(--ink)">${esc(c)}</b></td>
     <td><b>${fm(v.sale)}</b></td><td style="color:var(--ok)">${fm(v.col)}</td>
     <td>${v.out?`<b style="color:var(--bad)">${fm(v.out)}</b>`:'-'}</td><td>${v.ord?fm(v.ord):'-'}</td><td class="l muted">${v.last||'-'}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">거래처 데이터 없음</td></tr>';
-  return head('🏢 거래처 분석','거래처별 매출·수금·미수·진행수주 · 행 클릭 → 상세','')
+  return head('🏢 거래처 분석','거래처별 매출·수금·미수·진행수주 · 행 클릭 → 상세',
+    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fClientQ)}" oninput="fClientQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`)
     +`<div class="card" style="padding:0;overflow:auto"><table><thead><tr><th class="l">거래처</th><th>누적 매출</th><th>수금</th><th>미수</th><th>진행 수주</th><th class="l">최근 매출일</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function openClient(name){

@@ -74,7 +74,7 @@ input,select,textarea{font-family:inherit}
 .btn.warn{background:#b45309;color:#fff;border-color:#b45309}
 .sel,.inp{border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:12.5px;background:#fff;color:var(--body)}
 .chip{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap}
-.bar-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;position:sticky;top:100px;z-index:20;background:var(--bg);padding:8px 0}
 /* 표 */
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.dt{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -549,6 +549,7 @@ function viewList(){
     <label style="font-size:12.5px;display:flex;align-items:center;gap:5px;font-weight:600"><input type="checkbox" ${_f.hasAr?'checked':''} onchange="_f.hasAr=this.checked;render()"> 잔액 있는 건만</label>
     ${_f.special?`<button class="btn" onclick="_f.special='';render()">${SPECIAL_LBL[_f.special]||_f.special} ✕</button>`:''}
     ${(_f.aging!==''&&_f.aging!=null)?`<button class="btn" onclick="_f.aging='';render()">연령 ${AGING_B[_f.aging].k} ✕</button>`:''}
+    <button class="btn" onclick="goListAll()"><i class="bi bi-arrow-counterclockwise"></i> 필터 초기화</button>
     <span class="hint">${rows.length}건 · 미수 ${eok(rows.reduce((s,r)=>s+r.ar,0))}</span></div>`;
   if(_f.group){
     const g={};rows.forEach(r=>{const k=r.name;g[k]=g[k]||{name:k,cnt:0,amt:0,ar:0,types:{},mgrs:{},last:'',follow:''};const x=g[k];
@@ -1079,11 +1080,11 @@ function openRow(ridv){
   h+='<div class="editable-note">✏️ 아래 항목은 수정 가능합니다. 저장 시 원본과 별도로 보관되어, 엑셀 재업로드 후에도 유지됩니다.</div>';
   if(r._mgrConflict)h+=`<div class="editable-note" style="background:#fef2f2;border-color:#fecaca;color:#991b1b">⚠ 재무팀 최신 파일에는 담당자가 <b>${esc(r._mgrConflict)}</b>(으)로 되어 있어요. 지금 화면엔 사이트에서 입력한 값이 우선 표시 중입니다 — 재무팀 값이 맞다면 아래 담당자 칸을 그 값으로 고쳐서 다시 저장하세요.</div>`;
   h+=`<div class="fgrid" style="grid-template-columns:1fr 1fr">
-    <div class="fld"><label>담당자</label><input id="ed-mgr" value="${esc(r.mgr||'')}" placeholder="예: 홍길동"></div>
+    <div class="fld"><label>담당자</label><input id="ed-mgr" value="${esc(r.mgr||'')}" placeholder="예: 홍길동" onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit('${ridv}')}"></div>
     <div class="fld"><label>채권유형</label><select id="ed-type">${TYPE_ORDER.map(t=>`<option ${r.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
     ${mi?`<div class="fld"><label>관리 분류</label><select id="ed-cls">${['집중관리','검토필요','관리제외'].map(c=>`<option ${mi.cls===c?'selected':''}>${c}</option>`).join('')}</select></div>`:''}
     <div class="fld"><label>다음 조치일 <span class="hint">(도래 시 대시보드 팔로우업에 표시)</span></label><input type="date" id="ed-nextDate" value="${esc(r.nextDate||'')}"></div>
-    <div class="fld"><label>다음 조치 내용</label><input id="ed-nextAct" value="${esc(r.nextAct||'')}" placeholder="예: 분납 재약정 통화"></div>
+    <div class="fld"><label>다음 조치 내용</label><input id="ed-nextAct" value="${esc(r.nextAct||'')}" placeholder="예: 분납 재약정 통화" onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit('${ridv}')}"></div>
   </div>
   <div class="fld" style="margin-bottom:10px"><label>➕ 활동 기록 추가 <span class="hint">(저장 시 오늘 날짜·작성자로 이력에 쌓임)</span></label><textarea id="ed-log" placeholder="예: 원장 통화 — 7월 말 500만원 입금 약속"></textarea></div>
   <div class="fld" style="margin-bottom:10px"><label>향후 수금 계획</label><textarea id="ed-plan">${esc(r.plan)}</textarea></div>
@@ -1097,6 +1098,7 @@ function openRow(ridv){
   </div></div>`;
   document.getElementById('mbox').innerHTML=h;
   document.getElementById('modal').classList.add('open');
+  setTimeout(function(){var _fm=document.getElementById('ed-mgr');if(_fm)_fm.focus();},30);
 }
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
