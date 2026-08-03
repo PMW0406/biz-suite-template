@@ -9,6 +9,97 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<script>
+/* ═══ Chart.js y축 눈금 최적화 (WT_YFIT) ══════════════════════════════
+   문제: 데이터가 25~30억 구간인데 y축이 0~35억 → 아래 절반이 빈 공간.
+   해결: 선/추이 차트는 데이터 min~max 기준 ±15% 패딩(0 강제 안 함),
+         막대·누적·혼합 차트는 면적 왜곡 방지를 위해 0 기준 유지 + 상단 12% 여백만.
+   사용: Chart 생성 시 설정 객체 전체를 _yFit( ... ) 으로 감싼다.
+   기존 ticks.callback(억/만원 포맷)·grid·stacked 등은 건드리지 않고
+   suggestedMin / suggestedMax 만 병합한다. (min·max가 명시된 축은 제외) */
+function _yNums(arr){
+  var o=[];
+  (arr||[]).forEach(function(v){
+    if(v&&typeof v==='object') v=(v.y!==undefined?v.y:v.value);
+    if(v===null||v===undefined||v==='') return;
+    var n=Number(v); if(isFinite(n)) o.push(n);
+  });
+  return o;
+}
+function _ySum(arrs){
+  var n=0; (arrs||[]).forEach(function(a){ if(a&&a.length>n) n=a.length; });
+  var out=[];
+  for(var i=0;i<n;i++){ var s=0; (arrs||[]).forEach(function(a){ var v=Number(a&&a[i]); if(isFinite(v)) s+=v; }); out.push(s); }
+  return out;
+}
+/* 선(line)·추이 차트용 — 0에서 시작하지 않고 데이터 범위에 맞춤 */
+function _yScale(datasets){
+  var a=[]; (datasets||[]).forEach(function(d){ a=a.concat(_yNums(d&&d.data?d.data:d)); });
+  if(!a.length) return {};
+  var mn=Math.min.apply(null,a), mx=Math.max.apply(null,a), rg=mx-mn, lo, hi;
+  if(rg>0){ lo=mn-rg*0.15; hi=mx+rg*0.15; }
+  else if(mx!==0){ var m=Math.abs(mx); lo=mn-m*0.1; hi=mx+m*0.1; }   // 전부 같은 값
+  else return {suggestedMin:0, suggestedMax:1};                       // 전부 0
+  if(mn>=0) lo=Math.max(0,lo);                                        // 양수 데이터는 음수로 안 내려감
+  if(!isFinite(lo)||!isFinite(hi)||hi<=lo) return {};
+  return {suggestedMin:Math.round(lo*1e4)/1e4, suggestedMax:Math.round(hi*1e4)/1e4};
+}
+/* 막대(bar)·누적·혼합 차트용 — 0 기준 유지, 상단 여백만 */
+function _yScale0(datasets){
+  var a=[]; (datasets||[]).forEach(function(d){ a=a.concat(_yNums(d&&d.data?d.data:d)); });
+  var o={beginAtZero:true};
+  if(!a.length) return o;
+  var mx=Math.max.apply(null,a), mn=Math.min.apply(null,a);
+  if(mx>0) o.suggestedMax=Math.round(mx*1.12*1e4)/1e4;
+  if(mn<0) o.suggestedMin=Math.round(mn*1.12*1e4)/1e4;
+  return o;
+}
+/* Chart 설정 객체를 받아 y축(y, y1, y2 …)마다 위 규칙을 적용해 그대로 반환 */
+function _yFit(cfg){
+  try{
+    if(!cfg||!cfg.data) return cfg;
+    var ds=cfg.data.datasets||[]; if(!ds.length) return cfg;
+    if(/^(doughnut|pie|polarArea|radar|bubble|scatter)$/.test(cfg.type||'')) return cfg;
+    cfg.options=cfg.options||{};
+    if((cfg.options.indexAxis||'x')!=='x') return cfg;                 // 가로막대는 대상 아님
+    cfg.options.scales=cfg.options.scales||{};
+    var sc=cfg.options.scales;
+    var keys=Object.keys(sc).filter(function(k){ return /^y/i.test(k); });
+    if(!keys.length){ sc.y={}; keys=['y']; }
+    keys.forEach(function(k){
+      var ax=sc[k]; if(!ax||typeof ax!=='object') return;
+      if(ax.min!==undefined||ax.max!==undefined) return;               // 명시 범위 존중
+      if(ax.type==='category'||ax.display===false) return;
+      var mine=ds.filter(function(d){ return (d.yAxisID||'y')===k; });
+      if(!mine.length) return;
+      var typeOf=function(d){ return d.type||cfg.type||'bar'; };
+      var hasBar=mine.some(function(d){ return typeOf(d)==='bar'; });
+      if(!hasBar){                                                     // 선 전용 축
+        var r=_yScale(mine);
+        if(ax.beginAtZero===true) delete ax.beginAtZero;
+        if(r.suggestedMin!==undefined&&ax.suggestedMin===undefined) ax.suggestedMin=r.suggestedMin;
+        if(r.suggestedMax!==undefined&&ax.suggestedMax===undefined) ax.suggestedMax=r.suggestedMax;
+        return;
+      }
+      // 막대 포함(혼합·누적) → 0 기준. 누적이면 스택 합계로 상단 여백 계산
+      var groups={}, uid=0;
+      mine.forEach(function(d){
+        var stacked = typeOf(d)==='bar' && ax.stacked!==false && (ax.stacked===true || d.stack!==undefined);
+        var key = stacked ? ('s:'+(d.stack||'_')) : ('u:'+(uid++));
+        (groups[key]=groups[key]||[]).push(d.data||[]);
+      });
+      var series=Object.keys(groups).map(function(key){
+        var g=groups[key]; return g.length>1?_ySum(g):g[0];
+      });
+      var r0=_yScale0(series);
+      if(ax.beginAtZero===undefined) ax.beginAtZero=true;
+      if(r0.suggestedMax!==undefined&&ax.suggestedMax===undefined) ax.suggestedMax=r0.suggestedMax;
+      if(r0.suggestedMin!==undefined&&ax.suggestedMin===undefined) ax.suggestedMin=r0.suggestedMin;
+    });
+  }catch(e){ }
+  return cfg;
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -327,71 +418,168 @@ table{font-variant-numeric:tabular-nums}
 
 <!-- 런처 화면 -->
 <style id="launcher-opt">
-#launcher-screen{padding:56px 24px}
-#launcher-cards{width:100%;max-width:544px!important;display:flex!important;flex-direction:column;gap:24px!important}
-.lc-grp{width:100%}
-.lc-grp-t{font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.13em;text-transform:uppercase;margin:0 0 9px 3px}
-.lc-grp-row{display:flex;flex-direction:column;background:#fff;border:1px solid #e8edf3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.05)}
-.lc-card{display:flex;align-items:center;gap:14px;padding:15px 18px;cursor:pointer;border-bottom:1px solid #f1f4f8;transition:background .14s ease}
-.lc-card:last-child{border-bottom:none}
-.lc-card:hover{background:#f7f9fc}
-.lc-ico{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;background:#f1f5f9;color:#475569;font-size:18px;line-height:1;text-align:center;overflow:hidden}
-.lc-ico i{font-size:18px;line-height:1}
-.lc-main{flex:1;min-width:0}
-.lc-title{font-size:14.5px;font-weight:700;color:#0f172a;letter-spacing:-.2px;line-height:1.3}
-.lc-body{font-size:11.5px;color:#94a3b8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lc-chev{color:#cbd5e1;font-size:15px;flex-shrink:0;transition:color .14s ease,transform .14s ease}
-.lc-card:hover .lc-chev{color:#2563eb;transform:translateX(2px)}
-@media(max-width:540px){
-  #launcher-screen{padding:24px 12px!important;justify-content:flex-start!important}
-  #launcher-main{width:100%}
-  #launcher-cards{max-width:100%!important;gap:20px!important}
+/* ══ 런처 v2 — 다크 포털 · 글래스 카드 그리드 (앱 본문 라이트 테마와 무관, 오버레이 전용) ══ */
+#launcher-screen{
+  --lcw:#0f172a;                     /* 전경 */
+  --lcm:rgba(71,85,105,.78);         /* 보조 텍스트 */
+  --lcl:rgba(15,23,42,.08);          /* 라인 */
+  padding:clamp(30px,5vh,58px) clamp(16px,4vw,44px);
+  color:var(--lcw);
+  background:
+    radial-gradient(880px 520px at 10% -10%, rgba(59,130,246,.10), transparent 60%),
+    radial-gradient(740px 460px at 92% 2%, rgba(13,148,136,.08), transparent 62%),
+    radial-gradient(760px 620px at 50% 118%, rgba(99,102,241,.09), transparent 62%),
+    linear-gradient(180deg,#f7f9fc 0%,#eef1f6 100%);
+  -webkit-font-smoothing:antialiased;
+  /* JS가 justify-content 를 center/flex-start 로 바꾸지만, center 는 내용이 길 때 상단을 잘라먹는다.
+     항상 flex-start 로 고정하고 세로 중앙정렬은 아래 auto 마진으로 처리 → 상단 잘림 원천 차단 */
+  justify-content:flex-start!important;
 }
+#launcher-main{width:100%;max-width:940px;margin:auto auto}   /* auto 마진 = 세로중앙 + 콘텐츠가 길어도 상단 안 잘림 */
+
+/* ── 헤더(브랜드) ── */
+.lc-head{display:flex;flex-direction:column;align-items:center;margin-bottom:clamp(26px,4.5vh,42px)}
+.lc-brand{display:flex;align-items:center;gap:13px}
+.lc-mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:16.5px;font-weight:800;letter-spacing:-.03em;color:#fff;
+  background:linear-gradient(140deg,#38bdf8 0%,#3b82f6 45%,#6366f1 100%);
+  box-shadow:0 14px 34px -14px rgba(59,130,246,.95), inset 0 0 0 1px rgba(255,255,255,.16)}
+.lc-brandtx{text-align:left}
+.lc-kick{font-size:9.5px;font-weight:700;letter-spacing:.26em;color:#94a3b8}
+.lc-h1{margin:2px 0 0;font-size:27px;font-weight:800;letter-spacing:-.035em;line-height:1.08;
+  background:linear-gradient(180deg,#0f172a 0%,#334155 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lc-sub{margin:15px 0 0;font-size:13px;color:#64748b;letter-spacing:.01em;text-align:center}
+
+/* ── 카드 영역 ── */
+#launcher-cards{width:100%;display:flex;flex-direction:column;gap:clamp(20px,3vh,28px)}
+.lc-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lc-searchwrap{position:relative;flex:1;min-width:180px;max-width:300px}
+.lc-searchwrap>i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12.5px;color:rgba(148,163,184,.7);pointer-events:none}
+.lc-search{width:100%;-webkit-appearance:none;appearance:none;background:#fff;border:1px solid #dbe3ec;border-radius:11px;color:#0f172a;font-family:inherit;font-size:12.5px;padding:9px 12px 9px 33px;outline:none;transition:border-color .18s,background .18s,box-shadow .18s}
+.lc-search::placeholder{color:#94a3b8}
+.lc-search:focus{border-color:#2563eb;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.lc-search::-webkit-search-cancel-button{opacity:.55}
+.lc-count{font-size:11.5px;color:#64748b;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lc-empty{padding:30px 16px;text-align:center;font-size:12.5px;color:#64748b;border:1px dashed #cbd5e1;border-radius:16px;background:#fff}
+.lc-hide{display:none!important}
+
+/* ── 그룹 ── */
+.lc-grp{width:100%}
+.lc-grp-t{display:flex;align-items:center;gap:11px;margin:0 2px 12px}
+.lc-grp-t>b{font-size:11.5px;font-weight:800;letter-spacing:.05em;color:#475569}
+.lc-grp-t>em{font-style:normal;font-size:10.5px;font-weight:700;color:#94a3b8;font-variant-numeric:tabular-nums}
+.lc-grp-t>span{flex:1;height:1px;background:linear-gradient(90deg,#dbe3ec,rgba(219,227,236,0))}
+/* 모든 그룹이 동일 트랙(데스크톱 3열)을 공유 → 그룹이 달라도 카드 폭·좌우 열이 정확히 일치 */
+.lc-grp-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px;align-items:stretch}
+
+/* ── 카드 ── */
+.lc-card{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;min-height:152px;padding:18px;
+  border-radius:18px;cursor:pointer;
+  background:#fff;
+  border:1px solid #e4e9f0;
+  box-shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -18px rgba(16,24,40,.28);
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s ease,box-shadow .22s ease,background .22s ease}
+.lc-card::before{content:'';position:absolute;z-index:-1;top:-86px;right:-70px;width:190px;height:190px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,var(--acs) 0%,transparent 68%);opacity:.55;transition:opacity .25s ease}
+.lc-card:hover{transform:translateY(-3px);border-color:var(--ac);
+  background:#fff;
+  box-shadow:0 2px 6px rgba(16,24,40,.06), 0 18px 40px -22px rgba(16,24,40,.4)}
+.lc-card:hover::before{opacity:.92}
+.lc-card:focus-visible{outline:2px solid var(--gt);outline-offset:3px;transform:translateY(-3px)}
+.lc-card:active{transform:translateY(-1px)}
+.lc-ico{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;font-size:21px;line-height:1;text-align:center;overflow:hidden;
+  background:var(--acw);border:1px solid var(--acs);box-shadow:0 8px 18px -12px var(--ac)}
+.lc-ico i{font-size:19px;line-height:1;color:var(--gt)}
+.lc-badge{position:absolute;top:16px;right:16px;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:#64748b;
+  background:#f1f5f9;border:1px solid #e2e8f0;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.lc-txt{flex:1;margin-top:14px;min-width:0}
+.lc-title{font-size:15.5px;font-weight:700;color:#0f172a;letter-spacing:-.02em;line-height:1.3}
+.lc-body{font-size:12px;line-height:1.55;color:var(--lcm);margin-top:5px}
+.lc-go{display:flex;align-items:center;gap:6px;margin-top:14px;font-size:11.5px;font-weight:700;letter-spacing:.01em;color:#94a3b8;transition:color .2s ease}
+.lc-go i{font-size:12px;transition:transform .25s cubic-bezier(.2,.7,.3,1)}
+.lc-card:hover .lc-go{color:var(--gt)}
+.lc-card:hover .lc-go i{transform:translateX(4px)}
+
+/* ── 하단 액션 ── */
+.lc-foot{margin-top:clamp(26px,4vh,38px);display:flex;gap:9px;align-items:center;justify-content:center;flex-wrap:wrap}
+.lc-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #dbe3ec;color:#475569;
+  font-size:12px;font-weight:600;font-family:inherit;padding:8px 16px;border-radius:10px;cursor:pointer;transition:background .18s,color .18s,border-color .18s}
+.lc-btn:hover{background:#f1f5f9;border-color:#c7d2e0;color:#0f172a}
+.lc-btn.ghost{background:none;border-color:transparent;color:#64748b}
+.lc-btn.ghost:hover{background:#eef2f7;color:#0f172a}
+.lc-btn:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.lc-note{width:100%;text-align:center;margin-top:14px;font-size:10.5px;letter-spacing:.04em;color:#94a3b8}
+
+@media(max-width:880px){.lc-grp-row{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}}   /* 태블릿 2열 */
+@media(max-width:640px){
+  #launcher-screen{padding:24px 13px 30px}
+  .lc-h1{font-size:23px}
+  .lc-sub{font-size:12.5px;margin-top:12px}
+  .lc-searchwrap{max-width:none}
+  .lc-count{display:none}
+  .lc-grp-row{grid-template-columns:1fr;gap:9px}
+  .lc-card{flex-direction:row;align-items:center;gap:13px;min-height:0;padding:13px 15px;border-radius:15px}
+  .lc-card:hover{transform:none}
+  .lc-ico{width:38px;height:38px;border-radius:11px;font-size:18px}
+  .lc-badge{display:none}
+  .lc-txt{margin-top:0}
+  .lc-title{font-size:14px}
+  .lc-body{font-size:11.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lc-body br{display:none}
+  .lc-go{margin-top:0;color:#94a3b8}
+  .lc-go span{display:none}
+  .lc-go i{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){.lc-card,.lc-card::before,.lc-go i{transition:none!important}.lc-card:hover{transform:none}}
 </style>
-<div id="launcher-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(180deg,#f7f9fc 0%,#eef1f6 100%);z-index:9998;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto">
+<div id="launcher-screen" style="display:none;position:fixed;inset:0;z-index:9998;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto">
   <!-- 런처 메인 -->
   <div id="launcher-main" style="display:flex;flex-direction:column;align-items:center;width:100%">
-    <div style="text-align:center;margin-bottom:34px">
-      <div style="width:52px;height:52px;border-radius:15px;margin:0 auto 13px;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;color:#fff;letter-spacing:-.5px;background:linear-gradient(135deg,#2563eb,#1d4ed8);box-shadow:0 12px 26px -10px rgba(37,99,235,.55)">NV</div>
-      <div style="font-size:23px;font-weight:800;color:#0f172a;letter-spacing:-.5px">노바진단</div>
-      <div style="font-size:13px;color:#94a3b8;margin-top:5px;letter-spacing:.01em">접속할 시스템을 선택하세요</div>
+    <div class="lc-head">
+      <div class="lc-brand">
+        <div class="lc-mark" aria-hidden="true">NV</div>
+        <div class="lc-brandtx">
+          <div class="lc-kick">MANAGEMENT SYSTEM</div>
+          <div class="lc-h1">노바진단</div>
+        </div>
+      </div>
+      <div class="lc-sub">접속할 시스템을 선택하세요</div>
     </div>
     <div id="launcher-cards"></div>
-    <div style="margin-top:28px;display:flex;gap:14px;align-items:center">
-      <button id="launcher-admin-btn" onclick="enterAdmin()" style="display:none;background:#fff;border:1px solid #e2e8f0;color:#64748b;font-size:12px;padding:7px 16px;border-radius:9px;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.04)"><i class="bi bi-shield-lock me-1"></i>관리자 페이지</button>
-      <button onclick="doLogout()" style="background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</button>
+    <div class="lc-foot">
+      <button id="launcher-admin-btn" class="lc-btn" onclick="enterAdmin()" style="display:none"><i class="bi bi-shield-lock"></i>관리자 페이지</button>
+      <button class="lc-btn ghost" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i>로그아웃</button>
     </div>
   </div>
 
   <!-- 관리자 패널 -->
   <div id="launcher-admin" style="display:none;width:100%;align-self:flex-start">
-    <div style="position:sticky;top:0;z-index:10;background:linear-gradient(135deg,#0f172a,#1e2140);padding:20px 32px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08)">
-      <button onclick="hideAdminPanel()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#94a3b8;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px"><i class="bi bi-arrow-left me-1"></i>돌아가기</button>
-      <div style="font-size:18px;font-weight:700;color:#fff"><i class="bi bi-shield-lock me-2 text-warning"></i>사용자 관리</div>
+    <div style="position:sticky;top:0;z-index:10;background:#fff;padding:20px 32px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e4e8ef">
+      <button onclick="hideAdminPanel()" style="background:#f1f5f9;border:1px solid #cbd5e1;color:#94a3b8;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px"><i class="bi bi-arrow-left me-1"></i>돌아가기</button>
+      <div style="font-size:18px;font-weight:700;color:#0f172a"><i class="bi bi-shield-lock me-2 text-warning"></i>사용자 관리</div>
       <button id="admin-upload-btn" onclick="goUpload()" title="매일 재무팀 회계파일 1개 업로드 → 한국·해외·전사·포트폴리오·일보 전 사이트 자동 갱신 (마스터 전용)" style="display:none;margin-left:auto;background:#16a34a;border:none;color:#fff;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600"><i class="bi bi-cloud-arrow-up me-1"></i>회계파일 업로드 (전 사이트 갱신)</button>
       <button onclick="openAddUserModal()" style="background:#ff4500;border:none;color:#fff;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600"><i class="bi bi-person-plus me-1"></i>사용자 추가</button>
     </div>
     <div style="max-width:1640px;margin:0 auto;padding:24px 28px 40px">
     <div style="display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,.1)">
-      <button id="admtab-users" onclick="adminTab('users')" style="background:none;border:none;border-bottom:2px solid #ff4500;color:#fff;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">사용자 관리</button>
+      <button id="admtab-users" onclick="adminTab('users')" style="background:none;border:none;border-bottom:2px solid #ff4500;color:#0f172a;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">사용자 관리</button>
       <button id="admtab-fb" onclick="adminTab('fb')" style="background:none;border:none;border-bottom:2px solid transparent;color:#94a3b8;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">요청·신고함 <span id="admtab-fb-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:9px;margin-left:2px;font-weight:700"></span></button>
       <button id="admtab-signup" onclick="adminTab('signup')" style="background:none;border:none;border-bottom:2px solid transparent;color:#94a3b8;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">가입 신청 <span id="admtab-signup-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:9px;margin-left:2px;font-weight:700"></span></button>
     </div>
     <div id="admin-tab-users">
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
-      <input id="user-search" oninput="_paintUsers()" placeholder="🔍 이름·이메일·부서·직급 검색" style="flex:1;min-width:220px;max-width:360px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:13px;color:#fff">
-      <select id="user-role-filter" onchange="_paintUsers()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 10px;font-size:13px;color:#fff">
-        <option value="" style="background:#1e293b">전체 역할</option>
-        <option value="user" style="background:#1e293b">팀원</option>
-        <option value="manager" style="background:#1e293b">팀/파트장</option>
-        <option value="admin" style="background:#1e293b">관리자</option>
+      <input id="user-search" oninput="_paintUsers()" placeholder="🔍 이름·이메일·부서·직급 검색" style="flex:1;min-width:220px;max-width:360px;background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 12px;font-size:13px;color:#0f172a">
+      <select id="user-role-filter" onchange="_paintUsers()" style="background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 10px;font-size:13px;color:#0f172a">
+        <option value="" style="background:#f1f5f9">전체 역할</option>
+        <option value="user" style="background:#f1f5f9">팀원</option>
+        <option value="manager" style="background:#f1f5f9">팀/파트장</option>
+        <option value="admin" style="background:#f1f5f9">관리자</option>
       </select>
-      <button onclick="collapseAllDepts()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12px;color:#cbd5e1;cursor:pointer"><i class="bi bi-chevron-up me-1"></i>모두 접기</button>
-      <button onclick="expandAllDepts()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12px;color:#cbd5e1;cursor:pointer"><i class="bi bi-chevron-down me-1"></i>모두 펼치기</button>
+      <button onclick="collapseAllDepts()" style="background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 12px;font-size:12px;color:#475569;cursor:pointer"><i class="bi bi-chevron-up me-1"></i>모두 접기</button>
+      <button onclick="expandAllDepts()" style="background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 12px;font-size:12px;color:#475569;cursor:pointer"><i class="bi bi-chevron-down me-1"></i>모두 펼치기</button>
     </div>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:auto">
+        <div style="background:#fafbfc;border:1px solid #e4e8ef;border-radius:16px;overflow:auto">
       <table style="width:100%;border-collapse:collapse;min-width:900px">
-        <thead><tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+        <thead><tr style="border-bottom:1px solid #e4e8ef">
           <th style="padding:12px 16px;text-align:left;font-size:11px;color:#64748b;font-weight:600;white-space:nowrap">이메일</th>
           <th style="padding:12px 16px;text-align:left;font-size:11px;color:#64748b;font-weight:600;white-space:nowrap">이름</th>
           <th style="padding:12px 16px;text-align:left;font-size:11px;color:#64748b;font-weight:600;white-space:nowrap">부서</th>
@@ -406,19 +594,19 @@ table{font-variant-numeric:tabular-nums}
     </div><!-- /admin-tab-users -->
     <div id="admin-tab-fb" style="display:none">
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
-        <button id="fbsub-fb" onclick="fbSub('feedback')" style="background:#334155;border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer">요청·신고 <span id="fbsub-fb-n" style="color:#94a3b8"></span></button>
-        <button id="fbsub-err" onclick="fbSub('errors')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#94a3b8;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer">오류 로그 <span id="fbsub-err-n" style="color:#64748b"></span></button>
-        <select id="fb-site-filter" onchange="renderAdminFeedback()" style="margin-left:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 10px;font-size:12.5px;color:#fff"><option value="" style="background:#1e293b">전체 사이트</option></select>
-        <button onclick="renderAdminFeedback()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12.5px;color:#cbd5e1;cursor:pointer">새로고침</button>
+        <button id="fbsub-fb" onclick="fbSub('feedback')" style="background:#e2e8f0;border:1px solid #dbe3ec;color:#0f172a;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer">요청·신고 <span id="fbsub-fb-n" style="color:#94a3b8"></span></button>
+        <button id="fbsub-err" onclick="fbSub('errors')" style="background:#f8fafc;border:1px solid #dbe3ec;color:#94a3b8;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer">오류 로그 <span id="fbsub-err-n" style="color:#64748b"></span></button>
+        <select id="fb-site-filter" onchange="renderAdminFeedback()" style="margin-left:auto;background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 10px;font-size:12.5px;color:#0f172a"><option value="" style="background:#f1f5f9">전체 사이트</option></select>
+        <button onclick="renderAdminFeedback()" style="background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#475569;cursor:pointer">새로고침</button>
       </div>
-      <div id="admin-fb-list" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:auto;min-height:120px"></div>
+      <div id="admin-fb-list" style="background:#fafbfc;border:1px solid #e4e8ef;border-radius:16px;overflow:auto;min-height:120px"></div>
     </div>
     <div id="admin-tab-signup" style="display:none">
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
         <div style="font-size:12.5px;color:#94a3b8">가입 신청을 승인하면 계정이 자동 생성되고 임시비밀번호가 발급됩니다.</div>
-        <button onclick="renderSignupRequests()" style="margin-left:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12.5px;color:#cbd5e1;cursor:pointer">새로고침</button>
+        <button onclick="renderSignupRequests()" style="margin-left:auto;background:#f8fafc;border:1px solid #dbe3ec;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#475569;cursor:pointer">새로고침</button>
       </div>
-      <div id="admin-signup-list" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:auto;min-height:120px;padding:8px"></div>
+      <div id="admin-signup-list" style="background:#fafbfc;border:1px solid #e4e8ef;border-radius:16px;overflow:auto;min-height:120px;padding:8px"></div>
     </div>
   </div>
   </div>
@@ -2893,6 +3081,8 @@ async function init() {
 
 // 런처 카테고리(키→그룹). 여기 없는 신규 키는 '기타'로 자동 표시(registry 자동반영 유지)
 const _LAUNCH_GRPS=[['매출 현황',['total','korea','intl','consumables']],['해외법인',['us','th']],['영업전략 도구',['daily','ar']]];
+// 런처 전용 HTML 이스케이프(속성·표시 텍스트용). body_html 은 계약상 HTML이라 원문 유지.
+function _lcEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function _buildLauncherCardsHTML(access) {
   // site_registry 기반 — 신규 사이트는 DB row 추가만으로 여기 자동 반영됨
   const card = s=>{
@@ -2901,23 +3091,62 @@ function _buildLauncherCardsHTML(access) {
       : (s.needs_token
           ? `(async()=>{const {data:{session:s}}=await _sb.auth.getSession();let u='${s.url}';if(s)u+='#at='+encodeURIComponent(s.access_token)+'&rt='+encodeURIComponent(s.refresh_token);location.href=u;})()`
           : `location.href='${s.url}'`);
-    return `<div class="lc-card" style="--gf:${s.grad_from};--ac:${s.accent_color}" onclick="${onclick.replace(/"/g,'&quot;')}">
-      <div class="lc-ico" style="background:${s.accent_color}14">${s.icon||'📦'}</div>
-      <div class="lc-main"><div class="lc-title">${s.title}</div><div class="lc-body">${s.body_html}</div></div>
-      <i class="bi bi-chevron-right lc-chev"></i>
+    const ac = s.accent_color || '#64748b';                 // 강조색
+    const gt = s.grad_to || s.grad_from || ac;              // 밝은 강조(텍스트·화살표용)
+    const gf = s.grad_from || ac;
+    const ico = s.icon || '📦';
+    // 아이콘은 이모지 또는 부트스트랩 아이콘 클래스(bi-…) 둘 다 허용
+    const icoHTML = /^bi-[\w-]+$/.test(String(ico)) ? `<i class="bi ${_lcEsc(ico)}"></i>` : _lcEsc(ico);
+    const badge = s.badge || s.short_label || '';
+    const plain = (s.title||'')+' '+String(s.body_html||'').replace(/<[^>]*>/g,' ')+' '+(s.short_label||'')+' '+(s.badge||'')+' '+(s.key||'');
+    return `<div class="lc-card" role="button" tabindex="0" aria-label="${_lcEsc(s.title)} 열기" data-s="${_lcEsc(plain.toLowerCase())}"
+      style="--gf:${_lcEsc(gf)};--gt:${_lcEsc(gt)};--ac:${_lcEsc(ac)};--acw:${_lcEsc(ac)}1f;--acs:${_lcEsc(ac)}59"
+      onclick="${onclick.replace(/"/g,'&quot;')}"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <div class="lc-ico">${icoHTML}</div>
+      ${badge?`<span class="lc-badge">${_lcEsc(badge)}</span>`:''}
+      <div class="lc-txt"><div class="lc-title">${_lcEsc(s.title)}</div><div class="lc-body">${s.body_html||''}</div></div>
+      <div class="lc-go"><span>입장하기</span><i class="bi bi-arrow-right"></i></div>
     </div>`;
   };
   const vis=_siteRegistry.filter(s=>_siteVisible(s, access, _isAdmin));
   const used={};
   let html='';
+  // 사이트가 많아지면(6개 이상) 검색 바 노출 — 적을 땐 군더더기 없이 생략
+  if(vis.length>=6) html+=`<div class="lc-tools">
+      <div class="lc-searchwrap"><i class="bi bi-search"></i>
+        <input id="lc-q" class="lc-search" type="search" placeholder="시스템 검색 (이름 · 설명)" aria-label="시스템 검색"
+               autocomplete="off" oninput="_lcFilter(this.value)" onkeydown="_lcSearchKey(event)"></div>
+      <div class="lc-count">${vis.length}개 시스템</div>
+    </div>`;
   _LAUNCH_GRPS.forEach(([label,keys])=>{
     const sites=keys.map(k=>vis.find(s=>s.key===k)).filter(Boolean);
     sites.forEach(s=>used[s.key]=1);
-    if(sites.length)html+=`<div class="lc-grp"><div class="lc-grp-t">${label}</div><div class="lc-grp-row">${sites.map(card).join('')}</div></div>`;
+    if(sites.length)html+=`<section class="lc-grp"><div class="lc-grp-t"><b>${_lcEsc(label)}</b><em>${sites.length}</em><span></span></div><div class="lc-grp-row">${sites.map(card).join('')}</div></section>`;
   });
   const etc=vis.filter(s=>!used[s.key]);
-  if(etc.length)html+=`<div class="lc-grp"><div class="lc-grp-t">기타</div><div class="lc-grp-row">${etc.map(card).join('')}</div></div>`;
+  if(etc.length)html+=`<section class="lc-grp"><div class="lc-grp-t"><b>기타</b><em>${etc.length}</em><span></span></div><div class="lc-grp-row">${etc.map(card).join('')}</div></section>`;
+  html+=`<div id="lc-empty" class="lc-empty lc-hide">일치하는 시스템이 없습니다</div>`;
   return html;
+}
+// 런처 검색 — 카드/그룹 표시 토글(데이터·권한 로직과 무관한 표시 필터)
+function _lcFilter(q){
+  const root=document.getElementById('launcher-cards'); if(!root) return;
+  const k=String(q||'').trim().toLowerCase();
+  let n=0;
+  root.querySelectorAll('.lc-card').forEach(c=>{
+    const hit = !k || (c.dataset.s||'').indexOf(k)>-1;
+    c.classList.toggle('lc-hide', !hit);
+    if(hit) n++;
+  });
+  root.querySelectorAll('.lc-grp').forEach(g=>{
+    g.classList.toggle('lc-hide', !g.querySelector('.lc-card:not(.lc-hide)'));
+  });
+  const em=document.getElementById('lc-empty'); if(em) em.classList.toggle('lc-hide', n>0);
+}
+function _lcSearchKey(e){
+  if(e.key==='Escape'){ e.target.value=''; _lcFilter(''); e.target.blur(); return; }
+  if(e.key==='Enter'){ const c=document.querySelector('#launcher-cards .lc-card:not(.lc-hide)'); if(c) c.click(); }
 }
 
 // ── 중앙 로그인 복귀(ret) 헬퍼 ─────────────────────────────
@@ -3390,7 +3619,7 @@ function renderSalesOverview() {
   if (_ovChart) { _ovChart.destroy(); _ovChart=null; }
   const ctx = document.getElementById('ov-chart-monthly');
   if (ctx) {
-    _ovChart = new Chart(ctx, {
+    _ovChart = new Chart(ctx, _yFit({
       type:'bar',
       data:{labels:months12.map(m=>m+'월'), datasets:[
         {label:'소모품', data:consVals, backgroundColor:'#2563eb', borderRadius:3, stack:'cur', yAxisID:'y'},
@@ -3406,7 +3635,7 @@ function renderSalesOverview() {
             footer:()=>'클릭하면 그 달 상세'}}},
         scales:{y:{ticks:{callback:v=>v+'억'}, grid:{color:'#f3f4f6'}}}
       }
-    });
+    }));
   }
   // 월별 상세 표 (선택 기간)
   const _mt = document.getElementById('ov-month-table');
@@ -4232,7 +4461,7 @@ function renderDashboard() {
   const monthLabels=months.map(ym=>ym.split('-')[1]+'월');
   if(monthlyChart) monthlyChart.destroy();
   const ctx=document.getElementById('chart-monthly').getContext('2d');
-  monthlyChart=new Chart(ctx,{
+  monthlyChart=new Chart(ctx,_yFit({
     type:'bar',
     data:{
       labels:monthLabels,
@@ -4253,7 +4482,7 @@ function renderDashboard() {
         x:{ticks:{font:{size:11}},grid:{display:false},stacked:true,border:{display:false}}
       }
     }
-  });
+  }));
 
   // 파이프라인 퍼널
   const funnelEl=document.getElementById('dash-funnel');
@@ -5119,7 +5348,7 @@ function renderConsumables() {
 
   function makeLineChart(canvasId, datasets, oldChart) {
     if(oldChart) oldChart.destroy();
-    return new Chart(document.getElementById(canvasId).getContext('2d'),{
+    return new Chart(document.getElementById(canvasId).getContext('2d'),_yFit({
       type:'line',
       data:{labels:MO, datasets},
       options:{
@@ -5134,7 +5363,7 @@ function renderConsumables() {
           x:{grid:{display:false},ticks:{font:{size:10}}}
         }
       }
-    });
+    }));
   }
 
   // 종합 차트 (애니젠 + X/XM 합산)
@@ -5347,7 +5576,7 @@ function renderGradeTrend() {
     const ctx=document.getElementById('chart-grade-'+gr.g);
     if(!ctx) return;
     if(_gradeCharts[gr.g]) _gradeCharts[gr.g].destroy();
-    _gradeCharts[gr.g]=new Chart(ctx,{
+    _gradeCharts[gr.g]=new Chart(ctx,_yFit({
       type:'line',
       data:{
         labels,
@@ -5371,7 +5600,7 @@ function renderGradeTrend() {
           x:{ticks:{font:{size:10}},grid:{display:false}}
         }
       }
-    });
+    }));
   });
 
   // 등급별 상세 테이블 (클릭 → 드릴다운)
@@ -8422,7 +8651,7 @@ function renderPerformance(){
 
   const ctx=document.getElementById('chart-perf').getContext('2d');
   if(perfChart) perfChart.destroy();
-  perfChart=new Chart(ctx,{
+  perfChart=new Chart(ctx,_yFit({
     type:'bar',
     data:{
       labels:months.map(m=>m.split('-')[1]+'월'),
@@ -8438,7 +8667,7 @@ function renderPerformance(){
         y2:{ticks:{callback:v=>v+'건'},grid:{display:false},position:'right'}
       }
     }
-  });
+  }));
 
   // 영업사원별 실적 집계
   const salesSet=new Set([...DB.d.pipeline.map(d=>d.sales||'미배정'),...DB.d.logs.map(l=>l.sales||'미배정')].filter(s=>s!=='미배정'));
@@ -10477,7 +10706,7 @@ function _paintUsers(){
     return [p.email,p.display_name,p.dept,p.position].some(v=>(v||'').toLowerCase().includes(q));
   });
   if(!list.length){ el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:#64748b">해당 사용자 없음</td></tr>`; return; }
-  const iS = "background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:4px 8px;font-size:12px;color:#fff;width:96px";
+  const iS = "background:#f8fafc;border:1px solid #dbe3ec;border-radius:6px;padding:4px 8px;font-size:12px;color:#0f172a;width:96px";
   const groups = {};
   list.forEach(p => { const d=p.dept?.trim()||'(부서 미지정)'; (groups[d]=groups[d]||[]).push(p); });
   const deptOrder = Object.keys(groups).sort((a,b)=>a==='(부서 미지정)'?1:b==='(부서 미지정)'?-1:a.localeCompare(b,'ko'));
@@ -10485,7 +10714,7 @@ function _paintUsers(){
   _lastDeptOrder = deptOrder;
   deptOrder.forEach(dept => {
     const collapsed = _collapsedDepts.has(dept);
-    rows.push(`<tr data-dept="${(dept||'').replace(/"/g,'&quot;')}" onclick="toggleDept(this)" style="cursor:pointer"><td colspan="7" style="padding:9px 16px 5px;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.1)"><span style="font-size:11px;font-weight:700;color:#0d9488;letter-spacing:.05em"><i class="bi bi-chevron-${collapsed?'right':'down'} me-1" style="font-size:9px;width:9px;display:inline-block"></i><i class="bi bi-building me-1"></i>${dept}</span><span style="font-size:10px;color:#475569;margin-left:6px">${groups[dept].length}명</span>${_deptCtl(dept)}</td></tr>`);
+    rows.push(`<tr data-dept="${(dept||'').replace(/"/g,'&quot;')}" onclick="toggleDept(this)" style="cursor:pointer"><td colspan="7" style="padding:9px 16px 5px;background:#fafbfc;border-top:1px solid #e4e8ef"><span style="font-size:11px;font-weight:700;color:#0d9488;letter-spacing:.05em"><i class="bi bi-chevron-${collapsed?'right':'down'} me-1" style="font-size:9px;width:9px;display:inline-block"></i><i class="bi bi-building me-1"></i>${dept}</span><span style="font-size:10px;color:#475569;margin-left:6px">${groups[dept].length}명</span>${_deptCtl(dept)}</td></tr>`);
     groups[dept].forEach(p => rows.push(_adminUserRow(p, iS, collapsed)));
   });
   rows.push(`<tr><td colspan="7" style="padding:10px 16px;color:#475569;font-size:11px">총 ${list.length}명</td></tr>`);
@@ -10672,7 +10901,7 @@ async function renderSignupRequests(){
   };
   box.innerHTML=rows.map(function(r){
     var isPend=r.status==='pending';
-    return '<div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 16px;margin:8px;background:rgba(255,255,255,.03)">'
+    return '<div style="border:1px solid #f1f5f9;border-radius:12px;padding:13px 16px;margin:8px;background:rgba(255,255,255,.03)">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px">'
         +'<span style="font-size:14px;font-weight:700;color:#f1f5f9"><i class="bi bi-envelope me-1" style="color:#94a3b8"></i>'+esc(r.email||'')+'</span>'
         +'<span style="font-size:11px;color:#64748b">'+fmt(r.created_at)+'</span></div>'
@@ -10893,13 +11122,13 @@ async function renderAdminFeedback(){
   var sf=document.getElementById('fbsub-fb-n'), se=document.getElementById('fbsub-err-n');
   if(sf) sf.textContent=(fbCnt==null?'':'('+fbCnt+')'); if(se) se.textContent=(errCnt==null?'':'('+errCnt+')');
   var bfb=document.getElementById('fbsub-fb'), berr=document.getElementById('fbsub-err');
-  if(bfb){ var on=_fbSub==='feedback'; bfb.style.background=on?'#334155':'rgba(255,255,255,.06)'; bfb.style.color=on?'#fff':'#94a3b8'; }
-  if(berr){ var on2=_fbSub==='errors'; berr.style.background=on2?'#334155':'rgba(255,255,255,.06)'; berr.style.color=on2?'#fff':'#94a3b8'; }
+  if(bfb){ var on=_fbSub==='feedback'; bfb.style.background=on?'#e2e8f0':'#f8fafc'; bfb.style.color=on?'#fff':'#94a3b8'; }
+  if(berr){ var on2=_fbSub==='errors'; berr.style.background=on2?'#e2e8f0':'#f8fafc'; berr.style.color=on2?'#fff':'#94a3b8'; }
   var bd=document.getElementById('admtab-fb-badge'); if(bd){ if(fbCnt){ bd.style.display=''; bd.textContent=fbCnt; } else bd.style.display='none'; }
   // 사이트 필터 옵션 생성(전체 + 발견된 사이트)
   var selEl=document.getElementById('fb-site-filter'); var cur=selEl?selEl.value:'';
   if(selEl){ var sites=[]; rows.forEach(function(r){ if(r.site && sites.indexOf(r.site)<0) sites.push(r.site); }); sites.sort();
-    selEl.innerHTML='<option value="" style="background:#1e293b">\uC804\uCCB4 \uC0AC\uC774\uD2B8</option>'+sites.map(function(x){return '<option value="'+esc(x)+'"'+(x===cur?' selected':'')+' style="background:#1e293b">'+esc(x)+'</option>';}).join(''); }
+    selEl.innerHTML='<option value="" style="background:#f1f5f9">\uC804\uCCB4 \uC0AC\uC774\uD2B8</option>'+sites.map(function(x){return '<option value="'+esc(x)+'"'+(x===cur?' selected':'')+' style="background:#f1f5f9">'+esc(x)+'</option>';}).join(''); }
   var siteF=selEl?selEl.value:'';
   if(rlsErr){ box.innerHTML='<div style="padding:28px;text-align:center;color:#fca5a5;font-size:13px">\uC77D\uAE30 \uAD8C\uD55C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4 (RLS \uC815\uCC45 \uD544\uC694).<br><span style="color:#94a3b8;font-size:12px">'+esc(rlsErr.message||rlsErr)+'</span></div>'; return; }
   var shown=rows.filter(function(r){ return !siteF || r.site===siteF; });
@@ -10917,11 +11146,11 @@ async function renderAdminFeedback(){
   };
   var h='<table style="width:100%;border-collapse:collapse;min-width:720px;font-size:12.5px">';
   if(_fbSub==='feedback'){
-    h+='<thead><tr style="border-bottom:1px solid rgba(255,255,255,.08);color:#64748b;font-size:11px;text-align:left"><th style="padding:11px 14px">\uC77C\uC2DC</th><th>\uC791\uC131\uC790</th><th>\uC704\uCE58</th><th style="padding-left:14px">\uB0B4\uC6A9</th><th style="padding:0 10px;white-space:nowrap">\uCC98\uB9AC</th></tr></thead><tbody>';
-    shown.forEach(function(r){ h+='<tr style="border-bottom:1px solid rgba(255,255,255,.05);color:#e2e8f0"><td style="padding:10px 14px;white-space:nowrap;color:#94a3b8">'+fmt(r.created_at)+'</td><td style="white-space:nowrap;line-height:1.35">'+who(r.reporter)+'</td><td style="white-space:nowrap;color:#94a3b8">'+esc(r.site||'')+(r.page?'/'+esc(r.page):'')+'</td><td style="white-space:pre-wrap;padding:10px 14px 10px 14px">'+esc(r.message)+'</td><td style="white-space:nowrap;padding:10px 10px">'+(r.status==='done'?'<span style="color:#5eead4;font-weight:600"><i class="bi bi-check-circle-fill me-1"></i>완료</span>':'<button class="btn btn-sm" style="background:#0d9488;color:#fff;font-size:11px;padding:2px 10px;border:0;border-radius:6px" onclick="_fbResolve(\''+r.id+'\')">완료 처리</button>')+'</td></tr>'; });
+    h+='<thead><tr style="border-bottom:1px solid #f1f5f9;color:#64748b;font-size:11px;text-align:left"><th style="padding:11px 14px">\uC77C\uC2DC</th><th>\uC791\uC131\uC790</th><th>\uC704\uCE58</th><th style="padding-left:14px">\uB0B4\uC6A9</th><th style="padding:0 10px;white-space:nowrap">\uCC98\uB9AC</th></tr></thead><tbody>';
+    shown.forEach(function(r){ h+='<tr style="border-bottom:1px solid #f8fafc;color:#e2e8f0"><td style="padding:10px 14px;white-space:nowrap;color:#94a3b8">'+fmt(r.created_at)+'</td><td style="white-space:nowrap;line-height:1.35">'+who(r.reporter)+'</td><td style="white-space:nowrap;color:#94a3b8">'+esc(r.site||'')+(r.page?'/'+esc(r.page):'')+'</td><td style="white-space:pre-wrap;padding:10px 14px 10px 14px">'+esc(r.message)+'</td><td style="white-space:nowrap;padding:10px 10px">'+(r.status==='done'?'<span style="color:#5eead4;font-weight:600"><i class="bi bi-check-circle-fill me-1"></i>완료</span>':'<button class="btn btn-sm" style="background:#0d9488;color:#fff;font-size:11px;padding:2px 10px;border:0;border-radius:6px" onclick="_fbResolve(\''+r.id+'\')">완료 처리</button>')+'</td></tr>'; });
   } else {
-    h+='<thead><tr style="border-bottom:1px solid rgba(255,255,255,.08);color:#64748b;font-size:11px;text-align:left"><th style="padding:11px 14px">\uC77C\uC2DC</th><th>\uC704\uCE58</th><th style="padding-left:14px">\uC5D0\uB7EC</th><th>\uC0AC\uC6A9\uC790</th></tr></thead><tbody>';
-    shown.forEach(function(r){ h+='<tr style="border-bottom:1px solid rgba(255,255,255,.05);color:#e2e8f0"><td style="padding:10px 14px;white-space:nowrap;color:#94a3b8">'+fmt(r.created_at)+'</td><td style="white-space:nowrap;color:#94a3b8">'+esc(r.site||'')+(r.page?'/'+esc(r.page):'')+'</td><td style="padding:10px 14px 10px 14px"><span style="color:#fca5a5">'+esc(r.message)+'</span>'+(r.line?'<span style="color:#64748b"> :'+esc(r.line)+'</span>':'')+'</td><td style="white-space:nowrap;color:#94a3b8">'+esc(r.user_email||'')+'</td></tr>'; });
+    h+='<thead><tr style="border-bottom:1px solid #f1f5f9;color:#64748b;font-size:11px;text-align:left"><th style="padding:11px 14px">\uC77C\uC2DC</th><th>\uC704\uCE58</th><th style="padding-left:14px">\uC5D0\uB7EC</th><th>\uC0AC\uC6A9\uC790</th></tr></thead><tbody>';
+    shown.forEach(function(r){ h+='<tr style="border-bottom:1px solid #f8fafc;color:#e2e8f0"><td style="padding:10px 14px;white-space:nowrap;color:#94a3b8">'+fmt(r.created_at)+'</td><td style="white-space:nowrap;color:#94a3b8">'+esc(r.site||'')+(r.page?'/'+esc(r.page):'')+'</td><td style="padding:10px 14px 10px 14px"><span style="color:#fca5a5">'+esc(r.message)+'</span>'+(r.line?'<span style="color:#64748b"> :'+esc(r.line)+'</span>':'')+'</td><td style="white-space:nowrap;color:#94a3b8">'+esc(r.user_email||'')+'</td></tr>'; });
   }
   h+='</tbody></table>'; box.innerHTML=h;
 }
@@ -11212,7 +11441,7 @@ function renderDeviceSales() {
   if (deviceMonthlyChart) { deviceMonthlyChart.destroy(); deviceMonthlyChart=null; }
   const ctx = document.getElementById('dev-chart-monthly');
   if (ctx) {
-    deviceMonthlyChart = new Chart(ctx, {
+    deviceMonthlyChart = new Chart(ctx, _yFit({
       type:'bar',
       data:{labels:_labels, datasets:_ds},
       options:{responsive:true, maintainAspectRatio:false,
@@ -11220,7 +11449,7 @@ function renderDeviceSales() {
           tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y?.toLocaleString()+'만원'}}},
         scales:{y:{ticks:{callback:v=>v>=10000?(v/10000).toFixed(1)+'억':v.toLocaleString()+'만'},grid:{color:'#f3f4f6'}}}
       }
-    });
+    }));
   }
 
   // 제품별 detail col 렌더 (대수 포함, 클릭 시 내역 팝업)
@@ -11431,7 +11660,7 @@ function _drawRankBar(el,data){
   var sorted=data.slice().sort(function(a,b){ return b.cur-a.cur; }).slice(0,10);
   var wrap=el.parentNode; if(wrap) wrap.style.height=Math.max(240, sorted.length*28+40)+'px';
   var yoy=function(e){ return (e.pre>0)?((e.cur/e.pre-1)*100):null; };
-  _devChartObj=new Chart(el,{ type:'bar', data:{ labels:sorted.map(function(e){return e.name;}), datasets:[
+  _devChartObj=new Chart(el,_yFit({ type:'bar', data:{ labels:sorted.map(function(e){return e.name;}), datasets:[
     { label:'전년', data:sorted.map(function(e){return Math.round(e.pre||0);}), backgroundColor:sorted.map(function(e){return e.isTeam?'rgba(37,99,235,.22)':'rgba(245,158,11,.22)';}), borderWidth:0, order:2 },
     { label:'올해', data:sorted.map(function(e){return Math.round(e.cur||0);}), backgroundColor:sorted.map(function(e){return e.isTeam?'#2563eb':'#f59e0b';}), borderWidth:0, order:1 }
   ] }, options:{ indexAxis:'y', maintainAspectRatio:false,
@@ -11442,7 +11671,7 @@ function _drawRankBar(el,data){
     scales:{
       x:{ ticks:{font:{size:10},callback:function(v){return _devFmt(v);}}, grid:{color:'#f1f5f9'} },
       y:{ ticks:{font:{size:11,weight:'600'}, autoSkip:false, callback:function(val,idx){ var e=sorted[idx]; if(!e) return ''; var y=yoy(e); var b=y!=null?('  '+(y>=0?'▲':'▼')+Math.abs(y).toFixed(0)+'%'):'  신규'; return e.name+b; } }, grid:{display:false} }
-    } } });
+    } } }));
 }
 function _drawParetoChart(el,data){
   if(_devChartObj){ _devChartObj.destroy(); _devChartObj=null; }
@@ -11450,13 +11679,13 @@ function _drawParetoChart(el,data){
   var top=sorted.slice(0,25);
   var total=sorted.reduce(function(s,e){ return s+e.cur; },0)||1, cum=0;
   var cumPct=top.map(function(e){ cum+=e.cur; return +(cum/total*100).toFixed(1); });
-  _devChartObj=new Chart(el,{ data:{ labels:top.map(function(e){ return e.name; }), datasets:[
+  _devChartObj=new Chart(el,_yFit({ data:{ labels:top.map(function(e){ return e.name; }), datasets:[
     { type:'bar', label:'매출', data:top.map(function(e){ return e.cur; }), backgroundColor:top.map(function(e){ return e.isTeam?'#2563eb':'#f59e0b'; }), yAxisID:'y', order:2 },
     { type:'line', label:'누적 비중(%)', data:cumPct, borderColor:'#64748b', backgroundColor:'#64748b', yAxisID:'y1', tension:.25, pointRadius:2, order:1 }
   ] }, options:{ maintainAspectRatio:false, interaction:{mode:'index',intersect:false}, plugins:{ legend:{display:true,labels:{font:{size:11}}}, tooltip:{ callbacks:{ label:function(c){ return c.dataset.type==='line'?('누적 '+c.parsed.y+'%'):('매출 '+_devFmt(c.parsed.y)); } } } }, scales:{
     x:{ ticks:{font:{size:9},maxRotation:65,minRotation:65,autoSkip:false} },
     y:{ position:'left', ticks:{font:{size:10},callback:function(v){ return _devFmt(v); }} },
-    y1:{ position:'right', min:0, max:100, ticks:{font:{size:10},callback:function(v){ return v+'%'; }}, grid:{drawOnChartArea:false} } } } });
+    y1:{ position:'right', min:0, max:100, ticks:{font:{size:10},callback:function(v){ return v+'%'; }}, grid:{drawOnChartArea:false} } } } }));
 }
 let _devFilter = 'all';   // all | team(영업사원) | dealer(대리점·딜러)
 function _setDevFilter(v, btn){ _devFilter=v; document.querySelectorAll('#page-device-reps .btn-group .btn').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); renderDevReps(); }
@@ -11828,7 +12057,7 @@ function showDevRepDetail(repName) {
   requestAnimationFrame(() => {
     const ctx2 = document.getElementById(chartId);
     if (!ctx2) return;
-    _devRepChart = new Chart(ctx2, {
+    _devRepChart = new Chart(ctx2, _yFit({
       type:'bar',
       data:{labels:months12.map(m=>m+'월'), datasets:[
         {label:`${yr}년`,   data:months12.map(m=>Math.round((curM[m]||0)/1e4)), backgroundColor:'rgba(37,99,235,0.7)', borderRadius:3, yAxisID:'y'},
@@ -11839,7 +12068,7 @@ function showDevRepDetail(repName) {
           tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y?.toLocaleString()+'만원'}}},
         scales:{y:{ticks:{callback:v=>v>=10000?(v/10000).toFixed(1)+'억':v+'만'},grid:{color:'#f3f4f6'}}}
       }
-    });
+    }));
   });
 }
 
