@@ -128,6 +128,7 @@ table{font-variant-numeric:tabular-nums}
 /* WT-DEEP-v3 프리미엄 타이포 일관 */
 .kpi-value,.lux-num,.stat-num,.stat-value,.metric-value,.metric-num,.big-num,.num-lg,.hero-num,.summary-num,.card-num{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
 </style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
 <div id="veil">불러오는 중...</div>
@@ -174,6 +175,7 @@ table{font-variant-numeric:tabular-nums}
       <div class="big">📄</div>
       <div>아직 업로드된 보고서가 없습니다.</div>
       <div style="margin-top:6px;font-size:13px">우측 상단 <b>엑셀 업로드</b>로 소모품 매출 엑셀을 올려주세요.</div>
+      <div style="margin-top:16px"><button type="button" class="primary" onclick="document.getElementById('xlsx-input').click()" style="background:#2563eb;color:#fff;border:1px solid #2563eb;padding:10px 20px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer"><i class="bi bi-upload"></i> 엑셀 업로드</button></div>
     </div>
   </div>
 </div>
@@ -447,31 +449,61 @@ function parseWomall(wb){
     byGrp:byGrp, byProduct:sortAmt(prodMap), byHosp:sortAmt(hospMap), byMonth:byMonth,
     uploadedAt:new Date().toISOString() };
 }
+// ── CSV 내보내기 · 노바몰 검색(신규, UX 편의) ────────────
+var _womR=null;
+function _csvDL(filename, rows){
+  var csv=rows.map(function(r){ return r.map(function(c){ var s=(c==null?'':String(c)); if(/[",\n\r]/.test(s)) s='"'+s.replace(/"/g,'""')+'"'; return s; }).join(','); }).join('\r\n');
+  var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+}
+var _womSearchT=null;
+function womSearch(inp, tblId){
+  clearTimeout(_womSearchT);
+  _womSearchT=setTimeout(function(){
+    var q=String(inp.value||'').toLowerCase().trim();
+    var tb=document.getElementById(tblId); if(!tb) return;
+    var rows=tb.getElementsByTagName('tr');
+    for(var i=1;i<rows.length;i++){
+      var cell=rows[i].cells[0]; if(!cell) continue;
+      var txt=String(cell.textContent||'').toLowerCase();
+      rows[i].style.display=(!q||txt.indexOf(q)>=0)?'':'none';
+    }
+  },150);
+}
+function womCsvGrp(){ if(!_womR) return; var rows=[['제품군','수량','매출']]; _womR.byGrp.forEach(function(x){ rows.push([x.name,x.qty,x.amt]); }); _csvDL('노바몰_제품군별.csv',rows); }
+function womCsvMonth(){ if(!_womR) return; var rows=[['월','매출','수량']]; _womR.byMonth.forEach(function(m){ rows.push([m.ym,m.amt,m.qty]); }); _csvDL('노바몰_월별추이.csv',rows); }
+function womCsvHosp(){ if(!_womR) return; var rows=[['병원(주문자)','수량','매출']]; _womR.byHosp.forEach(function(x){ rows.push([x.name,x.qty,x.amt]); }); _csvDL('노바몰_병원별.csv',rows); }
 function renderWomall(R){
   if(!R){ document.getElementById('report-area').innerHTML='<div id="empty"><div class="big">🧴</div><div>노바몰 마감 파일을 업로드하면 국내 진단키트 매출이 표시됩니다.</div></div>'; return; }
+  _womR=R;
   var h='<div class="rpt">';
   h+='<div class="rpt-head" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)"><h2>국내 진단키트 매출 · 노바몰 기준</h2>'
     +'<div class="date">기간 '+esc(R.period.from||'-')+' ~ '+esc(R.period.to||'-')+' · 주문 '+Number(R.orders).toLocaleString()+'건 · 취소 '+Number(R.cancN||0)+'건 제외</div>'
     +'<div class="total">총 매출 <b>'+fmtWonFull(R.totAmt)+'</b> · 총수량 '+Number(R.totQty).toLocaleString()+'개</div></div>';
   // 1. 제품군별
-  h+='<div class="sec"><h3><span class="n">1</span> 제품군별 매출</h3><div class="scroll"><table>';
+  h+='<div class="sec"><h3><span class="n">1</span> 제품군별 매출<button type="button" onclick="womCsvGrp()" style="margin-left:auto;background:#eef2f7;color:#1d4ed8;border:1px solid #dbeafe;padding:5px 11px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer"><i class="bi bi-download"></i> CSV</button></h3><div class="scroll"><table>';
   h+='<tr><th>제품군</th><th>수량</th><th>매출</th><th>비중</th></tr>';
   R.byGrp.forEach(function(x){ var pct=R.totAmt?x.amt/R.totAmt:0;
     h+='<tr><td class="lbl">'+esc(x.name)+'</td><td>'+Number(x.qty).toLocaleString()+'</td><td>'+fmtWonFull(x.amt)+'</td><td>'+(pct*100).toFixed(1)+'%</td></tr>'; });
   h+='<tr class="sum"><td class="lbl">합계</td><td>'+Number(R.totQty).toLocaleString()+'</td><td>'+fmtWonFull(R.totAmt)+'</td><td>100%</td></tr>';
   h+='</table></div></div>';
   // 2. 월별 추이
-  h+='<div class="sec"><h3><span class="n">2</span> 월별 추이</h3><div class="scroll"><table>';
+  h+='<div class="sec"><h3><span class="n">2</span> 월별 추이<button type="button" onclick="womCsvMonth()" style="margin-left:auto;background:#eef2f7;color:#1d4ed8;border:1px solid #dbeafe;padding:5px 11px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer"><i class="bi bi-download"></i> CSV</button></h3><div class="scroll"><table>';
   h+='<tr><th>월</th><th>매출</th><th>수량</th></tr>';
   R.byMonth.forEach(function(m){ h+='<tr><td class="lbl">'+esc(m.ym)+'</td><td>'+fmtWonFull(m.amt)+'</td><td>'+Number(m.qty).toLocaleString()+'</td></tr>'; });
   h+='</table></div></div>';
   // 3. 제품별 상세
-  h+='<div class="sec"><h3><span class="n">3</span> 제품별 상세</h3><div class="scroll"><table>';
+  h+='<div class="sec"><h3><span class="n">3</span> 제품별 상세</h3>';
+  h+='<div style="margin:0 0 12px"><input type="text" placeholder="상품명 검색" oninput="womSearch(this,\'wom-prod-tbl\')" style="width:100%;max-width:320px;padding:8px 11px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box"></div>';
+  h+='<div class="scroll"><table id="wom-prod-tbl">';
   h+='<tr><th>상품명</th><th>제품군</th><th>수량</th><th>매출</th></tr>';
   R.byProduct.forEach(function(x){ h+='<tr><td class="lbl">'+esc(x.name)+'</td><td class="muted">'+esc(x.grp)+'</td><td>'+Number(x.qty).toLocaleString()+'</td><td>'+fmtWonFull(x.amt)+'</td></tr>'; });
   h+='</table></div></div>';
   // 4. 병원별 Top 30
-  h+='<div class="sec"><h3><span class="n">4</span> 병원별 매출 (Top 30)</h3><div class="scroll"><table>';
+  h+='<div class="sec"><h3><span class="n">4</span> 병원별 매출 (Top 30)<button type="button" onclick="womCsvHosp()" style="margin-left:auto;background:#eef2f7;color:#1d4ed8;border:1px solid #dbeafe;padding:5px 11px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer"><i class="bi bi-download"></i> CSV(전체)</button></h3>';
+  h+='<div style="margin:0 0 12px"><input type="text" placeholder="병원(주문자) 검색" oninput="womSearch(this,\'wom-hosp-tbl\')" style="width:100%;max-width:320px;padding:8px 11px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box"></div>';
+  h+='<div class="scroll"><table id="wom-hosp-tbl">';
   h+='<tr><th>병원(주문자)</th><th>수량</th><th>매출</th></tr>';
   R.byHosp.slice(0,30).forEach(function(x){ h+='<tr><td class="lbl">'+esc(x.name)+'</td><td>'+Number(x.qty).toLocaleString()+'</td><td>'+fmtWonFull(x.amt)+'</td></tr>'; });
   h+='</table></div><div class="sub">* 노바몰 마감 원본 자동 집계 · 국내 온라인 소모품 · 실결제가 기준</div></div>';

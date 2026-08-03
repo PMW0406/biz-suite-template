@@ -4370,7 +4370,7 @@ function renderLeaderboard() {
   const maxAmt = sorted[0]?.[1]?.wonAmt || 1;
   const medals = ['🥇','🥈','🥉'];
   const el = document.getElementById('leaderboard');
-  if(!sorted.length) { el.innerHTML='<div class="text-muted text-center py-3" style="font-size:13px">파이프라인 데이터 없음</div>'; return; }
+  if(!sorted.length) { el.innerHTML='<div class="text-center py-4" style="font-size:13px;color:#94a3b8"><i class="bi bi-kanban" style="font-size:26px;color:#cbd5e1;display:block;margin-bottom:8px"></i>진행 중인 딜이 없습니다.<div style="margin-top:10px"><button class="btn btn-sm btn-outline-primary" style="font-size:12px" onclick="showPage(\'sales\')"><i class="bi bi-plus-lg me-1"></i>수주관리에서 딜 등록</button></div></div>'; return; }
   el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px">
     ${sorted.map(([name,s],i)=>{
       const rate = s.deals>0?Math.round(s.won/s.deals*100):0;

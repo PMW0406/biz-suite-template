@@ -46,6 +46,8 @@ body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:#f0f4f8;color
 .pmodal-foot{display:flex;gap:8px;align-items:center;padding:13px 18px;border-top:1px solid #eef2f7}
 .pend-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:600;opacity:0;transition:opacity .2s;pointer-events:none}
 .pend-toast.show{opacity:1}
+/* 빠른기록 모달: 모바일=바텀시트(기본), 데스크톱=중앙정렬 */
+@media(min-width:769px){#qk-modal{align-items:center!important}#qk-modal>div{border-radius:16px!important}}
 #m-topbar,#m-backdrop{display:none}
 @media(max-width:820px){
   .sidebar{transform:translateX(-100%);transition:transform .25s ease;width:min(84vw,290px);box-shadow:2px 0 22px rgba(0,0,0,.35);z-index:200}
@@ -550,7 +552,7 @@ table{font-variant-numeric:tabular-nums}
       <button class="btn btn-sm btn-outline-secondary" onclick="_dealFromQuote()"><i class="bi bi-kanban me-1"></i>딜 전환</button>
       <div style="flex:1"></div>
       <button class="btn btn-sm btn-outline-secondary" onclick="var d=_qCollect();d.id='_tmp';INTL_QUOTES.push(Object.assign({id:'_tmp'},d));printQuote('_tmp');INTL_QUOTES=INTL_QUOTES.filter(function(x){return x.id!=='_tmp';});"><i class="bi bi-printer me-1"></i>미리보기 인쇄</button>
-      <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="saveQuote()">저장</button>
+      <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="saveQuote(this)">저장</button>
     </div>
   </div>
 </div>
@@ -608,7 +610,7 @@ table{font-variant-numeric:tabular-nums}
       <button class="btn btn-sm btn-outline-danger" id="a-del" onclick="delAct()" style="display:none">삭제</button>
       <button class="btn btn-sm btn-outline-secondary" onclick="_dealFromAct()"><i class="bi bi-kanban me-1"></i>딜 생성</button>
       <button class="btn btn-sm btn-outline-secondary" onclick="var n=document.getElementById('a-dealer').value.trim();if(n){closeAct();openDealer(n);}"><i class="bi bi-buildings me-1"></i>딜러</button>
-      <div style="flex:1"></div><button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="saveAct()">저장</button>
+      <div style="flex:1"></div><button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="saveAct(this)">저장</button>
     </div>
   </div>
 </div>
@@ -692,7 +694,7 @@ table{font-variant-numeric:tabular-nums}
       <button class="btn btn-sm btn-outline-secondary" onclick="var n=document.getElementById('d-dealer').value.trim();if(n){closeDeal();openDealer(n);}"><i class="bi bi-buildings me-1"></i>딜러</button>
       <button class="btn btn-sm btn-outline-secondary" onclick="_quoteFromDeal()"><i class="bi bi-file-earmark-text me-1"></i>견적</button>
       <div style="flex:1"></div>
-      <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="saveDeal()">저장</button>
+      <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="saveDeal(this)">저장</button>
     </div>
   </div>
 </div>
@@ -1581,10 +1583,7 @@ async function _loadIntlPipe(){
   try{ const {data}=await _sb.from('cons_cache').select('data').eq('key','intl_pipeline').maybeSingle(); INTL_PIPE=(data&&data.data&&data.data.deals)||[]; }catch(e){ console.warn('intl pipe load',e); INTL_PIPE=[]; }
   var pg=document.getElementById('page-sales'); if(pg&&pg.classList.contains('active')) renderSales();
 }
-async function _saveDeals(){
-  try{ const {error}=await _sb.from('cons_cache').upsert({key:'intl_pipeline',data:{deals:INTL_PIPE,updatedAt:new Date().toISOString()}},{onConflict:'key'}); if(error) throw error; }
-  catch(e){ alert('저장 실패: '+e.message); }
-}
+// _saveDeals 정의는 토스트 포함본(하단 CRM v9 블록)으로 일원화됨 — 중복 무토스트 정의 제거
 function _dealMatch(d){
   var kw=(document.getElementById('is-f-kw')&&document.getElementById('is-f-kw').value||'').trim().toLowerCase();
   var rep=document.getElementById('is-f-rep')&&document.getElementById('is-f-rep').value||'';
@@ -1663,10 +1662,15 @@ function openDeal(id){
   document.getElementById('is-modal').style.display='flex';
 }
 function closeDeal(){ document.getElementById('is-modal').style.display='none'; }
-function saveDeal(){
+// ── 저장 버튼 중복클릭 방지 (전역 락 + 버튼 시각 피드백) ──
+var _intlSaving=false;
+function _btnSaving(btn,on){ if(!btn)return; if(on){ if(btn.getAttribute('data-orig')==null)btn.setAttribute('data-orig',btn.innerHTML); btn.disabled=true; btn.innerHTML='<i class="bi bi-hourglass-split me-1"></i>저장 중…'; } else { btn.disabled=false; var o=btn.getAttribute('data-orig'); if(o!=null){ btn.innerHTML=o; btn.removeAttribute('data-orig'); } } }
+function _markInvalid(id){ var el=document.getElementById(id); if(!el)return; el.classList.add('is-invalid'); el.focus(); el.addEventListener('input',function h(){ el.classList.remove('is-invalid'); el.removeEventListener('input',h); }); }
+function saveDeal(btn){
+  if(_intlSaving) return;
   var g=function(k){return document.getElementById(k).value;};
-  var dealer=g('d-dealer').trim(); if(!dealer){ alert('딜러/거래처를 입력하세요'); return; }
-  if(_dealEdit&&!_canEditIntl(_dealEdit.sales)){ alert('담당자('+(_dealEdit.sales||'')+')의 딜입니다. 본인 딜만 수정할 수 있어요.'); return; }
+  var dealer=g('d-dealer').trim(); if(!dealer){ _pToast('딜러/거래처를 입력하세요'); _markInvalid('d-dealer'); return; }
+  if(_dealEdit&&!_canEditIntl(_dealEdit.sales)){ _pToast('담당자('+(_dealEdit.sales||'')+')의 딜입니다. 본인 딜만 수정할 수 있어요.'); return; }
   var d=_dealEdit||{id:'ip_'+Date.now()+Math.random().toString(36).slice(2,6),channel:'intl',createdAt:new Date().toISOString()};
   var prevStage=d.stage;
   d.channel='intl'; d.country=g('d-country').trim(); d.dealer=dealer; d.product=g('d-product').trim();
@@ -1675,7 +1679,9 @@ function saveDeal(){
   d.currency=(document.getElementById('d-cur')||{}).value||'USD'; d.poNo=g('d-po').trim(); d.invoiceNo=g('d-inv').trim(); d.shipStatus=document.getElementById('d-shipstat').value; d.docs={co:document.getElementById('doc-co').checked,ci:document.getElementById('doc-ci').checked,pl:document.getElementById('doc-pl').checked,ip:document.getElementById('doc-ip').checked};
   if(d.stage!==prevStage||!d.stageUpdatedAt) d.stageUpdatedAt=new Date().toISOString();
   if(!_dealEdit) INTL_PIPE.push(d);
-  closeDeal(); renderSales(); _saveDeals();
+  _intlSaving=true; _btnSaving(btn,true);
+  closeDeal(); renderSales();
+  Promise.resolve(_saveDeals()).finally(function(){ _intlSaving=false; _btnSaving(btn,false); });
 }
 function delDeal(){
   if(!_dealEdit||!confirm('이 딜을 삭제할까요?')) return;
@@ -1811,14 +1817,17 @@ function openAct(id){
   document.getElementById('ac-modal').style.display='flex';
 }
 function closeAct(){ document.getElementById('ac-modal').style.display='none'; }
-function saveAct(){
+function saveAct(btn){
+  if(_intlSaving) return;
   var g=function(k){return document.getElementById(k).value;};
   var dealer=g('a-dealer').trim(); if(!dealer){alert('딜러/거래처를 입력하세요');return;}
   if(_actEdit&&!_canEditIntl(_actEdit.sales)){alert('담당자('+(_actEdit.sales||'')+')의 활동입니다. 본인 기록만 수정할 수 있어요.');return;}
   var a=_actEdit||{id:'ia_'+Date.now()+Math.random().toString(36).slice(2,6)};
   a.date=g('a-date');a.type=g('a-type');a.country=g('a-country').trim();a.dealer=dealer;a.product=g('a-product').trim();a.content=g('a-content').trim();a.nextAction=g('a-next').trim();a.nextDate=g('a-nextdate');a.sales=g('a-sales').trim();
   if(!_actEdit)INTL_ACT.push(a);
-  closeAct(); renderActivities(); _saveActs();
+  _intlSaving=true; _btnSaving(btn,true);
+  closeAct(); renderActivities();
+  Promise.resolve(_saveActs()).finally(function(){ _intlSaving=false; _btnSaving(btn,false); });
 }
 function delAct(){ if(!_actEdit||!confirm('이 활동을 삭제할까요?'))return; var id=_actEdit.id; INTL_ACT=INTL_ACT.filter(function(a){return a.id!==id;}); closeAct(); renderActivities(); _saveActs(); }
 
@@ -1878,13 +1887,16 @@ function _qCollect(){
   var items=[]; document.querySelectorAll('#q-items .qrow').forEach(function(r){ var nm=r.querySelector('.qi-name').value.trim(); var qty=Number(r.querySelector('.qi-qty').value)||0; var pr=Number(r.querySelector('.qi-price').value)||0; if(nm||qty||pr)items.push({name:nm,qty:qty,price:pr}); });
   return {country:g('q-country').trim(),dealer:g('q-dealer').trim(),date:g('q-date'),validUntil:g('q-valid'),sales:g('q-sales').trim(),discount:Number(g('q-disc'))||0,terms:g('q-terms').trim(),note:g('q-note').trim(),items:items};
 }
-function saveQuote(){
+function saveQuote(btn){
+  if(_intlSaving) return;
   var data=_qCollect(); if(!data.dealer){alert('딜러/거래처를 입력하세요');return;}
   if(_qEdit&&!_canEditIntl(_qEdit.sales)){alert('담당자('+(_qEdit.sales||'')+')의 견적입니다. 본인 것만 수정할 수 있어요.');return;}
   var q=_qEdit||{id:'iq_'+Date.now()+Math.random().toString(36).slice(2,6),createdAt:new Date().toISOString()};
   Object.assign(q,data);
   if(!_qEdit)INTL_QUOTES.push(q);
-  closeQuote(); renderQuotes(); _saveQuotes();
+  _intlSaving=true; _btnSaving(btn,true);
+  closeQuote(); renderQuotes();
+  Promise.resolve(_saveQuotes()).finally(function(){ _intlSaving=false; _btnSaving(btn,false); });
 }
 function delQuote(){ if(!_qEdit||!confirm('이 견적을 삭제할까요?'))return; var id=_qEdit.id; INTL_QUOTES=INTL_QUOTES.filter(function(q){return q.id!==id;}); closeQuote(); renderQuotes(); _saveQuotes(); }
 function printQuote(id){
