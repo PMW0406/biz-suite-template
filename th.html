@@ -907,15 +907,17 @@ function mExp(id){const e=id?(D.expenses||[]).find(x=>x.id===id):{ym:curYm(),cat
 }
 
 // ── 공용 모달 / 드로어 ──
-let _onSave=null,_onDel=null;
+let _onSave=null,_onDel=null,_thSaving=false;
 function openM(title,body,onSave,onDel){_onSave=onSave;_onDel=onDel;
   document.getElementById('modal').innerHTML=`<div class="mh"><h3>${title}</h3><button class="x" onclick="closeM()">×</button></div><div class="mb">${body}</div>
     <div class="mf"><div>${onDel?'<button class="btn" style="color:var(--bad)" onclick="delM()">삭제</button>':''}</div><div style="display:flex;gap:8px"><button class="btn" onclick="closeM()">취소</button><button class="btn btn-primary" onclick="saveM()">저장</button></div></div>`;
   document.getElementById('mbg').style.display='flex';}
 function closeM(){document.getElementById('mbg').style.display='none';}
-async function saveM(){if(_onSave&&await _onSave()===false)return;closeM();}
+async function saveM(){if(_thSaving)return;_thSaving=true;try{if(_onSave&&await _onSave()===false)return;closeM();}finally{_thSaving=false;}}
 async function delM(){if(!confirm('삭제할까요?'))return;if(_onDel)await _onDel();closeM();}
 document.getElementById('mbg').addEventListener('click',e=>{if(e.target.id==='mbg')closeM();});
+// 모달 키보드: Esc=닫기, Enter=저장(텍스트영역·조합입력 제외)
+document.addEventListener('keydown',function(e){ var mbg=document.getElementById('mbg'); if(!mbg||mbg.style.display!=='flex')return; if(e.key==='Escape'){ e.preventDefault(); closeM(); } else if(e.key==='Enter'&&e.target&&e.target.tagName!=='TEXTAREA'&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); saveM(); } });
 function expCatDw(c){
   var rows=(D.expenses||[]).filter(function(e){return e.category===c;}).sort(function(a,b){return (b.ym||'').localeCompare(a.ym||'');});
   var tot=rows.reduce(function(s,e){return s+(+e.amt||0);},0);

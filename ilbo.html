@@ -380,7 +380,9 @@ function flagMatches(){
 }
 
 function saveAccounting(){ return _sb.from('cons_cache').upsert({key:'ilbo_acc',data:ACC},{onConflict:'key'}).then(function(r){ if(r.error) console.warn('acc',r.error); }); }
-function savePending(alertOk){ return _sb.from('cons_cache').upsert({key:'ilbo_pending',data:{rows:PENDING,updatedAt:ACC?ACC.reportDate:''}},{onConflict:'key'}).then(function(r){ if(r.error) alert('저장 실패: '+r.error.message); else if(alertOk) alert('💾 미반영분 저장 완료'); }); }
+let _ilboSaving=false;
+function _ilboToast(msg,bad){ var t=document.getElementById('_ilbotoast'); if(!t){ t=document.createElement('div'); t.id='_ilbotoast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .2s;pointer-events:none'; document.body.appendChild(t); } t.style.background=bad?'#b91c1c':'#0f172a'; t.textContent=msg; t.style.opacity='1'; clearTimeout(t._h); t._h=setTimeout(function(){ t.style.opacity='0'; },2400); }
+function savePending(alertOk){ if(_ilboSaving) return Promise.resolve(); _ilboSaving=true; var btn=document.querySelector('.save-bar button'); var _o=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='저장 중…'; } return _sb.from('cons_cache').upsert({key:'ilbo_pending',data:{rows:PENDING,updatedAt:ACC?ACC.reportDate:''}},{onConflict:'key'}).then(function(r){ if(r.error) _ilboToast('저장 실패: '+r.error.message,true); else if(alertOk) _ilboToast('미반영분 저장 완료',false); }).finally(function(){ _ilboSaving=false; if(btn){ btn.disabled=false; btn.textContent=_o; } }); }
 function loadAll(){
   return Promise.all([
     _sb.from('cons_cache').select('data').eq('key','ilbo_acc').maybeSingle(),
@@ -539,7 +541,7 @@ function renderPend(){
 }
 function addPendRow(region){ PENDING.unshift({id:uid(),region:region,type:'예정',country:'',customer:'',product:'',qty:'',amount:'',expectedDate:'',status:'대기',memo:''}); refresh(); }
 function pendSet(i,k,v){ if(!PENDING[i])return; if(k==='qty'||k==='amount'){ v=String(v).replace(/[^0-9.\-]/g,''); v=v===''?'':Number(v); } PENDING[i][k]=v; refresh(); }
-function delPend(i){ PENDING.splice(i,1); refresh(); }
+function delPend(i){ var p=PENDING[i]||{}; var nm=(p.customer||p.product||'').trim(); if(!confirm('이 미반영 건'+(nm?' ("'+nm+'")':'')+'을 삭제할까요?'))return; PENDING.splice(i,1); refresh(); }
 function refresh(){ if(ACC) render(); else renderPend(); }
 function renderReflected(){
   var box=document.getElementById('reflected-box'); if(!box) return;
