@@ -7277,15 +7277,15 @@ function _cduRenderChips(){
     var fid=_cduChipField[g], box=document.getElementById(fid+'-chips'); if(!box)return; var ed=_cduChipEditMode[g];
     var arr=c[g];
     if(!ed){ var fq=_cduChipFreq(g); arr=c[g].map(function(v,i){return {v:v,i:i,n:fq[v]||0};}).sort(function(a,b){ return (b.n-a.n)||(a.i-b.i); }).map(function(x){return x.v;}); }
-    box.innerHTML=arr.map(function(v){ var vv=_cduEsc(v).replace(/'/g,"\\'");
-      return '<span class="cdu-chip" data-for="'+fid+'" data-v="'+_cduEsc(v)+'" onclick="'+(ed?'_cduChipDel(\''+g+'\',\''+vv+'\')':'_cduChip(this)')+'">'+_cduEsc(v)+(ed?' <b style="color:#dc2626">×</b>':'')+'</span>'; }).join('')
+    box.innerHTML=arr.map(function(v,i){
+      return '<span class="cdu-chip" data-for="'+fid+'" data-v="'+_cduEsc(v)+'" onclick="'+(ed?'_cduChipDel(\''+g+'\','+i+')':'_cduChip(this)')+'">'+_cduEsc(v)+(ed?' <b style="color:#dc2626">×</b>':'')+'</span>'; }).join('')
       +(ed?'<span class="cdu-chip" style="border-style:dashed;color:#2563eb;font-weight:700" onclick="_cduChipAdd(\''+g+'\')">+ 추가</span>':'');
   });
   _cduChipSync();
 }
 function _cduChipEditToggle(g){ _cduChipEditMode[g]=!_cduChipEditMode[g]; _cduRenderChips(); }
 function _cduChipAdd(g){ var v=prompt('추가할 항목 입력'); if(v===null)return; v=v.trim(); if(!v)return; var c=_cduLoadChips(); if(c[g].indexOf(v)<0){ c[g].push(v); _cduSaveChips(); } _cduRenderChips(); }
-function _cduChipDel(g,v){ if(!confirm('"'+v+'" 칩을 삭제할까요?'))return; var c=_cduLoadChips(); c[g]=c[g].filter(function(x){return x!==v;}); _cduSaveChips(); _cduRenderChips(); }
+function _cduChipDel(g,i){ var c=_cduLoadChips(); if(!c[g]||i<0||i>=c[g].length)return; if(!confirm('"'+c[g][i]+'" 칩을 삭제할까요?'))return; c[g].splice(i,1); _cduSaveChips(); _cduRenderChips(); }
 function _cduSaveChips(){ var c=_cduLoadChips(); var rec={id:'cdu_chips',kind:'cdu_chips',proc:c.proc,comp:c.comp,chan:c.chan}; var idx=(DB.d.logs||[]).findIndex(function(l){return l.id==='cdu_chips';}); if(idx>=0)DB.d.logs[idx]=rec; else DB.d.logs.push(rec); DB.save('logs').then(function(){ showToast('칩 저장됨',true); }); }
 function _cduFillSalesList(){
   var dl=document.getElementById('cdu-sales-list'); if(!dl) return;
@@ -9660,7 +9660,7 @@ function _schHospCardHtml(name){  // 병원 정보 카드(데이터 있는 병�
   const equipCnt=_allEquipFor(name).length;
   const contacts=(hi&&hi.contacts)||[];
   const tel=(hi&&hi.tel)||(contacts[0]&&contacts[0].tel)||'-';
-  const rlog=(DB.d.logs||[]).filter(l=>l.custName===name&&l.kind!=='schedule').sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')))[0];
+  const rlog=(DB.d.logs||[]).filter(l=>l.custName===name&&l.kind!=='schedule'&&l.kind!=='cdu_reel'&&l.kind!=='cdu_chips').sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')))[0];
   const y26=(dh&&dh.y2026||0)+(ch&&ch.y2026||0);
   const nm=_schEsc(name).replace(/&#39;/g,"\\x27");
   const cell=(l,v)=>'<div><span style="color:#94a3b8">'+l+'</span> <b style="color:#334155">'+v+'</b></div>';
