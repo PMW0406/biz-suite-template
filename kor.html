@@ -407,6 +407,15 @@ table{font-variant-numeric:tabular-nums}
 /* WT-DEEP-v3 프리미엄 타이포 일관 */
 .kpi-value,.lux-num,.stat-num,.stat-value,.metric-value,.metric-num,.big-num,.num-lg,.hero-num,.summary-num,.card-num{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
 </style>
+
+<style id="wt-admin-legibility">
+/* 관리자 패널 라이트 전환 안전망: 다크 전제로 남은 밝은 글자를 판독 가능하게 */
+#launcher-admin{color:#0f172a}
+#launcher-admin td,#launcher-admin th{color:#334155}
+#launcher-admin [style*="color:#e2e8f0"],#launcher-admin [style*="color:#cbd5e1"],#launcher-admin [style*="color:#f1f5f9"],#launcher-admin [style*="color:#f8fafc"],#launcher-admin [style*="color:#fff"]{color:#334155!important}
+/* 단 컬러 배경 버튼/배지의 흰 글자는 유지 */
+#launcher-admin button[style*="background:#ff4500"],#launcher-admin button[style*="background:#ef4444"],#launcher-admin button[style*="background:#16a34a"],#launcher-admin button[style*="background:#2563eb"],#launcher-admin button[style*="background:#0d9488"],#launcher-admin [style*="background:#ff4500"],#launcher-admin [style*="background:#ef4444"]{color:#fff!important}
+</style>
 </head>
 <body>
 
@@ -10768,7 +10777,7 @@ function _adminUserRow(p, iS, hidden) {
     ? (hasPw ? `<span data-pw="${(p.temp_pw||'').replace(/"/g,'&quot;')}" onclick="var sh=this.dataset.s==='1';this.textContent=sh?'●●●●':this.dataset.pw;this.dataset.s=sh?'0':'1'" style="font-size:13px;color:#cbd5e1;font-family:monospace;cursor:pointer;user-select:none;letter-spacing:2px" title="클릭하면 비밀번호 보기/가리기">●●●●</span>` : `<span style="font-size:11px;color:#475569">-</span>`)
     : `<span style="font-size:11px;color:#475569" title="마스터만 열람 가능">●●●●</span>`;
   return `<tr style="border-bottom:1px solid rgba(255,255,255,.06)${hidden?';display:none':''}">
-    <td style="padding:10px 16px;font-size:12px;color:#e2e8f0;white-space:nowrap">${p.email||''}</td>
+    <td style="padding:10px 16px;font-size:12px;color:#334155;white-space:nowrap">${p.email||''}</td>
     <td style="padding:10px 8px"><input type="text" value="${p.display_name||''}" style="${iS}" onchange="updateUserField('${p.id}','display_name',this.value)"></td>
     <td style="padding:10px 8px"><input type="text" value="${p.dept||''}" placeholder="부서" style="${iS};width:140px" onchange="updateUserField('${p.id}','dept',this.value)"></td>
     <td style="padding:10px 8px"><input type="text" value="${p.position||''}" placeholder="직급" style="${iS};width:62px" onchange="updateUserField('${p.id}','position',this.value)"></td>
