@@ -313,6 +313,87 @@ table{font-variant-numeric:tabular-nums}
 /* WT-DEEP-v3 프리미엄 타이포 일관 */
 .kpi-value,.lux-num,.stat-num,.stat-value,.metric-value,.metric-num,.big-num,.num-lg,.hero-num,.summary-num,.card-num{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
 </style>
+<style id="wt-align-v1">
+/* ══ WT-ALIGN-v1 : 정렬(오와 열)·시각품질·반응형 최종 보정 레이어 ══
+   · 배경/테마 무변경(라이트 고정) · 기능/데이터 무관 · 마지막 캐스케이드 */
+
+/* ── 1) KPI 카드 : 행 내 숫자 기준선 정렬 ── */
+.row>[class*="col"]>.kpi-card{height:100%}
+.kpi-card{display:flex;flex-direction:column;min-width:0}
+.kpi-card>.kpi-label{min-height:2.1em;display:flex;align-items:flex-start;flex-wrap:wrap;gap:3px;line-height:1.3}
+.kpi-card>.kpi-value{margin-top:auto}
+.kpi-value{font-variant-numeric:tabular-nums;letter-spacing:-.018em}
+.kpi-sub{line-height:1.35}
+
+/* ── 2) 페이지 헤더 / 기간바 / 필터바 : 컨트롤 높이·기준선 통일 ── */
+.page-header{align-items:center;row-gap:8px}
+.page-header h5{align-items:center;line-height:1.35;min-width:0}
+.page-header .btn.btn-sm{height:32px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.period-bar{row-gap:8px}
+.period-bar .form-select-sm,.period-bar .form-control-sm{height:32px;padding-top:0;padding-bottom:0;line-height:1.2}
+.period-bar>span{display:inline-flex;align-items:center;line-height:1.2}
+/* 카드형 필터바(딜러·활동·견적·수주) 내부 컨트롤 정렬 */
+.card.p-2 .form-control-sm,.card.p-2 .form-select-sm{height:32px;padding-top:0;padding-bottom:0;line-height:1.2}
+.card.p-2 label{margin-bottom:0;line-height:1.2}
+#is-vk,#is-vl{height:32px;display:inline-flex;align-items:center;gap:5px;line-height:1}
+#is-fx{display:inline-flex;align-items:center}
+
+/* ── 3) 표 : 셀 수직정렬·머리글 기준선 통일 ── */
+.table>thead th{vertical-align:middle;font-weight:700}
+.table>tbody>tr>td,.table>thead>tr>th{vertical-align:middle}
+.table tbody tr>td{font-variant-numeric:tabular-nums}
+.table tbody tr:hover>td{background-color:rgba(37,99,235,.045)}
+.table td[colspan],.table th[colspan]{white-space:normal}
+/* 카드 안 순수 table (그리드형 상세) 도 동일 규격 */
+.card table th,.card table td{vertical-align:middle}
+/* 세로 스크롤 박스 안의 긴 표 → 머리글 고정(스크롤 컨테이너 내부에서만) */
+[style*="overflow-y:auto"]>table>thead th{position:sticky;top:0;z-index:2;background:#f8fafc;box-shadow:inset 0 -1px 0 #eef2f7}
+.cmp th,.cmp td{vertical-align:middle}
+
+/* ── 4) 라운드·그림자 컴포넌트 일관화 ── */
+.is-col{border-radius:12px}
+.is-card{border-radius:10px!important}
+.dl-card{border-radius:12px!important}
+.spd-card{border-radius:12px}
+.upload-zone{border-radius:12px}
+.pmodal-box{border-radius:16px}
+
+/* ── 5) 빈 상태 규격 통일 ── */
+.table .text-muted[colspan],.table td.text-center.text-muted{padding-top:26px;padding-bottom:26px}
+
+/* ── 6) 반응형 : 가로 넘침 0 ── */
+.main{max-width:100%}
+.page{max-width:100%}
+.card{max-width:100%}
+#is-board{max-width:100%}
+canvas{max-width:100%}
+@media(min-width:769px){
+  /* 화면이 낮을 때 100vh 계산 패널이 짓눌리지 않도록 최소 높이 확보 */
+  #page-by-country .col-md-4>.card,#page-by-country .col-md-8{min-height:440px}
+}
+@media(max-width:768px){
+  /* 데스크톱 전용 고정높이(100vh 계산) 해제 — 모바일 세로 압축 방지 */
+  #page-by-country .col-md-4>.card,#page-by-country .col-md-8,
+  #page-by-cons .col-md-4>.card,#page-by-cons .col-md-8{height:auto!important;max-height:none!important;overflow:visible!important}
+  .page-header{align-items:flex-start}
+  .page-header .btn.btn-sm{height:30px}
+  .period-bar{padding:8px 10px}
+  .period-bar .form-select-sm{flex:1 1 84px;width:auto!important;min-width:0}
+  .card.p-2 .form-control-sm,.card.p-2 .form-select-sm{flex:1 1 140px;width:auto!important;min-width:0}
+  .row>[class*="col"]{min-width:0}
+  .is-col{min-width:172px!important}
+}
+@media(max-width:480px){
+  .kpi-card>.kpi-label{min-height:0}
+}
+
+/* ── 7) 인쇄 ── */
+@media print{
+  .table tbody tr:hover>td{background-color:transparent}
+  [style*="overflow-y:auto"]>table>thead th{position:static!important;box-shadow:none!important}
+  .kpi-card,.card{break-inside:avoid}
+}
+</style>
 </head>
 <body>
 <div id="__page_veil" style="position:fixed;inset:0;background:#0f172a;z-index:9999"></div>
@@ -465,6 +546,7 @@ table{font-variant-numeric:tabular-nums}
 <div id="page-by-country" class="page">
   <div class="page-header"><h5><i class="bi bi-globe" style="color:#0891b2"></i>국가별 분석</h5></div>
   <div class="period-bar">
+    <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="ct-year" class="form-select form-select-sm" style="width:100px" onchange="renderByCountry()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
     <select id="ct-from" class="form-select form-select-sm" style="width:70px" onchange="_ctPC()"><option value="1" selected>1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
     <span style="color:#9ca3af">~</span>
@@ -509,6 +591,7 @@ table{font-variant-numeric:tabular-nums}
 <div id="page-by-product" class="page">
   <div class="page-header"><h5><i class="bi bi-box-seam" style="color:#7c3aed"></i>제품별 분석</h5></div>
   <div class="period-bar">
+    <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="pd-year" class="form-select form-select-sm" style="width:100px" onchange="renderByProduct()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
     <select id="pd-from" class="form-select form-select-sm" style="width:70px" onchange="_pdPC()"><option value="1" selected>1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
     <span style="color:#9ca3af">~</span>
@@ -530,6 +613,7 @@ table{font-variant-numeric:tabular-nums}
 <div id="page-by-cons" class="page">
   <div class="page-header"><h5><i class="bi bi-capsule" style="color:#2563eb"></i>소모품 분석</h5></div>
   <div class="period-bar">
+    <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="cs-year" class="form-select form-select-sm" style="width:100px" onchange="renderByCons()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
     <select id="cs-from" class="form-select form-select-sm" style="width:70px" onchange="_csPC()"><option value="1" selected>1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
     <span style="color:#9ca3af">~</span>
@@ -560,6 +644,7 @@ table{font-variant-numeric:tabular-nums}
 <div id="page-by-rep" class="page">
   <div class="page-header"><h5><i class="bi bi-person-badge" style="color:#16a34a"></i>담당자별 분석</h5></div>
   <div class="period-bar">
+    <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="rp-year" class="form-select form-select-sm" style="width:100px" onchange="renderByRep()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
     <select id="rp-from" class="form-select form-select-sm" style="width:70px" onchange="_rpPC()"><option value="1" selected>1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
     <span style="color:#9ca3af">~</span>
