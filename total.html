@@ -1591,7 +1591,9 @@ try{
   Chart.defaults.elements.bar.borderSkipped='bottom';
 }catch(e){}
 
-const fmtW = v => { v=Number(v)||0; return v>=1e8?(v/1e8).toFixed(1)+'억':v>=1e4?Math.round(v/1e4).toLocaleString()+'만원':Math.round(v).toLocaleString()+'원'; };
+/* 음수도 억/만원 단위로 — 예전엔 v>=1e8 비교라 음수가 전부 '원' 단위 원문으로 새어나갔다 */
+const fmtW = v => { v=Number(v)||0; const sg=v<0?'−':''; v=Math.abs(v);
+  return sg+(v>=1e8?(v/1e8).toFixed(1)+'억':v>=1e4?Math.round(v/1e4).toLocaleString()+'만원':Math.round(v).toLocaleString()+'원'); };
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function _jsAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 const sumMo = (o,f,t)=>{ if(!o) return 0; let s=0; for(let m=f;m<=t;m++) s+=Number(o[m]||0); return s; };
@@ -2996,7 +2998,7 @@ function renderLeaderboard(){
       cell('전년比',yo===null?'신규':arrow(yo),_yoyCol(yo))+
       cell('거래처',cu+'개')+
       cell(extraK,extraV(a))+
-      cell('증감 선두',best?esc(best.n)+' <span style="font-size:11px;color:'+_yoyCol(best.yoy)+'">'+(best.d>=0?'+':'')+fmtW(best.d)+'</span>':'-')+
+      cell('증감 선두',best?esc(best.n)+' <span style="font-size:11px;color:'+_yoyCol(best.yoy)+'">'+(best.d>=0?'+':'−')+fmtW(Math.abs(best.d))+'</span>':'-')+
       '</div>';
   };
   document.getElementById('lb-teams').innerHTML=
