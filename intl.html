@@ -110,6 +110,13 @@ body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:#f0f4f8;color
 .brand{padding:14px 18px 9px;border-bottom:1px solid #e4e8ef}
 .brand-name{font-size:16px;font-weight:800;color:#1c2534;letter-spacing:-0.5px}
 .brand-sub{font-size:11px;color:#64748b;margin-top:2px}
+/* ── 탭/세그먼트 필 버튼 (해외=틸) — 통합 메뉴 그룹 내 전환용 ── */
+.wt-tab{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12.5px;font-weight:600;color:#475569;background:#fff;border:1px solid #dfe6ee;border-radius:9px;padding:7px 15px;cursor:pointer;transition:all .15s;line-height:1;white-space:nowrap}
+.wt-tab:hover{background:#eef5f4;border-color:#9fd4cd;color:#0f766e}
+.wt-tab i{font-size:13px;color:#0f766e}
+.wt-tab.on{background:#0f766e;border-color:#0f766e;color:#fff;box-shadow:0 2px 6px rgba(15,118,110,.22)}
+.wt-tab.on i{color:#fff}
+.wt-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 12px}
 .nav-scroll{flex:1;overflow-y:auto;min-height:0}
 /* 사이드바 스크롤: 윈도우 기본 스크롤바(굵은 막대+화살표) 대신 얇고 은은하게 — 넘칠 때만 보임 */
 .nav-scroll{scrollbar-width:thin;scrollbar-color:#c7d2de transparent}
@@ -527,7 +534,7 @@ window.addEventListener('pageshow', function(e){
     </div>
   </div>
 
-  <div class="nav-scroll">
+    <div class="nav-scroll">
   <div class="nav-section">
     <div class="nav-label">내 업무</div>
     <ul class="nav flex-column gap-0">
@@ -537,18 +544,9 @@ window.addEventListener('pageshow', function(e){
   <div class="nav-section" id="sec-overview">
     <div class="nav-label">종합 현황</div>
     <ul class="nav flex-column gap-0">
-      <li class="nav-analysis"><a class="nav-link active" onclick="showPage('overview',this)"><i class="bi bi-bar-chart-line"></i>종합 현황</a></li>
-      <li class="nav-analysis"><a class="nav-link" onclick="showPage('by-country',this)"><i class="bi bi-globe"></i>국가별 분석</a></li>
-      <li class="nav-analysis"><a class="nav-link" onclick="showPage('by-product',this)"><i class="bi bi-box-seam"></i>제품별 분석</a></li>
-      <li class="nav-analysis"><a class="nav-link" onclick="showPage('by-cons',this)"><i class="bi bi-capsule"></i>소모품 분석</a></li>
-    </ul>
-  </div>
-  <div class="nav-section" id="sec-parts">
-    <div class="nav-label" id="lbl-parts">파트별 현황</div>
-    <ul class="nav flex-column gap-0">
-      <li class="nav-part" data-part="미주·아시아파트" style="display:none"><a class="nav-link" onclick="showPage('pv-am',this)"><i class="bi bi-globe-americas"></i>미주·아시아파트</a></li>
-      <li class="nav-part" data-part="중화파트" style="display:none"><a class="nav-link" onclick="showPage('pv-cn',this)"><i class="bi bi-globe-central-south-asia"></i>중화파트</a></li>
-      <li class="nav-part" data-part="유럽·중아파트" style="display:none"><a class="nav-link" onclick="showPage('pv-eu',this)"><i class="bi bi-globe-europe-africa"></i>유럽·중아파트</a></li>
+      <li><a class="nav-link" onclick="showPage('overview',this)"><i class="bi bi-bar-chart-line"></i>종합 현황</a></li>
+      <li><a class="nav-link" data-grp="anal" onclick="showPage('by-country',this)"><i class="bi bi-graph-up"></i>매출 분석</a></li>
+      <li><a class="nav-link" data-grp="part" onclick="showPage('pv-am',this)"><i class="bi bi-globe-americas"></i>파트별 현황</a></li>
     </ul>
   </div>
   <div class="nav-section">
@@ -557,28 +555,27 @@ window.addEventListener('pageshow', function(e){
       <li><a class="nav-link" onclick="showPage('crm-dash',this)"><i class="bi bi-speedometer2"></i>영업 현황판</a></li>
       <li><a class="nav-link" onclick="showPage('sales',this)"><i class="bi bi-kanban"></i>수주관리</a></li>
       <li><a class="nav-link" onclick="showPage('dealers',this)"><i class="bi bi-buildings"></i>딜러 관리</a></li>
-      <li><a class="nav-link" onclick="showPage('activities',this)"><i class="bi bi-journal-text"></i>활동일지</a></li>
-      <li><a class="nav-link" onclick="showPage('schedule',this)"><i class="bi bi-calendar-week"></i>일정</a></li>
-      <li><a class="nav-link" onclick="showPage('quotes',this)"><i class="bi bi-file-earmark-text"></i>견적서</a></li>
+      <li><a class="nav-link" data-grp="actsch" onclick="showPage('activities',this)"><i class="bi bi-journal-text"></i>활동·일정</a></li>
       <li><a class="nav-link" onclick="showPage('pending',this)"><i class="bi bi-hourglass-split"></i>회계미반영분</a></li>
     </ul>
   </div>
   <div class="nav-section" id="sec-lead" style="display:none">
     <div class="nav-label">팀장 · 관리</div>
     <ul class="nav flex-column gap-0">
-      <li id="nav-byrep" style="display:none"><a class="nav-link" onclick="showPage('by-rep',this)"><i class="bi bi-person-badge"></i>담당자별 분석</a></li>
-      <li id="nav-unitprice" style="display:none"><a class="nav-link" onclick="showPage('unitprice',this)"><i class="bi bi-tags"></i>단가 현황</a></li>
+      <li><a class="nav-link" onclick="showPage('by-rep',this)"><i class="bi bi-person-badge"></i>담당자별 분석</a></li>
+      <li><a class="nav-link" onclick="showPage('unitprice',this)"><i class="bi bi-tags"></i>단가 현황</a></li>
       <li id="nav-intl-users" style="display:none"><a class="nav-link" onclick="showPage('intl-users',this)"><i class="bi bi-person-gear"></i>사용자 관리</a></li>
     </ul>
   </div>
   <div class="nav-section">
     <div class="nav-label">도구</div>
     <ul class="nav flex-column gap-0">
+      <li><a class="nav-link" onclick="showPage('quotes',this)"><i class="bi bi-file-earmark-text"></i>견적서</a></li>
       <li><a class="nav-link" onclick="showPage('speech',this)"><i class="bi bi-chat-quote"></i>Sales Speech</a></li>
     </ul>
   </div>
   </div>
-  <!-- 계정 정보 (사이트 이동 위에) -->
+<!-- 계정 정보 (사이트 이동 위에) -->
   <div style="padding:10px 10px 8px;border-top:1px solid #1e293b;margin-top:auto">
     <div style="display:flex;flex-direction:row;align-items:center;gap:8px;margin-bottom:8px">
       <div id="intl-user-avatar" style="width:30px;height:30px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">?</div>
@@ -668,6 +665,7 @@ window.addEventListener('pageshow', function(e){
 
 <div id="page-by-country" class="page">
   <div class="page-header"><h5><i class="bi bi-globe" style="color:#0891b2"></i>국가별 분석</h5></div>
+  <div class="wt-tabs"><button class="wt-tab on"><i class="bi bi-globe2"></i>국가별</button><button class="wt-tab" onclick="showPage('by-product',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-box-seam"></i>제품별</button><button class="wt-tab" onclick="showPage('by-cons',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-capsule"></i>소모품</button></div>
   <div class="period-bar">
     <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="ct-year" class="form-select form-select-sm" style="width:100px" onchange="renderByCountry()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
@@ -713,6 +711,7 @@ window.addEventListener('pageshow', function(e){
 
 <div id="page-by-product" class="page">
   <div class="page-header"><h5><i class="bi bi-box-seam" style="color:#7c3aed"></i>제품별 분석</h5></div>
+  <div class="wt-tabs"><button class="wt-tab" onclick="showPage('by-country',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-globe2"></i>국가별</button><button class="wt-tab on"><i class="bi bi-box-seam"></i>제품별</button><button class="wt-tab" onclick="showPage('by-cons',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-capsule"></i>소모품</button></div>
   <div class="period-bar">
     <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="pd-year" class="form-select form-select-sm" style="width:100px" onchange="renderByProduct()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
@@ -735,6 +734,7 @@ window.addEventListener('pageshow', function(e){
 
 <div id="page-by-cons" class="page">
   <div class="page-header"><h5><i class="bi bi-capsule" style="color:#2563eb"></i>소모품 분석</h5></div>
+  <div class="wt-tabs"><button class="wt-tab" onclick="showPage('by-country',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-globe2"></i>국가별</button><button class="wt-tab" onclick="showPage('by-product',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-box-seam"></i>제품별</button><button class="wt-tab on"><i class="bi bi-capsule"></i>소모품</button></div>
   <div class="period-bar">
     <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="cs-year" class="form-select form-select-sm" style="width:100px" onchange="renderByCons()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
@@ -882,6 +882,7 @@ window.addEventListener('pageshow', function(e){
 <div id="page-activities" class="page">
   <div class="page-header"><h5><i class="bi bi-journal-text" style="color:#16a34a"></i>활동일지 <span style="font-size:12px;font-weight:400;color:#9ca3af">딜러 미팅·데모·전시회</span></h5>
     <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="openAct()"><i class="bi bi-plus-lg me-1"></i>활동 기록</button></div>
+  <div class="wt-tabs"><button class="wt-tab on"><i class="bi bi-journal-text"></i>활동일지</button><button class="wt-tab" onclick="showPage('schedule',document.querySelector('.nav-link[data-grp=actsch]'))"><i class="bi bi-calendar-week"></i>일정</button></div>
   <div class="card p-2 mb-2" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;align-items:center">
     <input id="ac-kw" class="form-control form-control-sm" style="width:200px" placeholder="딜러·내용 검색" oninput="renderActivities()">
     <select id="ac-type" class="form-select form-select-sm" style="width:120px" onchange="renderActivities()"><option value="">전체 유형</option></select>
@@ -890,6 +891,7 @@ window.addEventListener('pageshow', function(e){
 </div>
 <div id="page-schedule" class="page">
   <div class="page-header"><h5><i class="bi bi-calendar-week" style="color:#f59e0b"></i>일정 <span style="font-size:12px;font-weight:400;color:#9ca3af">다음 액션 · 선적 ETA · 데모/전시회</span></h5></div>
+  <div class="wt-tabs"><button class="wt-tab" onclick="showPage('activities',document.querySelector('.nav-link[data-grp=actsch]'))"><i class="bi bi-journal-text"></i>활동일지</button><button class="wt-tab on"><i class="bi bi-calendar-week"></i>일정</button></div>
   <div id="sc-body"></div>
 </div>
 <div id="ac-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:500;align-items:center;justify-content:center" onclick="if(event.target===this)closeAct()">
@@ -1077,7 +1079,15 @@ function toggleNav(force){
   sb.classList.toggle('open', open);
   if(bd) bd.classList.toggle('open', open);
 }
+var _NAVGRP={'by-country':'anal','by-product':'anal','by-cons':'anal','pv-am':'part','pv-cn':'part','pv-eu':'part','activities':'actsch','schedule':'actsch'};
+function _navElFor(n){ var g=_NAVGRP[n];
+  if(g){ var a=document.querySelector('.nav-link[data-grp='+g+']'); if(a) return a; }
+  var all=document.querySelectorAll('.nav-link');
+  for(var i=0;i<all.length;i++){ var oc=all[i].getAttribute('onclick')||'';
+    if(oc.indexOf("showPage('"+n+"'")>=0) return all[i]; }
+  return null; }
 function showPage(n,el,noPush){
+  if(!el) el=_navElFor(n);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(a=>a.classList.remove('active'));
   document.getElementById('page-'+n).classList.add('active');
@@ -4816,8 +4826,14 @@ function _renderPartView(part, rootId){
   // ── 회계 미반영분(이 파트) — 출고/선적예정 입력·반영처리, 회계미반영분 메뉴와 동일 데이터 연동 ──
   var _ilboR=(typeof _ilboBodyHTML==='function')?_ilboBodyHTML(part):{html:'',count:0,total:0,done:0};
   var pendTable=(_ilboR.count||_ilboR.done)?('<div class="card p-0 mb-2" id="pv-pend-'+_pvKey(part)+'" style="overflow:hidden"><div class="fw-bold" style="font-size:13px;padding:12px 16px 8px"><i class="bi bi-hourglass-split me-1" style="color:#f59e0b"></i>회계 미반영분 <span style="font-size:11px;font-weight:400;color:#94a3b8">'+_ilboR.count+'건 · '+fmtW(_ilboR.total)+' · 출고/선적예정 입력·반영처리 시 회계미반영분 메뉴와 즉시 연동</span></div><div style="overflow-x:auto"><table class="table table-sm mb-0" style="font-size:12px;min-width:680px"><thead style="background:#f8fafc"><tr><th style="padding:7px 16px">거래처</th><th>제품</th><th style="text-align:center">수량</th><th style="text-align:right">금액</th><th style="text-align:center">예정일</th><th style="text-align:center">출고예정</th><th style="text-align:center">선적예정</th><th style="text-align:center">관리</th></tr></thead><tbody>'+_ilboR.html+'</tbody></table></div></div>'):'';
+  var _pvCur=(rootId||'').replace('-root','');
+  var _pvTabs=[['pv-am','bi-globe-americas','미주·아시아'],['pv-cn','bi-translate','중화'],['pv-eu','bi-globe-europe-africa','유럽·중아']].map(function(t){
+    var on=(t[0]===_pvCur);
+    var oc=on?'':' onclick="showPage(\''+t[0]+'\',document.querySelector(\'.nav-link[data-grp=part]\'))"';
+    return '<button class="wt-tab'+(on?' on':'')+'"'+oc+'><i class="bi '+t[1]+'"></i>'+t[2]+'</button>';
+  }).join('');
   root.innerHTML=
-    '<div class="page-header"><h5><i class="bi bi-diagram-3" style="color:'+((typeof PART_COLOR!=='undefined'&&PART_COLOR[part])||'#2563eb')+'"></i>'+_esc(part)+' 현황 <span style="font-size:12px;font-weight:400;color:#9ca3af">1~'+lastM+'월 · 회계 기준</span></h5><span style="font-size:11px;color:#94a3b8">기준일 '+_esc(INTL.updatedAt||'')+'</span></div>'+
+    '<div class="page-header"><h5><i class="bi bi-diagram-3" style="color:'+((typeof PART_COLOR!=='undefined'&&PART_COLOR[part])||'#2563eb')+'"></i>'+_esc(part)+' 현황 <span style="font-size:12px;font-weight:400;color:#9ca3af">1~'+lastM+'월 · 회계 기준</span></h5><span style="font-size:11px;color:#94a3b8">기준일 '+_esc(INTL.updatedAt||'')+'</span></div>'+'<div class="wt-tabs">'+_pvTabs+'</div>'+
     '<div class="row g-2 mb-2">'+
       [['파트 합계',fmtW(tot),'#0f172a',bdg(yoy)],['전년 동기',fmtW(prev),'#94a3b8',''],['거래 국가',cArr.length+'개국','#0891b2',''],['거래처',nClients+'개사','#7c3aed',''],['진행 딜',openDeals.length+'건','#0891b2',''],['가중 예상',fmtW(wDeal),'#16a34a','']].map(function(k){ return '<div class="col-6 col-md-4 col-xl-2"><div class="kpi-card" style="padding:11px 13px"><div class="kpi-label">'+k[0]+'</div><div class="kpi-value" style="font-size:1.05rem;color:'+k[2]+'">'+k[1]+' <span style="font-size:11px">'+(k[3]||'')+'</span></div></div></div>'; }).join('')+
     '</div>'+
