@@ -552,9 +552,8 @@ window.addEventListener('pageshow', function(e){
   <div class="nav-section">
     <div class="nav-label">영업 관리</div>
     <ul class="nav flex-column gap-0">
-      <li><a class="nav-link" onclick="showPage('crm-dash',this)"><i class="bi bi-speedometer2"></i>영업 현황판</a></li>
-      <li><a class="nav-link" onclick="showPage('sales',this)"><i class="bi bi-kanban"></i>수주관리</a></li>
-      <li><a class="nav-link" onclick="showPage('dealers',this)"><i class="bi bi-buildings"></i>딜러 관리</a></li>
+      <li><a class="nav-link" data-grp="crm" onclick="showPage('crm-dash',this)"><i class="bi bi-speedometer2"></i>영업 활동</a></li>
+<li><a class="nav-link" onclick="showPage('dealers',this)"><i class="bi bi-buildings"></i>딜러 관리</a></li>
       <li><a class="nav-link" data-grp="actsch" onclick="showPage('activities',this)"><i class="bi bi-journal-text"></i>활동·일정</a></li>
       <li><a class="nav-link" onclick="showPage('pending',this)"><i class="bi bi-hourglass-split"></i>회계미반영분</a></li>
     </ul>
@@ -562,9 +561,8 @@ window.addEventListener('pageshow', function(e){
   <div class="nav-section" id="sec-lead" style="display:none">
     <div class="nav-label">팀장 · 관리</div>
     <ul class="nav flex-column gap-0">
-      <li><a class="nav-link" onclick="showPage('by-rep',this)"><i class="bi bi-person-badge"></i>담당자별 분석</a></li>
-      <li><a class="nav-link" onclick="showPage('unitprice',this)"><i class="bi bi-tags"></i>단가 현황</a></li>
-      <li id="nav-intl-users" style="display:none"><a class="nav-link" onclick="showPage('intl-users',this)"><i class="bi bi-person-gear"></i>사용자 관리</a></li>
+      <li><a class="nav-link" data-grp="lead" onclick="showPage('by-rep',this)"><i class="bi bi-clipboard-data"></i>팀장 분석</a></li>
+<li id="nav-intl-users" style="display:none"><a class="nav-link" onclick="showPage('intl-users',this)"><i class="bi bi-person-gear"></i>사용자 관리</a></li>
     </ul>
   </div>
   <div class="nav-section">
@@ -766,6 +764,7 @@ window.addEventListener('pageshow', function(e){
 
 <div id="page-by-rep" class="page">
   <div class="page-header"><h5><i class="bi bi-person-badge" style="color:#16a34a"></i>담당자별 분석</h5></div>
+  <div class="wt-tabs"><button class="wt-tab on"><i class="bi bi-person-badge"></i>담당자별</button><button class="wt-tab" onclick="showPage('unitprice',document.querySelector('.nav-link[data-grp=lead]'))"><i class="bi bi-tags"></i>단가</button></div>
   <div class="period-bar">
     <span style="font-size:12px;font-weight:600;color:#374151">📅 조회 기간</span>
     <select id="rp-year" class="form-select form-select-sm" style="width:100px" onchange="renderByRep()"><option value="2026" selected>2026년</option><option value="2025">2025년</option></select>
@@ -778,6 +777,7 @@ window.addEventListener('pageshow', function(e){
 
 <div id="page-unitprice" class="page">
   <div class="page-header"><h5><i class="bi bi-tags" style="color:#dc2626"></i>단가 현황 <span style="font-size:12px;font-weight:400;color:#9ca3af">지역별·제품별 판매단가 · 작년/올해 비교 · 팀장/관리자 전용</span></h5></div>
+  <div class="wt-tabs"><button class="wt-tab" onclick="showPage('by-rep',document.querySelector('.nav-link[data-grp=lead]'))"><i class="bi bi-person-badge"></i>담당자별</button><button class="wt-tab on"><i class="bi bi-tags"></i>단가</button></div>
   <div id="up-body"></div>
 </div>
 
@@ -868,6 +868,7 @@ window.addEventListener('pageshow', function(e){
 <div id="page-pv-eu" class="page"><div id="pv-eu-root"></div></div>
 <div id="page-crm-dash" class="page">
   <div class="page-header"><h5><i class="bi bi-speedometer2" style="color:#0891b2"></i>영업 현황판 <span style="font-size:12px;font-weight:400;color:#9ca3af">파이프라인 · 딜러 · 액션</span></h5></div>
+  <div class="wt-tabs"><button class="wt-tab on"><i class="bi bi-speedometer2"></i>현황판</button><button class="wt-tab" onclick="showPage('sales',document.querySelector('.nav-link[data-grp=crm]'))"><i class="bi bi-kanban"></i>수주관리</button></div>
   <div id="cd-body"></div>
 </div>
 <div id="page-dealers" class="page">
@@ -960,6 +961,7 @@ window.addEventListener('pageshow', function(e){
 <div id="page-sales" class="page">
   <div class="page-header"><h5><i class="bi bi-kanban" style="color:#0891b2"></i>수주관리 <span style="font-size:12px;font-weight:400;color:#9ca3af">해외 딜 파이프라인</span></h5>
     <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="openDeal()"><i class="bi bi-plus-lg me-1"></i>새 딜</button></div>
+  <div class="wt-tabs"><button class="wt-tab" onclick="showPage('crm-dash',document.querySelector('.nav-link[data-grp=crm]'))"><i class="bi bi-speedometer2"></i>현황판</button><button class="wt-tab on"><i class="bi bi-kanban"></i>수주관리</button></div>
   <div class="row g-2 mb-3" id="is-kpi"></div>
   <div class="card p-2 mb-2" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;align-items:center">
     <input id="is-f-kw" class="form-control form-control-sm" style="width:200px" placeholder="딜러·국가·제품 검색" oninput="renderSales()">
@@ -1079,7 +1081,7 @@ function toggleNav(force){
   sb.classList.toggle('open', open);
   if(bd) bd.classList.toggle('open', open);
 }
-var _NAVGRP={'by-country':'anal','by-product':'anal','by-cons':'anal','pv-am':'part','pv-cn':'part','pv-eu':'part','activities':'actsch','schedule':'actsch'};
+var _NAVGRP={'by-country':'anal','by-product':'anal','by-cons':'anal','pv-am':'part','pv-cn':'part','pv-eu':'part','activities':'actsch','schedule':'actsch','crm-dash':'crm','sales':'crm','by-rep':'lead','unitprice':'lead'};
 function _navElFor(n){ var g=_NAVGRP[n];
   if(g){ var a=document.querySelector('.nav-link[data-grp='+g+']'); if(a) return a; }
   var all=document.querySelectorAll('.nav-link');
