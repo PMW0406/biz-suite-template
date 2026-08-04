@@ -129,6 +129,7 @@ body{display:flex;min-height:100vh;background:var(--bg);font-family:'Noto Sans K
 .btn-outline-secondary{border-color:#dbe3ec;color:#475569;background:#fff;border-radius:8px;font-weight:600;transition:all .15s}
 .btn-outline-secondary:hover,.btn-outline-secondary:focus{background:#eff4fb;border-color:#a9c4e8;color:#2563eb}
 .btn-outline-secondary:active{background:#2563eb!important;border-color:#2563eb!important;color:#fff!important}
+.wt-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 12px}
 .wt-tab{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12.5px;font-weight:600;color:#475569;background:#fff;border:1px solid #dbe3ec;border-radius:9px;padding:7px 15px;cursor:pointer;transition:all .15s;line-height:1;white-space:nowrap}
 .wt-tab:hover{background:#eff4fb;border-color:#a9c4e8;color:#2563eb}
 .wt-tab i{font-size:13px;color:#2563eb}
@@ -1127,14 +1128,11 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
     </svg>
     <div><div class="brand-name" style="letter-spacing:-.5px">노바진단</div><div class="brand-sub">한국영업</div></div>
   </div>
-  <div class="nav-section">
+    <div class="nav-section">
     <div class="nav-label">매출현황</div>
     <ul class="nav flex-column gap-0">
       <li><a class="nav-link active" onclick="showPage('sales-overview',this)"><i class="bi bi-bar-chart-line"></i>종합</a></li>
-      <li><a class="nav-link" onclick="showPage('consumables',this)"><i class="bi bi-capsule"></i>소모품 매출</a></li>
-      <li><a class="nav-link" onclick="showPage('cons-hospitals',this)"><i class="bi bi-building-check"></i>병원별 분석</a></li>
-      <li><a class="nav-link" onclick="showPage('device-sales',this)"><i class="bi bi-box-seam"></i>제품 매출</a></li>
-      <li><a class="nav-link" onclick="showPage('region',this)"><i class="bi bi-geo-alt"></i>지역별 분석</a></li>
+      <li><a class="nav-link" data-grp="anal" onclick="showPage('consumables',this)"><i class="bi bi-graph-up"></i>매출 분석</a></li>
       <li><a class="nav-link" onclick="showPage('pending',this)"><i class="bi bi-hourglass-split"></i>회계 미반영 매출</a></li>
     </ul>
     <div class="nav-label mt-3">영업</div>
@@ -1142,17 +1140,17 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
       <li><a class="nav-link" onclick="showPage('sales',this)"><i class="bi bi-kanban"></i>수주관리</a></li>
       <li><a class="nav-link" onclick="showPage('schedule',this)"><i class="bi bi-calendar-week"></i>일정</a></li>
       <li><a class="nav-link" onclick="showPage('cdu',this)"><i class="bi bi-clipboard-data"></i>CDU<span id="cdu-pend-badge" style="display:none;background:#dc2626;color:#fff;font-size:9.5px;font-weight:800;border-radius:9px;padding:1px 6px;margin-left:6px" title="결과 미입력 방문"></span></a></li>
-      <li><a class="nav-link" onclick="showPage('quotes',this)"><i class="bi bi-file-earmark-text"></i>견적서/ROI</a></li>
-      <li><a class="nav-link" onclick="showPage('speech',this)"><i class="bi bi-chat-quote"></i>Sales Speech</a></li>
     </ul>
     <div class="nav-label mt-3">관리</div>
     <ul class="nav flex-column gap-0">
       <li id="nav-dashboard" style="display:none"><a class="nav-link" onclick="showPage('dashboard',this)"><i class="bi bi-grid-1x2"></i>현황판 <span style="font-size:9px;background:#e8eef6;color:#5b7591;border-radius:4px;padding:1px 5px;margin-left:2px">파트장</span></a></li>
-      <li><a class="nav-link" onclick="showPage('customers',this)"><i class="bi bi-building"></i>고객사</a></li>
-      <li><a class="nav-link" onclick="showPage('equipments',this)"><i class="bi bi-cpu"></i>장비</a></li>
-
-      <li><a class="nav-link" onclick="showPage('products',this)"><i class="bi bi-box-seam"></i>제품</a></li>
+      <li><a class="nav-link" data-grp="mast" onclick="showPage('customers',this)"><i class="bi bi-database"></i>기준정보</a></li>
       <li id="nav-device-reps" style="display:none"><a class="nav-link" onclick="showPage('device-reps',this)"><i class="bi bi-person-badge"></i>담당자별 분석 <span style="font-size:9px;background:#e8eef6;color:#5b7591;border-radius:4px;padding:1px 5px;margin-left:2px">파트장</span></a></li>
+    </ul>
+    <div class="nav-label mt-3">도구</div>
+    <ul class="nav flex-column gap-0">
+      <li><a class="nav-link" onclick="showPage('quotes',this)"><i class="bi bi-file-earmark-text"></i>견적서/ROI</a></li>
+      <li><a class="nav-link" onclick="showPage('speech',this)"><i class="bi bi-chat-quote"></i>Sales Speech</a></li>
     </ul>
   </div>
   <div class="sidebar-footer">
@@ -1322,6 +1320,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
   <!-- 지역별 분석 -->
   <style id="ana-css">.ana-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.ana-tabs .anatab{border:1px solid #e4e8ef;background:#fff;border-radius:9999px;padding:7px 16px;font-size:13px;font-weight:600;color:#4b5563;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:border-color .15s,background .15s,color .15s}.ana-tabs .anatab:hover{border-color:#2563eb;color:#2563eb}.ana-tabs .anatab.on{background:#2563eb;border-color:#2563eb;color:#fff}.ana-tabs .anatab i{font-size:14px}</style>
   <div id="page-region" class="page">
+    <div class="wt-tabs"><button class="wt-tab" onclick="showPage('consumables',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-capsule"></i>소모품</button><button class="wt-tab" onclick="showPage('cons-hospitals',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-building-check"></i>병원별</button><button class="wt-tab" onclick="showPage('device-sales',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-box-seam"></i>제품</button><button class="wt-tab on"><i class="bi bi-geo-alt"></i>지역별</button></div>
     <div class="ana-tabs">
       <button class="anatab" data-sub="device-reps" onclick="showPage('device-reps')"><i class="bi bi-person-badge"></i>담당자별</button>
       <button class="anatab" data-sub="cons-hospitals" onclick="showPage('cons-hospitals')"><i class="bi bi-building-check"></i>병원별</button>
@@ -1932,6 +1931,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 
   <!-- 고객사 (실제 거래 데이터 기반) -->
   <div id="page-customers" class="page">
+    <div class="wt-tabs"><button class="wt-tab on"><i class="bi bi-building"></i>고객사</button><button class="wt-tab" onclick="showPage('equipments',document.querySelector('.nav-link[data-grp=mast]'))"><i class="bi bi-cpu"></i>장비</button><button class="wt-tab" onclick="showPage('products',document.querySelector('.nav-link[data-grp=mast]'))"><i class="bi bi-box-seam"></i>제품</button></div>
     <div class="ana-tabs">
       <button class="anatab" data-sub="customers" onclick="showPage('customers')"><i class="bi bi-building"></i>고객사</button>
       <button class="anatab" data-sub="equipments" onclick="showPage('equipments')"><i class="bi bi-cpu"></i>장비</button>
@@ -1950,6 +1950,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 
   <!-- 장비 -->
   <div id="page-equipments" class="page">
+    <div class="wt-tabs"><button class="wt-tab" onclick="showPage('customers',document.querySelector('.nav-link[data-grp=mast]'))"><i class="bi bi-building"></i>고객사</button><button class="wt-tab on"><i class="bi bi-cpu"></i>장비</button><button class="wt-tab" onclick="showPage('products',document.querySelector('.nav-link[data-grp=mast]'))"><i class="bi bi-box-seam"></i>제품</button></div>
     <div class="ana-tabs">
       <button class="anatab" data-sub="customers" onclick="showPage('customers')"><i class="bi bi-building"></i>고객사</button>
       <button class="anatab" data-sub="equipments" onclick="showPage('equipments')"><i class="bi bi-cpu"></i>장비</button>
@@ -2013,6 +2014,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
     <div id="fb-mine"></div>
   </div>
   <div id="page-products" class="page">
+    <div class="wt-tabs"><button class="wt-tab" onclick="showPage('customers',document.querySelector('.nav-link[data-grp=mast]'))"><i class="bi bi-building"></i>고객사</button><button class="wt-tab" onclick="showPage('equipments',document.querySelector('.nav-link[data-grp=mast]'))"><i class="bi bi-cpu"></i>장비</button><button class="wt-tab on"><i class="bi bi-box-seam"></i>제품</button></div>
     <div class="wt-mast"><div><div class="kick">노바진단 SALES</div><div class="t">제품 목록</div></div><button class="btn btn-primary btn-sm" onclick="openModal('product')"><i class="bi bi-plus-lg me-1"></i>제품 추가</button></div>
     <div class="card"><div class="card-body p-0"><table class="table table-hover mb-0">
       <thead class="table-light"><tr><th>제품코드</th><th>제품명</th><th>카테고리</th><th class="text-end">정가</th><th class="text-end">보증기간</th><th></th></tr></thead>
@@ -2023,6 +2025,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 
   <!-- 소모품 매출 -->
   <div id="page-consumables" class="page">
+    <div class="wt-tabs"><button class="wt-tab on"><i class="bi bi-capsule"></i>소모품</button><button class="wt-tab" onclick="showPage('cons-hospitals',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-building-check"></i>병원별</button><button class="wt-tab" onclick="showPage('device-sales',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-box-seam"></i>제품</button><button class="wt-tab" onclick="showPage('region',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-geo-alt"></i>지역별</button></div>
     <div class="ana-tabs">
       <button class="anatab" data-sub="device-sales" onclick="showPage('device-sales')"><i class="bi bi-box-seam"></i>제품 매출</button>
       <button class="anatab" data-sub="consumables" onclick="showPage('consumables')"><i class="bi bi-capsule"></i>소모품 매출</button>
@@ -2137,6 +2140,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 
   <!-- 제품 매출현황 -->
   <div id="page-device-sales" class="page">
+    <div class="wt-tabs"><button class="wt-tab" onclick="showPage('consumables',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-capsule"></i>소모품</button><button class="wt-tab" onclick="showPage('cons-hospitals',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-building-check"></i>병원별</button><button class="wt-tab on"><i class="bi bi-box-seam"></i>제품</button><button class="wt-tab" onclick="showPage('region',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-geo-alt"></i>지역별</button></div>
     <div class="ana-tabs">
       <button class="anatab" data-sub="device-sales" onclick="showPage('device-sales')"><i class="bi bi-box-seam"></i>제품 매출</button>
       <button class="anatab" data-sub="consumables" onclick="showPage('consumables')"><i class="bi bi-capsule"></i>소모품 매출</button>
@@ -2200,6 +2204,7 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 
   <!-- 병원별 분석 (통합) -->
   <div id="page-cons-hospitals" class="page">
+    <div class="wt-tabs"><button class="wt-tab" onclick="showPage('consumables',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-capsule"></i>소모품</button><button class="wt-tab on"><i class="bi bi-building-check"></i>병원별</button><button class="wt-tab" onclick="showPage('device-sales',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-box-seam"></i>제품</button><button class="wt-tab" onclick="showPage('region',document.querySelector('.nav-link[data-grp=anal]'))"><i class="bi bi-geo-alt"></i>지역별</button></div>
     <div class="ana-tabs">
       <button class="anatab" data-sub="device-reps" onclick="showPage('device-reps')"><i class="bi bi-person-badge"></i>담당자별</button>
       <button class="anatab" data-sub="cons-hospitals" onclick="showPage('cons-hospitals')"><i class="bi bi-building-check"></i>병원별</button>
@@ -3749,7 +3754,15 @@ function _closeSidebar() {
 // 모바일 하단 탭바 활성 동기화
 function _mNavSync(n){ document.querySelectorAll('#m-bottomnav button[data-p]').forEach(b=>b.classList.toggle('on', b.dataset.p===n)); }
 
+var _NAVGRP={'consumables':'anal','cons-hospitals':'anal','device-sales':'anal','region':'anal','customers':'mast','equipments':'mast','products':'mast'};
+function _navElFor(n){ var g=_NAVGRP[n];
+  if(g){ var x=document.querySelector('.nav-link[data-grp='+g+']'); if(x) return x; }
+  var all=document.querySelectorAll('.nav-link');
+  for(var i=0;i<all.length;i++){ var oc=all[i].getAttribute('onclick')||'';
+    if(oc.indexOf("showPage('"+n+"'")>=0) return all[i]; }
+  return null; }
 function showPage(name, el, noPush) {
+  if(!el) el=_navElFor(name);
   _closeSidebar();
   // 담당자별 분석=파트장/관리자, 현황판=파트장/관리자+영업전략파트 (그 외 팀원 → 종합현황)
   if(name==='device-reps' && typeof _isMgr!=='undefined' && !_isMgr){ name='sales-overview'; el=null; }
