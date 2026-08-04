@@ -1017,7 +1017,12 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 <div id="login-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e2140 100%);z-index:9999;display:flex;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:20px;padding:40px 36px;width:340px;box-shadow:0 25px 60px rgba(0,0,0,.4)">
     <div style="text-align:center;margin-bottom:28px">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" style="width:60px;height:42px;margin-bottom:10px;object-fit:contain">
+      <svg viewBox="0 0 64 64" width="56" height="56" style="margin-bottom:12px;display:inline-block" aria-label="노바진단">
+        <defs><linearGradient id="ndlg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16324f"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs>
+        <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#ndlg1)"/>
+        <path d="M14 41 L23 41 L28 24 L34 47 L39 33 L44 33" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="48.5" cy="22" r="4.6" fill="#5eead4"/>
+      </svg>
       <div style="font-size:20px;font-weight:800;color:#111827;letter-spacing:-.5px;line-height:1.25">노바진단<br><span style="font-size:13px;font-weight:600;color:#374151;letter-spacing:.3px">management system</span></div>
       <div style="font-size:12px;color:#64748b;margin-top:6px">로그인하여 계속하세요</div>
     </div>
@@ -1114,7 +1119,12 @@ html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
 
 <nav class="sidebar">
   <div class="sidebar-brand">
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" style="width:46px;height:33px;flex-shrink:0;object-fit:contain">
+    <svg viewBox="0 0 64 64" width="34" height="34" style="flex-shrink:0;display:block" aria-label="노바진단">
+      <defs><linearGradient id="ndlg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16324f"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#ndlg2)"/>
+      <path d="M14 41 L23 41 L28 24 L34 47 L39 33 L44 33" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="48.5" cy="22" r="4.6" fill="#5eead4"/>
+    </svg>
     <div><div class="brand-name" style="letter-spacing:-.5px">노바진단</div><div class="brand-sub">한국영업</div></div>
   </div>
   <div class="nav-section">
@@ -8816,9 +8826,42 @@ function _qedPDF(){
 
 // ── 견적서 출력(2종 템플릿 + 올바른 CI + 한글금액 + PDF) ──
 const WT_SUP={name:'노바진단 주식회사',reg:'220-88-12345',ceo:'이현우',addr:'서울특별시 강남구 테헤란로 501',tel:'02) 555-0100',fax:'02) 555-0199',web:'www.novadx.co.kr'};
-// ── 실제 CI 로고(원본 PNG) + 장비별 기본 부속품(★견적서 엑셀 기준) ──
-const _WT_SEAL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-const _WT_LOGO_URI="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+/* ── 노바진단 CI(SVG 자체 제작) — 이미지 파일 의존 없이 어느 배율에서도 선명 ──
+   _ND_MARK : 정사각 뱃지(분석 파형 + 검체 점). 로그인·사이드바·문서 헤더 공용
+   _ND_WORD : 뱃지 + 워드마크 가로형. 견적서·일일보고서 문서 상단용
+   _ND_SEAL : 원형 인장. 견적서 대표이사 (인) 자리 */
+function _ndURI(svg){ return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg); }
+const _ND_MARK_SVG=
+ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">'
+ +'<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">'
+ +'<stop offset="0" stop-color="#16324f"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs>'
+ +'<rect x="2" y="2" width="60" height="60" rx="15" fill="url(#g)"/>'
+ +'<path d="M14 41 L23 41 L28 24 L34 47 L39 33 L44 33" fill="none" stroke="#ffffff" '
+ +'stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>'
+ +'<circle cx="48.5" cy="22" r="4.6" fill="#5eead4"/></svg>';
+const _ND_WORD_SVG=
+ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" width="300" height="64">'
+ +'<defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">'
+ +'<stop offset="0" stop-color="#16324f"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs>'
+ +'<rect x="2" y="2" width="60" height="60" rx="15" fill="url(#g2)"/>'
+ +'<path d="M14 41 L23 41 L28 24 L34 47 L39 33 L44 33" fill="none" stroke="#ffffff" '
+ +'stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>'
+ +'<circle cx="48.5" cy="22" r="4.6" fill="#5eead4"/>'
+ +'<text x="76" y="34" font-family="Malgun Gothic,맑은 고딕,sans-serif" font-size="27" font-weight="800" '
+ +'fill="#16324f" letter-spacing="-1">노바진단</text>'
+ +'<text x="77" y="51" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="600" '
+ +'fill="#0f766e" letter-spacing="2.6">NOVA DIAGNOSTICS</text></svg>';
+const _ND_SEAL_SVG=
+ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">'
+ +'<circle cx="50" cy="50" r="46" fill="none" stroke="#c0392b" stroke-width="5"/>'
+ +'<circle cx="50" cy="50" r="38" fill="none" stroke="#c0392b" stroke-width="2"/>'
+ +'<text x="50" y="43" text-anchor="middle" font-family="Malgun Gothic,맑은 고딕,sans-serif" '
+ +'font-size="21" font-weight="800" fill="#c0392b">노바</text>'
+ +'<text x="50" y="68" text-anchor="middle" font-family="Malgun Gothic,맑은 고딕,sans-serif" '
+ +'font-size="21" font-weight="800" fill="#c0392b">진단</text></svg>';
+const _WT_SEAL=_ndURI(_ND_SEAL_SVG);
+const _WT_LOGO_URI=_ndURI(_ND_WORD_SVG);
+const _WT_MARK_URI=_ndURI(_ND_MARK_SVG);
 const WT_DEVICES={"애니젠 IF-100": {"accessories": [{"name": "형광분석기 본체", "spec": "IF-100"}, {"name": "시약 카트리지 리더", "spec": ""}, {"name": "바코드 스캐너", "spec": ""}, {"name": "전원 어댑터", "spec": "DC 12V"}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이션 키트", "spec": ""}]}, "애니젠": {"accessories": [{"name": "형광분석기 본체", "spec": "IF-100"}, {"name": "시약 카트리지 리더", "spec": ""}, {"name": "바코드 스캐너", "spec": ""}, {"name": "전원 어댑터", "spec": "DC 12V"}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이션 키트", "spec": ""}]}, "이뮤노": {"accessories": [{"name": "면역분석기 본체", "spec": ""}, {"name": "시약 트레이", "spec": ""}, {"name": "샘플 로더", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "파보체크": {"accessories": [{"name": "판독기 본체", "spec": ""}, {"name": "카세트 트레이", "spec": ""}, {"name": "희석 버퍼", "spec": "50T"}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "바이오PCR": {"accessories": [{"name": "PCR 분석기 본체", "spec": "P-200"}, {"name": "리액션 튜브 랙", "spec": "96-well"}, {"name": "추출 시약 키트", "spec": ""}, {"name": "프린터", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이션 키트", "spec": ""}]}, "퀵스캔": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "카트리지 리더", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "케미프로": {"accessories": [{"name": "생화학 분석기 본체", "spec": "C-300"}, {"name": "시약 로터", "spec": ""}, {"name": "큐벳 세트", "spec": ""}, {"name": "프린터", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}, {"name": "캘리브레이터", "spec": ""}]}, "헤마카운트": {"accessories": [{"name": "혈구분석기 본체", "spec": ""}, {"name": "희석액 팩", "spec": ""}, {"name": "세정액 팩", "spec": ""}, {"name": "폐액 용기", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "마이크로디텍트": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "카세트 트레이", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "제니Dx": {"accessories": [{"name": "분자진단기 본체", "spec": ""}, {"name": "카트리지 슬롯", "spec": ""}, {"name": "추출 시약", "spec": ""}, {"name": "전원 케이블", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "벨라체크": {"accessories": [{"name": "판독기 본체", "spec": ""}, {"name": "카세트 트레이", "spec": ""}, {"name": "희석 버퍼", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "아큐진단": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "시약 트레이", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}, "프리모진단": {"accessories": [{"name": "분석기 본체", "spec": ""}, {"name": "시약 카트리지 리더", "spec": ""}, {"name": "전원 어댑터", "spec": ""}, {"name": "사용자 매뉴얼", "spec": ""}]}};
 function _wtLogo(c,w){ return '<img src="'+_WT_LOGO_URI+'" width="'+w+'" alt="노바진단" style="height:auto;display:inline-block;vertical-align:middle">'; }
 function numKor(n){ n=Math.round(Math.abs(n||0)); if(n===0)return '영'; const D=['','일','이','삼','사','오','육','칠','팔','구'],U=['','십','백','천'],P=['','만','억','조','경']; let res='',g=0; while(n>0){ let part=n%10000,s=''; for(let i=0;i<4;i++){ const d=Math.floor(part/Math.pow(10,i))%10; if(d)s=D[d]+U[i]+s; } if(s)res=s+P[g]+res; n=Math.floor(n/10000); g++; } return res; }
@@ -8849,7 +8892,7 @@ function QDOC(q,tmpl){
   const items=q.items||[]; const won=v=>Number(v||0).toLocaleString('ko-KR');
   const total=Number(q.total||0);
   const INK='#1a1714',MUT='#8f8a82',CLAY='#ff4d00',LINE='#ece9e4',CREAM='#faf9f7';
-  const logo = _wtLogo('#ff4d00','116');   // 정확한 CI(SVG) 고정 사용
+  const logo = _wtLogo('','116');   // 노바진단 CI(SVG) 고정 사용 — 색상 인자는 미사용
   const termsList=(q.termsList&&q.termsList.length)?q.termsList.map(x=>_qEscH(x)):(function(){ const _tv=(q.terms&&q.terms.length===4)?q.terms.map(x=>_qEscH(x)):null; return ['납품기일 : '+((_tv&&_tv[1])||'계약 후 3일 이내'),'결제조건 : '+((_tv&&_tv[2])||'선입금'),'납품처 : '+((_tv&&_tv[3])||'지정장소')]; })();
 
   if(tmpl==='classic'){
@@ -10742,7 +10785,7 @@ function _sdrCompFor(hosp){ // 최근 CDU 방문에서 파악된 경쟁품
     return vs.length?vs[0].competitor:''; }catch(e){ return ''; }
 }
 function _sdrSaved(D,R){ return (DB.d.logs||[]).find(l=>l.kind==='sdr'&&l.date===D&&(l.sales||'')===R)||null; }
-var _SDR_LOGO='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+var _SDR_LOGO=(typeof _WT_LOGO_URI!=='undefined')?_WT_LOGO_URI:'';   // 노바진단 CI(가로 워드마크) 공용
 var _SDR_TD='border:1px solid #000;padding:6px 8px;font-size:12px;vertical-align:top';
 var _SDR_TH='border:1px solid #000;padding:6px 8px;font-size:12px;background:#F2F2F2;font-weight:700;text-align:center';
 function _sdrRowHtml(r,i){ var td=_SDR_TD; return '<tr'+(r.sid?' data-sid="'+_schEsc(r.sid)+'"':'')+'>'
