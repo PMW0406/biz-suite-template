@@ -4488,6 +4488,7 @@ renderByRep=function(){
       {text:'저렴한 키트 단가와 간편한 운용으로, **대규모 농장·방역 현장의 반복 스크리닝 수요**를 안정적으로 흡수합니다.'},
       {closing:true,text:'실험실 반입 수일을 농장 현장 당일로 — 휴대형 스크리닝으로 산업동물 방역 대응 속도를 끌어올리세요.'}]}
   ];
+  window.__SPEECH_SRC = SPEECH_DATA;   /* 뒤쪽 다국어 렌더러가 쓰도록 전역 노출 */
   const CLOSING_SPEECH = {
     quote:"노바진단 장비의 가장 큰 장점은\n단순히 효과가 아니라 **투자금 회수**입니다.\n\n수입장비 대비 초기 투자금은 낮고,\n유지비는 적으며, 검사 메뉴는 더 많이 만들 수 있습니다.\n\n결국 장비는 스펙이 아니라\n**병원 매출을 만드는 도구**인데,\n노바진단 장비는 그 부분에 가장 최적화되어 있습니다.",
     points:[{icon:'💰',title:'낮은 초기 투자금',desc:'수입장비 대비 대폭 절감'},{icon:'🔧',title:'적은 유지비',desc:'국내 A/S · 소모품 절약'},{icon:'📈',title:'넓은 검사 메뉴',desc:'투자 대비 수익 극대화'}]
@@ -4570,7 +4571,9 @@ renderByRep=function(){
 <script>
 /* ── Sales Speech 다국어+PDF (뒤 정의가 앞 이식본을 재정의) ── */
 (function(){
-  var SPEECH_I18N = [];  /* 미사용 다국어 잔재 제거 */
+  /* 다국어 렌더러(_spL)는 문자열/객체를 모두 받으므로 국문 SPEECH_DATA 를 그대로 사용.
+     예전엔 여기를 빈 배열로 두는 바람에 Sales Speech 목록·상세·PDF가 전부 비어 있었다. */
+  var SPEECH_I18N = (typeof window.__SPEECH_SRC!=="undefined"&&window.__SPEECH_SRC.length)?window.__SPEECH_SRC:[];
 /* ── Sales Speech: 다국어(한/EN/中文/日本語) + 딜러용 PDF(언어·장비 선택) ── */
 var SP_LANG = 'ko';
 var SP_LANGS = [['ko','한국어'],['en','EN'],['zh','中文'],['ja','日本語']];
@@ -5227,7 +5230,24 @@ function renderIntlUsers(){
   if(!_canTeamMgmtIntl()){ el.innerHTML='<div class="card p-4 text-center" style="font-size:13px;color:#94a3b8"><i class="bi bi-lock d-block mb-2" style="font-size:22px"></i>해외영업 팀장·관리자만 사용할 수 있습니다.</div>'; return; }
   el.innerHTML='<div class="card p-4 text-center text-muted" style="font-size:12px">팀원 목록 로딩...</div>';
   _intlUserApi({action:'list'}).then(function(d){ _iuRender(d.users||[]); }).catch(function(e){
-    el.innerHTML='<div class="card p-4" style="font-size:12px;color:#dc2626"><b>목록을 불러오지 못했습니다.</b><br>'+_esc(e.message)+'<div style="color:#94a3b8;margin-top:8px">edge function(intl-user-admin)이 아직 배포되지 않았을 수 있습니다. 배포 후 다시 시도하세요.</div></div>';
+    /* 관리 Edge Function 미배포 환경 폴백 — crm_profiles 로 읽기 전용 명단이라도 보여준다
+       (예전엔 여기서 'Failed to fetch' 오류 화면만 떠서 페이지가 통째로 죽어 보였음) */
+    _sb.from('crm_profiles').select('email,display_name,dept,role').order('display_name')
+      .then(function(r){
+        var rows=(r&&r.data)||[];
+        if(!rows.length){ el.innerHTML='<div class="card p-4" style="font-size:12px;color:#dc2626"><b>목록을 불러오지 못했습니다.</b><br>'+_esc(e.message)+'</div>'; return; }
+        el.innerHTML='<div class="card p-2 px-3 mb-2" style="font-size:11.5px;color:#64748b;background:#f8fafc;border-color:#e8edf3">'
+          +'<i class="bi bi-info-circle me-1"></i>계정 <b>조회 전용</b> 모드입니다. 등록·삭제·비밀번호 초기화는 관리 서버 연결이 필요합니다.</div>'
+          +'<div class="card" style="overflow:hidden"><table class="table table-sm mb-0" style="font-size:12.5px">'
+          +'<thead style="background:#f8fafc"><tr><th style="padding:8px 12px">이름</th><th>이메일</th><th>소속</th><th>권한</th></tr></thead><tbody>'
+          +rows.map(function(u){ return '<tr><td style="padding:7px 12px;font-weight:700">'+_esc(u.display_name||'-')+'</td>'
+            +'<td style="color:#64748b">'+_esc(u.email||'')+'</td>'
+            +'<td>'+_esc(u.dept||'-')+'</td>'
+            +'<td><span class="chip" style="background:#eef5f4;color:#0f766e;border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700">'+_esc(u.role||'user')+'</span></td></tr>'; }).join('')
+          +'</tbody></table></div>';
+      }).catch(function(){
+        el.innerHTML='<div class="card p-4" style="font-size:12px;color:#dc2626"><b>목록을 불러오지 못했습니다.</b><br>'+_esc(e.message)+'</div>';
+      });
   });
 }
 function _iuRender(users){
