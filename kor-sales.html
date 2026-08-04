@@ -815,7 +815,7 @@ function vQueue(){
   const tb=t=>'<button class="wt-tab'+(_qTab===t[0]?' on':'')+'" style="padding:3px 11px" onclick="qTab(\''+t[0]+'\')">'+t[1]+' '+t[2]+'</button>';
   const body=qBody(q);
   const h='<div class="wt-card"><div class="wt-st"><i class="bi bi-lightning-charge"></i>처리 큐'+
-    '<span style="margin-left:10px;display:inline-flex;gap:4px;flex-wrap:wrap">'+[['coup','쿠폰·적립금',q.coup.length],['comm','수수료',q.comm.length]].map(tb).join('')+'</span>'+
+    '<span style="margin-left:10px;display:inline-flex;gap:4px;flex-wrap:wrap">'+[['late','납품지연',q.late.length],['due','납품예정',q.due.length],['coup','쿠폰·적립금',q.coup.length],['comm','수수료',q.comm.length],['tax','계산서',q.tax.length],['settle','정산 잔여',q.settle.length]].map(tb).join('')+'</span>'+
     '<span class="hint">누락 방지 목록 · 일괄 지급 가능</span></div>'+qfBar(window.__qShown||0)+body+'</div>';
   document.getElementById('view-queue').innerHTML=h;
   if(_qTab==='coup')renderBulk();

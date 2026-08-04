@@ -6521,7 +6521,7 @@ function runGlobalSearch(kw) {
   const results = [];
   // 고객사
   DB.d.customers.filter(c => [c.name,c.doctor,c.region,c.contact].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(c =>
-    results.push({group:'고객사', icon:'bi-hospital', label:c.name, sub:`${c.region||''} ${c.doctor||''}`, action:`showPage('customers');document.getElementById('cust-search').value='${c.name.replace(/'/g,"\\'")}';filterCust();closeSearch()`}));
+    results.push({group:'고객사', icon:'bi-hospital', label:c.name, sub:`${c.region||''} ${c.doctor||''}`, action:`showPage('customers');(document.getElementById('search-cust')||{}).value='${c.name.replace(/'/g,"\\'")}';renderCustomers();closeSearch()`}));
   // 장비
   _allEquip().filter(e => [e.custName,e.model,e.serial].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(e =>
     results.push({group:'장비', icon:'bi-device-ssd', label:`${e.custName} — ${e.model}`, sub:e.serial||'', action:`showPage('equipments');document.getElementById('search-equip').value='${(e.model||'').replace(/'/g,"\\'")}';filterEquip();closeSearch()`}));
@@ -6529,7 +6529,7 @@ function runGlobalSearch(kw) {
   DB.d.pipeline.filter(d => [d.custName,d.model,d.sales].join(' ').toLowerCase().includes(q)).slice(0,4).forEach(d =>
     results.push({group:'파이프라인', icon:'bi-kanban', label:`${d.custName} — ${d.model}`, sub:`${d.stage} · ${fmtAmt(Number(d.amount||0))}`, action:`showPage('sales');closeSearch();editPipeline('${d.id}')`}));
   // 견적서
-  DB.d.quotes.filter(q2 => [q2.id,q2.cust,q2.sales].join(' ').toLowerCase().includes(q)).slice(0,4).forEach(qt =>
+  DB.d.quotes.filter(q2 => [q2.id,q2.custName,q2.sales].join(' ').toLowerCase().includes(q)).slice(0,4).forEach(qt =>
     results.push({group:'견적서', icon:'bi-file-earmark-text', label:`${qt.id} — ${qt.cust}`, sub:qt.sales||'', action:`showPage('quotes');closeSearch();editQuote('${qt.id}')`}));
 
   if (!results.length) { el.innerHTML = '<div class="search-empty">검색 결과가 없습니다</div>'; _searchIdx=-1; return; }
@@ -6556,7 +6556,12 @@ function searchKeyNav(e) {
   if(_searchIdx>=0) items[_searchIdx].scrollIntoView({block:'nearest'});
 }
 document.addEventListener('keydown', e => {
-  // 통합 검색(Ctrl+K) 비활성화 — 메뉴에서 제거됨
+  // 통합 검색: Ctrl+K(맥 ⌘K)로 열기 — 오버레이/검색 로직은 아래 openSearch/runGlobalSearch
+  if ((e.ctrlKey||e.metaKey) && String(e.key||'').toLowerCase()==='k') {
+    const _ov=document.getElementById('search-overlay');
+    const _app=document.getElementById('main-content');
+    if (_ov && _app && getComputedStyle(_app).display!=='none') { e.preventDefault(); openSearch(); return; }
+  }
   if (e.key==='Escape' && document.getElementById('search-overlay').classList.contains('open')) closeSearch();
 });
 
@@ -10877,7 +10882,8 @@ function saveLog(){
   const d={id:gV('l-id')||uid(),date:gV('l-date'),custName:gV('l-custName'),type:gV('l-type'),content:gV('l-content'),product:gV('l-product'),nextAction:gV('l-next'),nextDate:gV('l-nextDate'),sales:gV('l-sales')};
   if(!d.custName){alert('병원명을 입력하세요.');return;}
   const idx=DB.d.logs.findIndex(x=>x.id===d.id);
-  if(idx>=0) DB.d.logs[idx]=d; else DB.d.logs.push(d);
+  // 기존 레코드의 다른 필드(by/kind/dealId 등)를 보존하며 병합 저장(통째 교체 시 필드 유실)
+  if(idx>=0) DB.d.logs[idx]=Object.assign({},DB.d.logs[idx],d); else DB.d.logs.push(d);
   DB.save('logs').then(()=>{bootstrap.Modal.getInstance(document.getElementById('logModal')).hide();renderLogs();});
 }
 
