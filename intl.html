@@ -5049,7 +5049,7 @@ function _upUF(u){ return u==null?'—':(u>=1e8?(u/1e8).toFixed(2)+'억':Math.ro
    회계 원본에 소모품 오분류·0원 더미·음수 반품행이 섞여 장비 단가를 오염시킴.
    장비 단가는 물리적으로 500만↑ → 그 미만/음수는 단가분석에서 제외. 알려진 소모품 코드는 재분류. */
 var _UP_DEVFLOOR=5000000;                                  // 장비 단가 하한(원): 이 미만은 소모품·더미·반품
-var _UP_CATFIX={'BA 400 R':'소모품','BA 600 R':'소모품'};   // 회계원본 오분류 보정(BA 카트리지=소모품)
+var _UP_CATFIX={'심장사상충 진단키트':'소모품','인체 면역진단 스트립':'소모품','파보·디스템퍼 항원키트':'소모품'};   // 회계원본 오분류 보정(키트류=소모품)
 function _upCatOf(p){ if(_UP_CATFIX[p])return _UP_CATFIX[p]; var pr=_UPRICE&&_UPRICE.y2026&&_UPRICE.y2026.prod[p]; return (pr&&pr.cat)||'장비'; }
 function _upValid(cat,q,a){ if(!(q>0))return false; var u=a/q; return cat==='소모품'?(u>0):(u>=_UP_DEVFLOOR); }  // 음수반품·0원더미 제외, 장비는 하한 적용
 function _upProdAgg(p,Y){ var cat=_upCatOf(p); var q=0,a=0,drop=0; var C=(Y&&Y.ctry)||{}; Object.keys(C).forEach(function(c){ var x=C[c]&&C[c][p]; if(!x)return; if(_upValid(cat,x.qty,x.amt)){ q+=x.qty; a+=x.amt; } else if(x.qty>0){ drop++; } }); return {cat:cat,qty:q,amt:a,u:q>0?a/q:null,drop:drop}; }
