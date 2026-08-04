@@ -294,6 +294,87 @@ td.empty::before,.card>.empty::before{content:'';display:block;width:34px;height
   .wrap [style*="grid-template-columns:repeat(6,1fr)"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap 만 조정. 배경·색상·테마 선언 없음.
+     다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 기존 레이어(wt-align-v1 / wt-contrast-v1 / wt-mobile-v1) 뒤에 놓여
+     간격만 덮어쓴다. 모바일(≤768px)에서는 압축을 완화한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* 1. 페이지 프레임 — 상단 여백 · 하단 빈 공간(50px) 축소 */
+.topbar{padding:12px 22px 10px}
+.wrap{padding:14px 22px 22px}
+
+/* 2. 카드 · 섹션 */
+.card{padding:14px 15px}
+.sect{margin-bottom:9px}
+.grid{gap:11px}
+
+/* 3. KPI / 지표 카드 (대형 수치는 유지, 패딩만 소폭) */
+.kpis{margin-bottom:11px}
+.kpi{padding:12px 14px}
+.kpi .l{margin-top:5px}
+.kpi .s{margin-top:3px}
+.mcards{gap:10px;margin-bottom:11px}
+.mcard{padding:12px 14px}
+.mcard .mtop{margin-bottom:8px}
+.mcard .msub{margin-top:6px}
+.statcard{padding:12px 15px}
+.statcard .sl{margin-top:5px}
+.hero{padding:15px 18px;margin-bottom:11px;gap:16px}
+.hero .divv{padding-left:16px}
+
+/* 4. 리스트형 카드 */
+.acard{padding:10px 13px;margin-bottom:7px}
+.cgrid{gap:10px}
+.ccard{padding:12px 14px}
+.lbcard{padding:11px 14px;margin-bottom:7px}
+
+/* 5. 드로어 · 모달 */
+.dwh{padding:13px 18px}
+.dwb{padding:12px 18px 16px}
+.mh{padding:12px 17px}
+.mb{padding:13px 17px}
+.mf{padding:11px 17px}
+
+/* 6. 표 행 높이 (8/11px → 6/9px) */
+th,td{padding:6px 9px}
+
+/* 7. 빈 상태 블록 */
+.empty{padding:16px 12px}
+td.empty{padding:22px 12px}
+.kbempty{padding:14px 0}
+
+/* 8. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) */
+.wrap [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+.wrap [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+.wrap [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+.wrap [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+.wrap [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+.wrap [style*="margin-top:32px"]{margin-top:16px!important}
+.wrap [style*="margin-top:28px"]{margin-top:15px!important}
+.wrap [style*="margin-top:24px"]{margin-top:14px!important}
+.wrap [style*="margin-top:20px"]{margin-top:13px!important}
+.wrap [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* 9. 모바일(≤768px) : 압축 완화 */
+@media screen and (max-width:768px){
+  .topbar{padding:12px 14px 10px}
+  .wrap{padding:12px 14px 24px}
+  .card{padding:13px 14px}
+  th,td{padding:7px 8px}
+  .empty{padding:20px 12px}
+  td.empty{padding:26px 12px}
+  .hero{padding:16px 14px}
+}
+</style>
 </head>
 <body>
 <div id="boot-ov"><i class="bi bi-arrow-repeat" style="margin-right:8px"></i>불러오는 중…</div>
@@ -439,6 +520,19 @@ async function goSite(url,extra){try{const{data:{session:s}}=await _sb.auth.getS
 document.addEventListener('click',e=>{const w=document.querySelector('.switch-wrap');if(w&&!w.contains(e.target))document.getElementById('swdd').classList.remove('open');});
 
 // ── 유틸 ──
+let _thBusy=false;   /* 저장 중복 클릭 방지(수금·수주전환 공용) */
+/* 검색어 실시간 반영 — 재렌더로 포커스가 날아가므로 커서 위치까지 복원 */
+let _thSchT=null;
+function _thSearch(){
+  clearTimeout(_thSchT);
+  _thSchT=setTimeout(function(){
+    const a=document.activeElement, cls=a?a.className:'', ph=a?a.placeholder:'', pos=a&&a.selectionStart;
+    render();
+    if(!ph)return;
+    const el=Array.prototype.find.call(document.querySelectorAll('input.sel'),function(x){return x.placeholder===ph;});
+    if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(e){} }
+  },180);
+}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 function esc(s){return(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function today(){return new Date().toISOString().slice(0,10);}
@@ -509,6 +603,14 @@ function vDash(){
   const low=(D.items||[]).filter(i=>itemQty(i.name)<(+i.safety||0));
   const lateOrd=backlog.filter(o=>o.eta&&o.eta<today());
   const eM=(D.expenses||[]).filter(e=>e.ym===curYm()).reduce((a,e)=>a+(+e.amt||0),0);
+  // DSO = 미수 ÷ 일평균 매출 (연초~당월말 경과일 기준)
+  const _dayEl=Math.max(1,Math.round((new Date(curYm()+'-01')-new Date(yr+'-01-01'))/864e5)+30);
+  const dso=(ySale>0)?Math.round(out/(ySale/_dayEl)):null;
+  // 간이 손익 — 누적 매출 vs 누적 비용
+  const yExp=(D.expenses||[]).filter(e=>String(e.ym||'').slice(0,4)===String(yr)).reduce((a,e)=>a+(+e.amt||0),0);
+  const opInc=ySale-yExp, opMgn=ySale>0?opInc/ySale*100:null;
+  const expByCat=(function(){const m={};(D.expenses||[]).forEach(e=>{if(String(e.ym||'').slice(0,4)!==String(yr))return;m[e.category||'기타']=(m[e.category||'기타']||0)+(+e.amt||0);});
+    return Object.keys(m).map(k=>({k:k,v:m[k]})).sort((a,b)=>b.v-a.v);})();
   // 히어로
   const gcol=achv>=100?'#16a34a':achv>=70?'#2563eb':'#d97706';
   const hero=`<div class="hero">
@@ -519,7 +621,7 @@ function vDash(){
     <div class="divv" style="cursor:pointer" onclick="setView('ar')" title="클릭하면 미수금 상세"><div class="hl">수금 (입금 기준 · 참고)</div><div class="hv" style="font-size:24px">${fm(yPay)}</div>
       <div class="hs">수금률 ${ySale?payRate.toFixed(0)+'%':'-'} · ${fkrw(yPay)}</div>
       <div class="hl" style="margin-top:12px">미수채권</div><div style="font-size:20px;font-weight:800;color:${out?'#dc2626':'#16a34a'}">${fm(out)}</div>
-      <div class="hs">${fkrw(out)}</div></div>
+      <div class="hs">${fkrw(out)}${dso!=null?' · DSO <b>'+dso+'일</b>':''}</div></div>
     <div class="divv" style="cursor:pointer" onclick="setView('funds')" title="클릭하면 자금 상세"><div class="hl">자금 잔액</div><div class="hv" style="font-size:24px;color:${bal<0?'#dc2626':'#111827'}">${fm(bal)}</div>
       <div class="hs">${fkrw(bal)}</div>
       <div class="hl" style="margin-top:12px">수주 잔고</div><div style="font-size:20px;font-weight:800">${fm(backAmt)}</div>
@@ -550,6 +652,16 @@ function vDash(){
   return head('📈 임원 대시보드',`${'태국법인'} 경영 현황 · 환율 ${SYM}1 = ₩${(D.rate||0).toLocaleString()} · 기준 ${today()}`,
     `<button class="btn btn-sm" onclick="mTargets()"><i class="bi bi-bullseye"></i> 목표 설정</button><button class="btn btn-sm" onclick="setRate()"><i class="bi bi-currency-exchange"></i> 환율</button>${isEmpty()?'<button class="btn btn-primary" onclick="seedSample(true)">샘플 데이터 넣기</button>':''}`)
     +hero
+    +`<div class="card" style="margin-bottom:14px"><div class="sect"><span>💰 간이 손익 <span class="muted" style="font-weight:500;font-size:11.5px">${yr}년 누적 · 매출인식 − 등록비용</span></span><span class="muted" style="font-size:12px;cursor:pointer" onclick="setView('exp')">비용 상세 →</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:stretch">
+        <div style="flex:1 1 130px;min-width:0"><div class="hl">누적 매출</div><div style="font-size:19px;font-weight:800">${fm(ySale)}</div></div>
+        <div style="flex:1 1 130px;min-width:0"><div class="hl">누적 비용</div><div style="font-size:19px;font-weight:800;color:#b45309">${fm(yExp)}</div></div>
+        <div style="flex:1 1 130px;min-width:0"><div class="hl">영업이익</div><div style="font-size:19px;font-weight:800;color:${opInc>=0?'#0f766e':'#dc2626'}">${fm(opInc)}</div>
+          <div class="hs">${opMgn==null?'-':'이익률 '+opMgn.toFixed(1)+'%'}</div></div>
+        <div style="flex:2 1 220px;min-width:0"><div class="hl">비용 구성</div>
+          ${expByCat.length?expByCat.slice(0,4).map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span style="font-size:11.5px;color:var(--body);width:56px;flex-shrink:0">${esc(c.k)}</span><div style="flex:1;height:7px;background:#eef2f7;border-radius:4px;overflow:hidden"><i style="display:block;height:100%;width:${yExp>0?(c.v/yExp*100).toFixed(1):0}%;background:#94a3b8"></i></div><span style="font-size:11px;color:var(--muted);width:52px;text-align:right">${fmS(c.v)}</span></div>`).join(''):'<div class="hs">등록된 비용 없음</div>'}
+        </div>
+      </div></div>`
     +`<div class="grid kpis">
       <div class="kpi" onclick="setView('sales')" style="cursor:pointer"><div class="v">${fm(pm[mo]||0)}</div><div class="l">이번달 수금</div></div>
       <div class="kpi" onclick="setView('orders')" style="cursor:pointer"><div class="v">${backlog.length}</div><div class="l">진행 수주</div><div class="s">${fmS(backAmt)}</div></div>
@@ -590,7 +702,7 @@ function vSales(){
     <td>${o>0?`<b style="color:var(--bad)">${fm(o)}</b>${b&&b!=='30내'?` <span class="chip c-${b==='90+'?'red':'amber'}">${b}</span>`:''}`:'<span class="chip c-green">완납</span>'}</td>
     <td>${o>0?`<button class="btn btn-sm" onclick="event.stopPropagation();quickCollect('${s.id}')" title="잔액 전액 오늘 수금">＋수금</button>`:''}</td></tr>`;}).join(''):'<tr><td colspan="8" class="empty">매출 기록이 없습니다</td></tr>';
   return head('🧾 매출 · 수금','매출인식 기준 · 행 클릭 → 상세(수금내역) · ＋수금 = 잔액 전액 오늘 처리',
-    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`+
+    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fSalesQ)}" oninput="fSalesQ=this.value;_thSearch()" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`+
     `<select class="sel" onchange="fSalesYm=this.value;render()"><option value="">전체 기간</option>${yms.map(m=>`<option ${fSalesYm===m?'selected':''}>${m}</option>`).join('')}</select>`+
     `<button class="btn btn-sm ${fOutOnly?'btn-primary':''}" onclick="fOutOnly=!fOutOnly;render()">미수만</button>`+
     `<button class="btn btn-sm" onclick="csvSales()"><i class="bi bi-download"></i> CSV</button>`+
@@ -612,9 +724,9 @@ function mSale(id,pre){const s=id?(D.sales||[]).find(x=>x.id===id):Object.assign
       const i=(D.sales||[]).findIndex(x=>x.id===rec.id);if(i>=0)D.sales[i]=rec;else D.sales.push(rec);return await saveAll();},
     id?async()=>{D.sales=D.sales.filter(x=>x.id!==id);await saveAll('삭제됨');}:null);
 }
-async function quickCollect(id){const s=(D.sales||[]).find(x=>x.id===id);if(!s)return;const o=outAmt(s);if(o<=0)return;
+async function quickCollect(id){if(_thBusy)return;const s=(D.sales||[]).find(x=>x.id===id);if(!s)return;const o=outAmt(s);if(o<=0)return;
   if(!confirm(`'${s.client}' 잔액 ${fm(o)} 전액 오늘 수금 처리할까요?`))return;
-  s.collections.push({id:uid(),date:today(),amt:o,ref:'전액 수금'});await saveAll('수금 처리: '+fm(o));}
+  _thBusy=true;try{ s.collections.push({id:uid(),date:today(),amt:o,ref:'전액 수금'});await saveAll('수금 처리: '+fm(o)); }finally{ _thBusy=false; }}
 function csvSales(){
   const rows=[['인식일','거래처','제품','수량','매출','수금','미수','수금내역']];
   (D.sales||[]).forEach(s=>rows.push([s.date,s.client,s.product,s.qty,s.amt,colSum(s),outAmt(s),(s.collections||[]).map(c=>c.date+':'+c.amt).join(' | ')]));
@@ -669,7 +781,7 @@ function vAR(){
     <td><span class="chip c-${b==='90+'?'red':b==='60+'?'amber':b==='30+'?'amber':'gray'}">${d}일</span></td>
     <td><button class="btn btn-sm" onclick="event.stopPropagation();quickCollect('${s.id}')">＋수금</button></td></tr>`;}).join(''):'<tr><td colspan="8" class="empty" style="color:var(--ok)">미수 채권이 없습니다 🎉</td></tr>';
   return head('⏳ 미수금 현황','받을 돈(매출−수금) · 경과일 필터 · 행 클릭 → 수금 처리',
-    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fArQ)}" oninput="fArQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`+chips+`<button class="btn btn-sm" onclick="csvAR()"><i class="bi bi-download"></i> CSV</button>`)
+    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fArQ)}" oninput="fArQ=this.value;_thSearch()" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`+chips+`<button class="btn btn-sm" onclick="csvAR()"><i class="bi bi-download"></i> CSV</button>`)
     +`<div class="card" style="margin-bottom:14px;display:flex;gap:26px;align-items:center;flex-wrap:wrap">
       <div><div class="muted" style="font-size:12px">미수 합계${fAg?' ('+fAg+')':''}</div><div style="font-size:24px;font-weight:800;color:var(--bad)">${fm(tot)}</div><div class="muted" style="font-size:11.5px">${fkrw(tot)}</div></div>
       <div><div class="muted" style="font-size:12px">건수</div><div style="font-size:24px;font-weight:800;color:var(--ink)">${L.length}</div></div></div>
@@ -703,11 +815,15 @@ function mOrder(id){const o=id?(D.orders||[]).find(x=>x.id===id):{date:today(),c
       const i=(D.orders||[]).findIndex(x=>x.id===rec.id);if(i>=0)D.orders[i]=rec;else D.orders.push(rec);return await saveAll();},
     id?async()=>{D.orders=D.orders.filter(x=>x.id!==id);await saveAll('삭제됨');}:null);
 }
-async function convertOrder(id){const o=(D.orders||[]).find(x=>x.id===id);if(!o)return;
+async function convertOrder(id){if(_thBusy)return;const o=(D.orders||[]).find(x=>x.id===id);if(!o)return;
+  if(o.status==='납품완료'||o.saleId){toast&&toast('이미 납품완료 처리된 수주입니다');return;}
   if(!confirm(`'${o.client} — ${o.product||''}' 납품완료 처리하고 매출(${fm(o.amt)})을 생성할까요?`))return;
-  const sale={id:uid(),date:today(),client:o.client,product:o.product,qty:o.qty,amt:o.amt,memo:'수주 전환 ('+o.date+' 수주)',collections:[]};
-  D.sales.push(sale);o.status='납품완료';o.saleId=sale.id;
-  await saveAll('납품완료 + 매출 생성됨');}
+  _thBusy=true;
+  try{
+    const sale={id:uid(),date:today(),client:o.client,product:o.product,qty:o.qty,amt:o.amt,memo:'수주 전환 ('+o.date+' 수주)',collections:[]};
+    D.sales.push(sale);o.status='납품완료';o.saleId=sale.id;
+    await saveAll('납품완료 + 매출 생성됨');
+  }finally{ _thBusy=false; }}
 function csvOrders(){const rows=[['수주일','거래처','제품','수량','금액','상태','납기']];(D.orders||[]).forEach(o=>rows.push([o.date,o.client,o.product,o.qty,o.amt,o.status,o.eta]));dlCsv('orders_corp_th_erp.csv',rows);}
 
 // ── 거래처 분석 ──
@@ -722,7 +838,7 @@ function vClients(){
     <td><b>${fm(v.sale)}</b></td><td style="color:var(--ok)">${fm(v.col)}</td>
     <td>${v.out?`<b style="color:var(--bad)">${fm(v.out)}</b>`:'-'}</td><td>${v.ord?fm(v.ord):'-'}</td><td class="l muted">${v.last||'-'}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">거래처 데이터 없음</td></tr>';
   return head('🏢 거래처 분석','거래처별 매출·수금·미수·진행수주 · 행 클릭 → 상세',
-    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fClientQ)}" oninput="fClientQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`)
+    `<input class="sel" placeholder="거래처·제품 검색" value="${esc(fClientQ)}" oninput="fClientQ=this.value;_thSearch()" onkeydown="if(event.key==='Enter')render()" style="min-width:150px">`)
     +`<div class="card" style="padding:0;overflow:auto"><table><thead><tr><th class="l">거래처</th><th>누적 매출</th><th>수금</th><th>미수</th><th>진행 수주</th><th class="l">최근 매출일</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function openClient(name){
@@ -871,7 +987,7 @@ function vAsset(){
       <div class="kpi"><div class="v">${inStock}</div><div class="l">창고 재고</div></div>
       <div class="kpi"><div class="v" style="color:var(--ok)">${atClient}</div><div class="l">고객사 보유</div></div>
       <div class="kpi"><div class="v" style="color:${svc?'var(--bad)':'var(--ink)'}">${svc}</div><div class="l">AS · 반품</div></div></div>
-    <div class="filterbar"><div style="display:flex;gap:5px;flex-wrap:wrap">${stChips}</div><select class="sel" onchange="setAssetF('item',this.value)" style="margin-left:auto">${itemOpts}</select><input class="sel srch" placeholder="시리얼·고객사 검색" value="${esc(fAssetQ)}" oninput="fAssetQ=this.value" onkeydown="if(event.key==='Enter')render()" style="min-width:172px"></div>
+    <div class="filterbar"><div style="display:flex;gap:5px;flex-wrap:wrap">${stChips}</div><select class="sel" onchange="setAssetF('item',this.value)" style="margin-left:auto">${itemOpts}</select><input class="sel srch" placeholder="시리얼·고객사 검색" value="${esc(fAssetQ)}" oninput="fAssetQ=this.value;_thSearch()" onkeydown="if(event.key==='Enter')render()" style="min-width:172px"></div>
     <div class="card" style="padding:0;overflow:auto"><table style="width:100%"><thead><tr><th class="l">시리얼</th><th class="l">품목</th><th class="l">상태</th><th class="l">현재 위치</th><th class="l">메모</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function openAsset(id){

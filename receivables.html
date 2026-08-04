@@ -417,6 +417,83 @@ table{font-variant-numeric:tabular-nums}
   [style*="minmax(180px,1fr)"]{grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr))!important}
 }
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap 만 조정. 배경·색상·테마 선언 없음.
+     다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 상단 헤더(.hdr)는 .bar-row 의 sticky top:100px 기준이므로 높이를 바꾸지 않는다.
+   · 모바일(≤768px)에서는 압축을 완화한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* 1. 페이지 프레임 — 상단 여백 · 하단 빈 공간(60px) 축소 */
+.pagetitle{padding:14px 24px 2px}
+.wrap{padding:14px 26px 24px}
+.sec{margin:4px 0 9px}
+
+/* 2. 카드 · 그리드 */
+.grid{gap:11px}
+.card{padding:14px 16px;margin-bottom:12px}
+
+/* 3. KPI · 액션 카드 */
+.kpis{margin-bottom:12px}
+.kpi{padding:12px 14px}
+.kpi .v{margin-top:5px}
+.kpi .s{margin-top:4px}
+.acts{margin-bottom:11px}
+.act{padding:10px 12px}
+
+/* 4. 툴바 */
+.bar-row{margin-bottom:10px;padding:6px 0}
+
+/* 5. 표 행 높이 */
+.dt th,.dt td{padding:6px 9px}
+.rt th,.rt td{padding:5px 9px}
+
+/* 6. 모달 */
+.mhd{padding:14px 18px 11px}
+.mbody{padding:13px 18px 16px}
+.fgrid{gap:8px 14px;margin-bottom:10px}
+.editable-note{padding:8px 11px;margin-bottom:10px}
+
+/* 7. 임원 보고 문서 */
+.rpt .sub{margin-bottom:13px}
+.rpt h4{margin:14px 0 8px}
+.rpt .sumline{padding:4px 0}
+.rpt .concl{padding:11px 13px;margin-top:12px}
+
+/* 8. 빈 상태 블록 */
+.dt tbody tr td[colspan]:not(.l):not(.lbl),
+.rt tbody tr td[colspan]:not(.l):not(.lbl){padding:16px 12px}
+
+/* 9. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) */
+.wrap [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+.wrap [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+.wrap [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+.wrap [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+.wrap [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+.wrap [style*="margin-top:32px"]{margin-top:16px!important}
+.wrap [style*="margin-top:28px"]{margin-top:15px!important}
+.wrap [style*="margin-top:24px"]{margin-top:14px!important}
+.wrap [style*="margin-top:20px"]{margin-top:13px!important}
+.wrap [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* 10. 모바일(≤768px) : 압축 완화 */
+@media screen and (max-width:768px){
+  .pagetitle{padding:14px 14px 2px}
+  .wrap{padding:12px 14px 26px}
+  .card{padding:14px;margin-bottom:12px}
+  .dt th,.dt td{padding:7px 8px}
+  .rt th,.rt td{padding:6px 8px}
+  .dt tbody tr td[colspan]:not(.l):not(.lbl),
+  .rt tbody tr td[colspan]:not(.l):not(.lbl){padding:20px 12px}
+}
+</style>
 </head>
 <body>
 <div id="load"><i class="bi bi-arrow-repeat" style="margin-right:8px"></i>불러오는 중...</div>
@@ -612,7 +689,9 @@ function mgrAgg(){const m={};E.filter(r=>r.ar>0).forEach(r=>{const g=r.mgr||'(�
   if(r.type==='지연채권'||r.type==='장기체납채권')m[g].delay++;
   if(isNoPlan(r))m[g].noplan++;
   if(!m[g].oldest||r.saleDate<m[g].oldest)m[g].oldest=r.saleDate;});
-  return Object.keys(m).map(k=>Object.assign({mgr:k},m[k])).sort((a,b)=>b.ar-a.ar);}
+  // 회수율: 잔액 유무와 무관하게 담당 전체 채권 기준(수금 완료분 포함)이라야 실적이 된다
+  E.forEach(r=>{const g=r.mgr||'(미배정)';if(!m[g])return;m[g].amt=(m[g].amt||0)+r.amt;m[g].collAmt=(m[g].collAmt||0)+r.coll;});
+  return Object.keys(m).map(k=>Object.assign({mgr:k,rate:m[k].amt>0?m[k].collAmt/m[k].amt:null},m[k])).sort((a,b)=>b.ar-a.ar);}
 
 // ── 렌더 ──
 function destroyCharts(){_charts.forEach(c=>{try{c.destroy();}catch(e){}});_charts=[];}
@@ -642,6 +721,8 @@ function viewHome(){
     {t:'👤 담당 미배정',n:noMgr.length+'건 · '+eok2(noMgr.reduce((s,r)=>s+r.ar,0)),d:'수금 책임자 지정 필요',c:'#6d28d9',fn:`goListSpecial('noMgr')`},
     {t:'📝 수금계획 미기재',n:noPlan.length+'건 · '+eok2(noPlan.reduce((s,r)=>s+r.ar,0)),d:'지연·체납 채권 계획 입력(행 클릭 편집)',c:'#0891b2',fn:`goListSpecial('noPlan')`}
   ];
+  const fdue=E.filter(isFollowDue);
+  if(fdue.length)acts.splice(1,0,{t:'📅 조치일 도래',n:fdue.length+'건 · '+eok2(fdue.reduce((s,r)=>s+r.ar,0)),d:'수금계획상 오늘까지 조치 예정 — 지금 처리',c:'#dc2626',fn:`goListSpecial('follow')`});
   const woc=woCands();const wocUn=woc.filter(x=>!woOf(x.r));
   acts.push({t:'🧾 손실처리 후보',n:woc.length+'건 · '+eok2(woc.reduce((s,x)=>s+x.r.ar,0)),d:wocUn.length?('미검토 '+wocUn.length+'건 — 대손 품의 검토'):'전건 검토 완료 — 품의서 출력 가능',c:'#334155',fn:`setView('wo')`});
   const mgrConf=E.filter(hasMgrConflict);
@@ -680,8 +761,15 @@ function viewHome(){
   // 담당자별 + 연령(aging) 2컬럼
   const ma=mgrAgg(),ab=agingBuckets();
   h+='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">';
-  h+='<div class="card"><div class="sec">담당자별 미수 현황 <span class="hint">잔액 보유 기준 · 행 클릭 → 목록</span></div><div class="tbl-scroll" style="max-height:340px;overflow-y:auto"><table class="dt"><thead><tr><th class="l">담당자</th><th>건수</th><th>미수잔액</th><th>지연·체납</th><th>계획미기재</th></tr></thead><tbody>'
-    +ma.map(x=>`<tr class="clk" onclick="goListMgr('${escJs(x.mgr)}')"><td class="l"><b>${esc(x.mgr)}</b></td><td>${x.cnt}</td><td><b>${fmt(x.ar)}</b></td><td>${x.delay?`<span class="chip" style="background:#fef3c7;color:#b45309">${x.delay}건</span>`:'-'}</td><td>${x.noplan?`<span class="chip" style="background:#e0f2fe;color:#0369a1">${x.noplan}건</span>`:'-'}</td></tr>`).join('')
+  const _avgR=(function(){const t=ma.reduce((s,x)=>s+(x.amt||0),0),c=ma.reduce((s,x)=>s+(x.collAmt||0),0);return t>0?c/t:null;})();
+  h+='<div class="card"><div class="sec">담당자별 미수 현황 <span class="hint">잔액 보유 기준 · 회수율은 담당 전체 채권(수금완료 포함) 기준 · 행 클릭 → 목록</span></div><div class="tbl-scroll" style="max-height:340px;overflow-y:auto"><table class="dt"><thead><tr><th class="l">담당자</th><th>건수</th><th>미수잔액</th><th>회수율</th><th>지연·체납</th><th>계획미기재</th></tr></thead><tbody>'
+    +ma.map(x=>{
+      const rt=x.rate, rc=(rt==null?'#94a3b8':rt>=0.9?'#0f766e':rt>=0.75?'#334155':'#dc2626');
+      const dev=(rt!=null&&_avgR!=null)?(rt-_avgR)*100:null;
+      const rcell=(rt==null?'<span class="muted">-</span>'
+        :`<b style="color:${rc}">${(rt*100).toFixed(1)}%</b>`+(dev==null||Math.abs(dev)<0.05?'':`<div style="font-size:10px;color:${dev>=0?'#0f766e':'#dc2626'}">평균 ${dev>=0?'+':'−'}${Math.abs(dev).toFixed(1)}p</div>`));
+      return `<tr class="clk" onclick="goListMgr('${escJs(x.mgr)}')"><td class="l"><b>${esc(x.mgr)}</b></td><td>${x.cnt}</td><td><b>${fmt(x.ar)}</b></td><td>${rcell}</td><td>${x.delay?`<span class="chip" style="background:#fef3c7;color:#b45309">${x.delay}건</span>`:'-'}</td><td>${x.noplan?`<span class="chip" style="background:#e0f2fe;color:#0369a1">${x.noplan}건</span>`:'-'}</td></tr>`;
+    }).join('')
     +'</tbody></table></div></div>';
   h+='<div class="card"><div class="sec">채권 연령(Aging) <span class="hint">매출일 기준 경과 · 클릭 → 목록</span></div>';
   const abMax=Math.max(...ab.map(x=>x.ar),1);

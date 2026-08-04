@@ -412,6 +412,86 @@ canvas{max-width:100%}
   #m-topbar{width:100%;max-width:100vw}
 }
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap 만 조정. 배경·색상·테마 선언 없음.
+     다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 적용 범위는 앱 본문(.main) 으로 한정 — 로그인(#login-screen) 제외.
+   · 모바일(≤768px)에서는 압축을 완화한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* 1. 페이지 프레임 */
+.main{padding:15px 18px 20px}
+.main .page-header{margin-bottom:12px}
+
+/* 2. 카드 · KPI */
+.main .kpi-card{padding:12px 15px}
+.main .kpi-label{margin-bottom:4px}
+.main .kpi-value{margin-bottom:3px}
+.main .period-bar{padding:8px 12px;margin-bottom:11px}
+.main .upload-zone{padding:16px}
+
+/* 3. 부트스트랩 간격 유틸리티 (24px/16px → 15px/11px) */
+.main .p-4{padding:15px!important}
+.main .p-3{padding:11px!important}
+.main .card-body{padding:12px 14px}
+.main .mb-5{margin-bottom:20px!important}
+.main .mb-4{margin-bottom:14px!important}
+.main .mb-3{margin-bottom:11px!important}
+.main .mt-5{margin-top:20px!important}
+.main .mt-4{margin-top:14px!important}
+.main .mt-3{margin-top:11px!important}
+.main .my-4{margin-top:14px!important;margin-bottom:14px!important}
+.main .py-5{padding-top:20px!important;padding-bottom:20px!important}
+.main .py-4{padding-top:13px!important;padding-bottom:13px!important}
+.main .row{--bs-gutter-x:1rem}
+.main .row.g-4{--bs-gutter-x:.9rem;--bs-gutter-y:.9rem}
+.main .row.g-3{--bs-gutter-x:.75rem;--bs-gutter-y:.75rem}
+
+/* 4. 표 행 높이 */
+.main .table{--bs-table-cell-padding-y:.35rem;--bs-table-cell-padding-x:.5rem}
+
+/* 5. 빈 상태 블록 */
+.main .table .text-muted[colspan],
+.main .table td.text-center.text-muted{padding-top:16px;padding-bottom:16px}
+
+/* 6. 모달 */
+.pmodal-head{padding:12px 16px}
+.pmodal-body{padding:12px 16px}
+.pmodal-foot{padding:10px 16px}
+
+/* 7. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) */
+.main [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+.main [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+.main [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+.main [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+.main [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+.main [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+.main [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+.main [style*="margin-top:32px"]{margin-top:16px!important}
+.main [style*="margin-top:28px"]{margin-top:15px!important}
+.main [style*="margin-top:24px"]{margin-top:14px!important}
+.main [style*="margin-top:20px"]{margin-top:13px!important}
+.main [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* 8. 모바일(≤768px) : 압축 완화 */
+@media screen and (max-width:768px){
+  .main{padding:14px 12px 22px}
+  .main .p-4{padding:14px!important}
+  .main .p-3{padding:12px!important}
+  .main .card-body{padding:12px}
+  .main .table{--bs-table-cell-padding-y:.42rem;--bs-table-cell-padding-x:.45rem}
+  .main .table .text-muted[colspan],
+  .main .table td.text-center.text-muted{padding-top:20px;padding-bottom:20px}
+}
+@media screen and (max-width:820px){
+  .main{padding-top:64px}
+}
+</style>
 </head>
 <body>
 <div id="__page_veil" style="position:fixed;inset:0;background:#0f172a;z-index:9999"></div>
@@ -740,6 +820,7 @@ canvas{max-width:100%}
     <div class="row g-2" style="font-size:13px;margin-top:2px">
       <div class="col-12"><label>거래조건 (결제/인도/독점 등)</label><textarea id="q-terms" class="form-control form-control-sm" rows="2"></textarea></div>
       <div class="col-12"><label>메모(내부)</label><input id="q-note" class="form-control form-control-sm" autocomplete="off"></div>
+      <div class="col-12" id="q-linked" style="display:none"></div>
     </div>
     <div style="display:flex;flex-direction:row;justify-content:space-between;margin-top:14px;gap:8px">
       <button class="btn btn-sm btn-outline-danger" id="q-del" onclick="delQuote()" style="display:none">삭제</button>
@@ -881,6 +962,7 @@ canvas{max-width:100%}
       <div class="col-4"><label>선적상태</label><select id="d-shipstat" class="form-select form-select-sm"><option value=""></option><option>준비중</option><option>선적완료</option><option>통관중</option><option>납품완료</option></select></div>
       <div class="col-12" style="font-size:11px"><label style="margin-bottom:3px;display:block">수출 서류</label><div style="display:flex;flex-direction:row;gap:14px;flex-wrap:wrap"><label style="font-weight:400;cursor:pointer"><input type="checkbox" id="doc-co"> 원산지</label><label style="font-weight:400;cursor:pointer"><input type="checkbox" id="doc-ci"> 상업송장</label><label style="font-weight:400;cursor:pointer"><input type="checkbox" id="doc-pl"> 패킹리스트</label><label style="font-weight:400;cursor:pointer"><input type="checkbox" id="doc-ip"> 수입허가</label></div></div>
       <div class="col-12"><label>메모</label><textarea id="d-note" class="form-control form-control-sm" rows="2"></textarea></div>
+      <div class="col-12" id="d-linked" style="display:none"></div>
     </div>
     <div style="display:flex;flex-direction:row;justify-content:space-between;margin-top:16px">
       <button class="btn btn-sm btn-outline-danger" id="d-del" onclick="delDeal()" style="display:none">삭제</button>
@@ -1853,7 +1935,36 @@ function openDeal(id){
   set('d-prob',d.prob);set('d-sales',d.sales!=null?d.sales:_meName);set('d-ship',d.expectedShip);set('d-nextdate',d.nextDate);set('d-next',d.nextAction);set('d-note',d.note);
   set('d-po',d.poNo);set('d-inv',d.invoiceNo);var ss=document.getElementById('d-shipstat');if(ss)ss.value=d.shipStatus||'';var dc=d.docs||{};['co','ci','pl','ip'].forEach(function(k){var e=document.getElementById('doc-'+k);if(e)e.checked=!!dc[k];});var cu=document.getElementById('d-cur');if(cu)cu.value=d.currency||'USD';if(typeof _updDealKrw==='function')_updDealKrw();
   document.getElementById('d-del').style.display=id?'inline-block':'none';
+  _dealLinked(d);
   document.getElementById('is-modal').style.display='flex';
+}
+/* 딜 ↔ 견적 연결 — 명시적 quoteId 우선, 없으면 딜러+국가로 추정 */
+function _dealQuotes(d){
+  if(!d)return [];
+  var qs=(typeof INTL_QUOTES!=='undefined'?INTL_QUOTES:[])||[];
+  if(d.quoteId){ var hit=qs.filter(function(q){return q.id===d.quoteId;}); if(hit.length)return hit; }
+  if(!d.dealer)return [];
+  return qs.filter(function(q){ return q.dealer===d.dealer && (!d.country||!q.country||q.country===d.country); })
+           .sort(function(a,b){ return (b.date||'')<(a.date||'')?-1:1; }).slice(0,5);
+}
+function _dealLinked(d){
+  var el=document.getElementById('d-linked'); if(!el)return;
+  var qs=_dealQuotes(d);
+  if(!qs.length){ el.style.display='none'; el.innerHTML=''; return; }
+  var col={'수락':'#0f766e','거절':'#dc2626','취소':'#94a3b8'};
+  var jsq=function(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');};
+  var money=function(q){return (CUR_SYM[q.currency||'USD']||'$')+Math.round(Number(q.total)||0).toLocaleString();};
+  el.style.display='';
+  el.innerHTML='<label>관련 견적 <span style="font-weight:400;color:#9ca3af;font-size:11px">'+(d.quoteId?'연결됨':'같은 딜러 기준 추정')+'</span></label>'+
+    '<div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">'+
+    qs.map(function(q){
+      var c=col[q.status]||'#334155';
+      return '<div onclick="closeDeal();openQuote(\''+jsq(q.id)+'\')" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid #f1f5f9;font-size:12px">'+
+        '<span style="color:#64748b;width:74px;flex-shrink:0">'+_esc(q.date||'')+'</span>'+
+        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_esc(q.dealer||'')+(q.country?' · '+_esc(q.country):'')+'</span>'+
+        '<b style="white-space:nowrap">'+_esc(money(q))+'</b>'+
+        '<span style="color:'+c+';font-weight:700;width:38px;text-align:right;flex-shrink:0">'+_esc(q.status||'-')+'</span></div>';
+    }).join('')+'</div>';
 }
 function closeDeal(){ document.getElementById('is-modal').style.display='none'; }
 // ── 저장 버튼 중복클릭 방지 (전역 락 + 버튼 시각 피드백) ──
@@ -2041,7 +2152,7 @@ function renderSchedule(){
   '</div>';}).join('');
 }
 // ── 해외 견적서 (Quote) — cons_cache 'intl_quotes' ──
-let INTL_QUOTES=[], _qEdit=null;
+let INTL_QUOTES=[], _qEdit=null, _qFromDealId=null;
 async function _loadQuotes(){ try{ const {data}=await _sb.from('cons_cache').select('data').eq('key','intl_quotes').maybeSingle(); INTL_QUOTES=(data&&data.data&&data.data.quotes)||[]; }catch(e){ INTL_QUOTES=[]; } var p=document.getElementById('page-quotes'); if(p&&p.classList.contains('active'))renderQuotes(); }
 async function _saveQuotes(){ try{ const {error}=await _sb.from('cons_cache').upsert({key:'intl_quotes',data:{quotes:INTL_QUOTES,updatedAt:new Date().toISOString()}},{onConflict:'key'}); if(error)throw error; }catch(e){ alert('저장 실패: '+e.message); } }
 function _qTot(q){ var sub=(q.items||[]).reduce(function(s,it){return s+(Number(it.qty)||0)*(Number(it.price)||0);},0); var disc=Number(q.discount)||0; return {sub:sub,disc:disc,total:sub-disc}; }
@@ -2073,7 +2184,28 @@ function openQuote(id,fromDeal){
   var items=(q.items&&q.items.length)?q.items:[{}]; items.forEach(function(it){ box.insertAdjacentHTML('beforeend',_qRow(it)); });
   _qCalc();
   document.getElementById('q-del').style.display=id?'inline-block':'none';
+  _quoteLinked(q);
   document.getElementById('q-modal').style.display='flex';
+}
+/* 견적 → 딜 역방향 연결 */
+function _quoteLinked(q){
+  var el=document.getElementById('q-linked'); if(!el)return;
+  var ds=[];
+  if(q&&q.id) ds=INTL_PIPE.filter(function(d){return d.quoteId===q.id;});
+  if(!ds.length&&q&&q.dealer) ds=INTL_PIPE.filter(function(d){return d.dealer===q.dealer&&(!q.country||!d.country||d.country===q.country);});
+  ds=ds.slice(0,5);
+  if(!ds.length){ el.style.display='none'; el.innerHTML=''; return; }
+  var jsq=function(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');};
+  el.style.display='';
+  el.innerHTML='<label>관련 딜 <span style="font-weight:400;color:#9ca3af;font-size:11px">같은 딜러 기준</span></label>'+
+    '<div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">'+
+    ds.map(function(d){
+      return '<div onclick="closeQuote();openDeal(\''+jsq(d.id)+'\')" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid #f1f5f9;font-size:12px">'+
+        '<span style="color:#fff;background:#0891b2;border-radius:4px;padding:1px 6px;font-size:10px;flex-shrink:0">'+_esc(d.stage||'')+'</span>'+
+        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_esc(d.product||d.dealer||'')+'</span>'+
+        '<b style="white-space:nowrap">'+_esc(_fmtCur(d))+'</b>'+
+        '<span style="color:#94a3b8;width:38px;text-align:right;flex-shrink:0">'+(Number(d.prob)||0)+'%</span></div>';
+    }).join('')+'</div>';
 }
 function closeQuote(){ document.getElementById('q-modal').style.display='none'; }
 function _qCollect(){
@@ -2087,7 +2219,11 @@ function saveQuote(btn){
   if(_qEdit&&!_canEditIntl(_qEdit.sales)){alert('담당자('+(_qEdit.sales||'')+')의 견적입니다. 본인 것만 수정할 수 있어요.');return;}
   var q=_qEdit||{id:'iq_'+Date.now()+Math.random().toString(36).slice(2,6),createdAt:new Date().toISOString()};
   Object.assign(q,data);
-  if(!_qEdit)INTL_QUOTES.push(q);
+  if(!_qEdit){
+    INTL_QUOTES.push(q);
+    // 딜에서 만든 견적이면 양방향 연결 고정(딜러명이 바뀌어도 추적 가능)
+    if(_qFromDealId){ var _d=INTL_PIPE.find(function(x){return x.id===_qFromDealId;}); if(_d){ _d.quoteId=q.id; q.dealId=_d.id; Promise.resolve(_saveDeals()); } _qFromDealId=null; }
+  }
   _intlSaving=true; _btnSaving(btn,true);
   closeQuote(); renderQuotes();
   Promise.resolve(_saveQuotes()).finally(function(){ _intlSaving=false; _btnSaving(btn,false); });
@@ -2105,7 +2241,7 @@ function printQuote(id){
     '<script>window.onload=function(){window.print();}<\/script></body></html>';
   var w=window.open('','_blank'); if(w){ w.document.write(html); w.document.close(); } else { alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.'); }
 }
-function _quoteFromDeal(){ var d=_dealEdit||{}; closeDeal(); openQuote(null,{country:d.country,dealer:d.dealer,product:d.product,amount:d.amount,sales:d.sales}); }
+function _quoteFromDeal(){ var d=_dealEdit||{}; _qFromDealId=d.id||null; closeDeal(); openQuote(null,{country:d.country,dealer:d.dealer,product:d.product,amount:d.amount,sales:d.sales}); }
 async function _loadIlboPending(){
   try{
     const {data}=await _sb.from('cons_cache').select('data').eq('key','ilbo_pending').maybeSingle();

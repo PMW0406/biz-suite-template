@@ -234,6 +234,70 @@ table.rpt td[colspan],.ptable td[colspan]{text-align:center;color:#9ca3af;paddin
 /* amber 대형 숫자는 가독 위해 한 톤 진하게(의미색 유지) */
 [style*="color:#f59e0b"]{color:#c2760a!important}
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap 만 조정. 배경·색상·테마 선언 없음.
+     다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 기존 모바일 규칙(≤820 / ≤640)은 아래에서 동일 취지로 다시 선언해 보존한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* 1. 페이지 프레임 — 상단/하단 여백 축소 */
+header{padding:9px 20px}
+.toggle-wrap{margin:11px auto 0}
+.toggle button{padding:8px 20px}
+.wrap{margin:12px auto 20px;padding:0 20px}
+
+/* 2. 보고서 머리 */
+.rpt-title{padding:4px 0 11px;margin-bottom:5px}
+.rpt-meta{margin-bottom:12px}
+.sec-h{margin:18px 0 9px}
+
+/* 3. 표 행 높이 (12/14px → 7/11px) */
+table.rpt th,table.rpt td{padding:7px 11px}
+/* 빈 상태 행은 최소 가독 여백 유지(16px → 14px) */
+table.rpt td[colspan],.ptable td[colspan]{padding:14px 10px}
+.note{margin:6px 2px 0}
+
+/* 4. 미반영 입력 박스 */
+.region-box{margin-bottom:11px}
+.rb-head{padding:9px 14px}
+.rb-body{padding:9px 12px}
+.rb-tools{margin-bottom:6px}
+.pend-grid{gap:12px}
+
+/* 5. 매칭 모달 */
+#match-modal .mm{padding:16px 18px}
+.mm-note{padding:8px 11px;margin-top:9px}
+
+/* 6. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) */
+.wrap [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+.wrap [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+.wrap [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+.wrap [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+.wrap [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+.wrap [style*="margin-top:32px"]{margin-top:16px!important}
+.wrap [style*="margin-top:28px"]{margin-top:15px!important}
+.wrap [style*="margin-top:24px"]{margin-top:14px!important}
+.wrap [style*="margin-top:20px"]{margin-top:13px!important}
+.wrap [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* 7. 모바일 : 기존 규칙 취지 유지(압축 완화) */
+@media screen and (max-width:820px){
+  header{padding:10px 14px}
+  .wrap{padding:0 12px;margin:12px auto 24px}
+  .rpt-title{padding:12px}
+  .sec-h{margin:16px 0 9px}
+}
+@media screen and (max-width:640px){
+  table.rpt th,table.rpt td{padding:6px 5px}
+}
+</style>
 </head>
 <body>
 <div id="veil">불러오는 중...</div>
@@ -467,7 +531,7 @@ function flagMatches(){
 function saveAccounting(){ return _sb.from('cons_cache').upsert({key:'ilbo_acc',data:ACC},{onConflict:'key'}).then(function(r){ if(r.error) console.warn('acc',r.error); }); }
 let _ilboSaving=false;
 function _ilboToast(msg,bad){ var t=document.getElementById('_ilbotoast'); if(!t){ t=document.createElement('div'); t.id='_ilbotoast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .2s;pointer-events:none'; document.body.appendChild(t); } t.style.background=bad?'#b91c1c':'#0f172a'; t.textContent=msg; t.style.opacity='1'; clearTimeout(t._h); t._h=setTimeout(function(){ t.style.opacity='0'; },2400); }
-function savePending(alertOk){ if(_ilboSaving) return Promise.resolve(); _ilboSaving=true; var btn=document.querySelector('.save-bar button'); var _o=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='저장 중…'; } return _sb.from('cons_cache').upsert({key:'ilbo_pending',data:{rows:PENDING,updatedAt:ACC?ACC.reportDate:''}},{onConflict:'key'}).then(function(r){ if(r.error) _ilboToast('저장 실패: '+r.error.message,true); else if(alertOk) _ilboToast('미반영분 저장 완료',false); }).finally(function(){ _ilboSaving=false; if(btn){ btn.disabled=false; btn.textContent=_o; } }); }
+function savePending(alertOk){ if(_ilboSaving) return Promise.resolve(); _ilboSaving=true; var btn=document.querySelector('.save-bar button'); var _o=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='저장 중…'; } return _sb.from('cons_cache').upsert({key:'ilbo_pending',data:{rows:PENDING,updatedAt:ACC?ACC.reportDate:''}},{onConflict:'key'}).then(function(r){ if(r.error) _ilboToast('저장 실패: '+r.error.message,true); else { _pendMark(false); if(alertOk) _ilboToast('미반영분 저장 완료',false); } }).finally(function(){ _ilboSaving=false; if(btn){ btn.disabled=false; btn.textContent=_o; } }); }
 function loadAll(){
   return Promise.all([
     _sb.from('cons_cache').select('data').eq('key','ilbo_acc').maybeSingle(),
@@ -628,7 +692,7 @@ function renderPend(){
 function addPendRow(region){
   var nid=uid();
   PENDING.unshift({id:nid,region:region,type:'예정',country:'',customer:'',product:'',qty:'',amount:'',expectedDate:'',status:'대기',memo:''});
-  refresh();
+  _pendMark(true); refresh();
   setTimeout(function(){
     var row=document.querySelector('tr[data-pid="'+nid+'"]'); if(!row) return;
     var ins=row.getElementsByTagName('input'), target=null;
@@ -669,8 +733,17 @@ function pendCsv(){
   PENDING.forEach(function(p){ rows.push([p.region,p.country||'',p.customer||'',p.product||'',p.qty||'',p.amount||'',p.expectedDate||'',p.type||'',p.status||'']); });
   _csvDL('미반영분.csv',rows);
 }
-function pendSet(i,k,v){ if(!PENDING[i])return; if(k==='qty'||k==='amount'){ v=String(v).replace(/[^0-9.\-]/g,''); v=v===''?'':Number(v); } PENDING[i][k]=v; refresh(); }
-function delPend(i){ var p=PENDING[i]||{}; var nm=(p.customer||p.product||'').trim(); if(!confirm('이 미반영 건'+(nm?' ("'+nm+'")':'')+'을 삭제할까요?'))return; PENDING.splice(i,1); refresh(); }
+function pendSet(i,k,v){ if(!PENDING[i])return; if(k==='qty'||k==='amount'){ v=String(v).replace(/[^0-9.\-]/g,''); v=v===''?'':Number(v); } PENDING[i][k]=v; _pendMark(true); refresh(); }
+/* ── 미저장 변경 경고 ── 입력만 하고 저장 없이 이탈하면 날아가므로 표시+확인 ── */
+var _pendDirty=false;
+function _pendMark(on){
+  _pendDirty=!!on;
+  var b=document.querySelector('.save-bar button'); if(!b)return;
+  if(_pendDirty){ b.textContent='💾 미반영분 저장 · 저장 안 된 변경 있음'; b.style.background='#dc2626'; }
+  else { b.textContent='💾 미반영분 저장'; b.style.background=''; }
+}
+window.addEventListener('beforeunload',function(e){ if(!_pendDirty)return; e.preventDefault(); e.returnValue=''; return ''; });
+function delPend(i){ var p=PENDING[i]||{}; var nm=(p.customer||p.product||'').trim(); if(!confirm('이 미반영 건'+(nm?' ("'+nm+'")':'')+'을 삭제할까요?'))return; PENDING.splice(i,1); _pendMark(true); refresh(); }
 function refresh(){ if(ACC) render(); else renderPend(); }
 function renderReflected(){
   var box=document.getElementById('reflected-box'); if(!box) return;

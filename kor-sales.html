@@ -273,6 +273,77 @@ table{font-variant-numeric:tabular-nums}
   .wt-top nav{order:9;flex:1 1 auto;min-width:0}
 }
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap 만 조정. 배경·색상·테마 선언 없음.
+     다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 적용 범위는 본문(.main) 으로 한정 — 로그인(#login) 제외.
+   · 모바일(≤768px)에서는 압축을 완화한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* 1. 페이지 프레임 · 머리 */
+.main{padding:12px 20px 18px}
+.wt-mast{padding-bottom:10px;margin-bottom:13px}
+
+/* 2. 툴바 · 알림바 */
+.wt-tools{padding:9px 12px;margin-bottom:12px}
+#chgbar{margin-bottom:11px}
+.chg{padding:8px 12px}
+
+/* 3. 히어로/팩트 밴드 (대형 수치 유지, 패딩만) */
+.wt-band{padding:14px 20px;margin-bottom:13px}
+.wt-band-sm{padding:10px 18px!important;margin-bottom:11px}
+.wt-hero{padding-right:18px}
+.wt-fact{padding:2px 13px}
+
+/* 4. 카드 · 섹션 */
+.wt-card{padding:13px 15px}
+.wt-st{padding-bottom:7px;margin-bottom:10px}
+.wt-grid{gap:12px}
+
+/* 5. 표 행 높이 */
+.wt-tbl thead th{padding:6px 9px}
+.wt-tbl tbody td{padding:6px 9px}
+/* 정산 인라인 표는 이미 조밀(4/8px) — 원본 유지 */
+.il-tbl tbody td{padding:4px 8px}
+.msg{padding:9px 2px}
+
+/* 6. 빈 상태 블록(34px → 20px) */
+.empty{padding:20px 12px}
+.warnnote{padding:8px 11px}
+
+/* 7. 모달 */
+.mhd{padding:14px 18px 11px}
+.mbody{padding:13px 18px 16px}
+
+/* 8. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) */
+.main [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+.main [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+.main [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+.main [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+.main [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+.main [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+.main [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+.main [style*="margin-top:32px"]{margin-top:16px!important}
+.main [style*="margin-top:28px"]{margin-top:15px!important}
+.main [style*="margin-top:24px"]{margin-top:14px!important}
+.main [style*="margin-top:20px"]{margin-top:13px!important}
+.main [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* 9. 모바일(≤768px) : 압축 완화 */
+@media screen and (max-width:768px){
+  .main{padding:12px 12px 20px}
+  .wt-band{padding:14px 14px}
+  .wt-card{padding:13px 13px}
+  .wt-tbl thead th,.wt-tbl tbody td{padding:7px 8px}
+  .il-tbl tbody td{padding:5px 7px}
+  .empty{padding:26px 12px}
+}
+</style>
 </head>
 <body>
 
@@ -681,16 +752,20 @@ function openForm(c){ window.__editC=c; window.__dno=null;
    +'<div class="mbody">'+_dlist('products')+_dlist('reps')+_dlist('pays')+_dlist('regions')
    +'<div class="cform">'+CFIELDS.map(f=>_fld(f,c)).join('')+'</div>'
    +'<div class="cform-foot">'+(c?'<button class="btn btn-outline-danger btn-sm" onclick="deleteContract('+c.no+')"><i class="bi bi-trash"></i> 삭제</button>':'<span></span>')
-   +'<div style="display:flex;gap:8px"><button class="btn btn-outline-secondary btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" onclick="saveContract()"><i class="bi bi-check-lg"></i> 저장</button></div></div></div>';
+   +'<div style="display:flex;gap:8px"><button class="btn btn-outline-secondary btn-sm" onclick="closeModal()">취소</button><button class="btn btn-primary btn-sm" id="cf-save" onclick="saveContract()"><i class="bi bi-check-lg"></i> 저장</button></div></div></div>';
   document.getElementById('mbox').innerHTML=h; document.getElementById('modal').classList.add('on');
 }
-async function saveContract(){ const c=window.__editC; const d=c?Object.assign({},c):{}; delete d._id; delete d._month;
+let _ksSaving=false;   /* 저장 버튼 중복 클릭 → 계약 중복 생성 방지 */
+async function saveContract(){ if(_ksSaving)return; const c=window.__editC; const d=c?Object.assign({},c):{}; delete d._id; delete d._month;
   CFIELDS.forEach(f=>{ const el=document.getElementById('cf-'+f[1]); if(!el)return; let v=el.value; if(f[2]==='num')v=(v===''?null:Number(v)); d[f[1]]=v; });
   if(!d.cust||!String(d.cust).trim()){ toast('거래처를 입력하세요'); return; }
   if(!d.bizRaw)d.bizRaw=d.biz||'';
   let no=c?c.no:null, id=c?c._id:null;
   if(!id){ no=(ROWS.reduce((m,r)=>Math.max(m,r.no||0),0))+1; d.no=no; }
-  await saveData(id,no,d,c?'수정 완료':'신규 등록 완료',no);
+  _ksSaving=true;
+  const _btn=document.getElementById('cf-save'); if(_btn){_btn.disabled=true;_btn.style.opacity=.6;}
+  try{ await saveData(id,no,d,c?'수정 완료':'신규 등록 완료',no); }
+  finally{ _ksSaving=false; if(_btn){_btn.disabled=false;_btn.style.opacity='';} }
 }
 async function deleteContract(no){ const c=ROWS.find(r=>r.no===no); if(!c||!c._id){toast('삭제할 수 없습니다');return;} if(!confirm('#'+no+' '+c.cust+' 계약을 삭제할까요?\n(삭제 후 아래 실행취소로 복구할 수 있어요)'))return;
   const d=Object.assign({},c); delete d._id; delete d._month; d._deleted=true;

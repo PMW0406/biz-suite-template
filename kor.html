@@ -617,6 +617,100 @@ table{font-variant-numeric:tabular-nums}
   .main .wt-band,.main .cdud,.main .kpi-card{break-inside:avoid}
 }
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap / row-gap / column-gap 만 조정한다.
+     배경 · 색상 · 테두리 · 폰트 선언 없음. 다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · 적용 범위는 앱 본문(.main) 으로 한정 —
+     런처(#launcher-screen) · 관리자 패널(#launcher-admin) · 로그인(#login-screen) 제외.
+   · 문서 끝 WT-DESIGN-POLISH-v2 가 뒤(늦은 캐스케이드)에 오므로
+     `.main.main` 으로 특이도를 한 단계 올려 결과를 확정한다.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 모바일(≤768px)에서는 압축 정도를 완화해 답답해지지 않게 한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* ─── 1. 페이지 프레임 : 상단 여백 · 하단 빈 공간(104px) 축소 ─────────────── */
+html body .main{padding:16px 24px 28px!important}
+
+/* ─── 2. 페이지 머리 3종(page-header / wt-mast / dash-hero) ───────────────── */
+html body .main.main .page-header{padding-bottom:9px!important;margin-bottom:12px!important}
+html body .main.main .wt-mast{padding-bottom:9px!important;margin-bottom:12px!important}
+html body .main.main .dash-hero{padding:0 0 9px!important;margin-bottom:12px!important}
+
+/* ─── 3. 필터바 · 탭 스트립 ──────────────────────────────────────────────── */
+html body .main.main .wt-filter{padding:7px 12px!important;margin-bottom:11px!important}
+html body .main.main .ana-tabs{margin-bottom:10px!important}
+
+/* ─── 4. 카드 · KPI · 밴드 내부 패딩 (KPI 대형카드는 과도 축소 금지) ──────── */
+html body .main.main .wt-band{padding:13px 18px!important;margin-bottom:12px!important}
+html body .main.main .cdud{padding:12px 16px!important}
+html body .main.main .card.p-3{padding:13px 15px!important}
+html body .main.main .card-body:not(.p-0):not(.p-1):not(.p-2){padding:12px 14px!important}
+html body .main.main .kpi-card{padding:14px 16px!important}
+html body .main.main .stat-card{padding:14px 16px!important;gap:13px!important}
+html body .main.main .kpi-label{margin-bottom:6px!important}
+html body .main.main .kpi-value{margin-bottom:4px!important}
+html body .main.main .kpi-sub{margin-bottom:6px!important}
+html body .main.main .wt-ct{margin-bottom:8px!important}
+html body .main.main .pipeline-board{gap:11px!important;padding-bottom:5px!important}
+html body .main.main .pipeline-col{padding:11px!important}
+html body .main.main .page>.card:not(:last-child){margin-bottom:12px!important}
+
+/* ─── 5. 부트스트랩 간격 유틸리티 (24px/16px → 14px/11px) ────────────────── */
+html body .main.main .mb-5{margin-bottom:20px!important}
+html body .main.main .mb-4,html body .main.main .page>.mb-4{margin-bottom:14px!important}
+html body .main.main .mb-3{margin-bottom:11px!important}
+html body .main.main .mt-5{margin-top:20px!important}
+html body .main.main .mt-4{margin-top:14px!important}
+html body .main.main .mt-3{margin-top:11px!important}
+html body .main.main .my-4{margin-top:14px!important;margin-bottom:14px!important}
+html body .main.main .p-4{padding:16px!important}
+html body .main.main .py-5{padding-top:20px!important;padding-bottom:20px!important}
+html body .main.main .py-4{padding-top:13px!important;padding-bottom:13px!important}
+html body .main.main .row{--bs-gutter-x:1rem}
+html body .main.main .row.g-4{--bs-gutter-x:.9rem;--bs-gutter-y:.9rem}
+html body .main.main .row.g-3{--bs-gutter-x:.75rem;--bs-gutter-y:.75rem}
+
+/* ─── 6. 표 행 높이 (11/14px → 7/11px) ──────────────────────────────────── */
+html body .main.main .table th{padding:7px 11px!important}
+html body .main.main .table td{padding:7px 11px!important}
+
+/* ─── 7. 빈 상태 블록(세로 30px → 18px) ─────────────────────────────────── */
+html body .main.main .text-center.text-muted.py-2,
+html body .main.main .text-center.text-muted.py-3,
+html body .main.main .text-center.text-muted.py-4,
+html body .main.main .text-center.text-muted.py-5{padding-top:18px!important;padding-bottom:18px!important}
+
+/* ─── 8. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) ─────────────── */
+html body .main.main [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+html body .main.main [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+html body .main.main [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+html body .main.main [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+html body .main.main [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+html body .main.main [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+html body .main.main [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+html body .main.main [style*="margin-top:32px"]{margin-top:16px!important}
+html body .main.main [style*="margin-top:28px"]{margin-top:15px!important}
+html body .main.main [style*="margin-top:24px"]{margin-top:14px!important}
+html body .main.main [style*="margin-top:20px"]{margin-top:13px!important}
+html body .main.main [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* ─── 9. 모바일(≤768px) : 압축 완화 ─────────────────────────────────────── */
+@media screen and (max-width:768px){
+  html body .main{padding:12px 12px 26px!important}
+  html body .main.main .card.p-3{padding:13px!important}
+  html body .main.main .card-body:not(.p-0):not(.p-1):not(.p-2){padding:12px!important}
+  html body .main.main .wt-band{padding:14px 13px!important}
+  html body .main.main .table th,html body .main.main .table td{padding:8px 9px!important}
+  html body .main.main .text-center.text-muted.py-2,
+  html body .main.main .text-center.text-muted.py-3,
+  html body .main.main .text-center.text-muted.py-4,
+  html body .main.main .text-center.text-muted.py-5{padding-top:22px!important;padding-bottom:22px!important}
+}
+</style>
 </head>
 <body>
 
@@ -6492,11 +6586,40 @@ function dealDrawerHtml(d){
         <div style="display:flex;gap:8px;margin-top:8px">
           <input id="deal-log-input" placeholder="상담/메모 입력 후 Enter" onkeydown="if(event.key==='Enter')addDealLog('${d.id}')" style="flex:1;padding:8px 11px;border:1px solid #e5e7eb;border-radius:9px;font-size:13px">
           <button onclick="addDealLog('${d.id}')" style="border:0;background:#2563eb;color:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer">기록</button>
-        </div></div></div>
+        </div></div>${_dealQuoteBlock(d)}</div>
     <div style="padding:14px 22px;border-top:1px solid #e5e7eb;display:flex;gap:8px;justify-content:flex-end">
       <button onclick="closeDealDrawer()" style="border:1px solid #e5e7eb;background:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer">닫기</button>
       <button onclick="closeDealDrawer();openSchedule({custName:'${esc(d.custName).replace(/'/g,"&#39;")}',sales:'${esc(d.sales||'').replace(/'/g,"&#39;")}',type:'방문',product:'${esc(d.model||'').replace(/'/g,"&#39;")}',content:'딜 관련 방문',dealId:'${d.id}'})" style="border:1px solid #bfdbfe;background:#eff6ff;color:#2563eb;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer"><i class="bi bi-calendar-plus"></i> 일정 잡기</button>
+      <button onclick="closeDealDrawer();_quoteFromDeal('${d.id}')" style="border:1px solid #ddd6fe;background:#f5f3ff;color:#6d28d9;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer"><i class="bi bi-file-earmark-text"></i> 견적 만들기</button>
       <button onclick="closeDealDrawer();editPipeline('${d.id}')" style="border:0;background:#2563eb;color:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer"><i class="bi bi-pencil"></i> 정보 수정</button></div>`;
+}
+/* ── 딜 ↔ 견적 연결 ── 명시적 quoteId 우선, 없으면 병원명으로 추정 ── */
+function _dealQuotesKor(d){
+  const qs=(DB.d.quotes||[]);
+  if(d.quoteId){ const hit=qs.filter(q=>q.id===d.quoteId); if(hit.length)return hit; }
+  if(!d.custName)return [];
+  return qs.filter(q=>q.custName===d.custName).sort((a,b)=>String(b.quoteDate||'').localeCompare(String(a.quoteDate||''))).slice(0,5);
+}
+function _dealQuoteBlock(d){
+  const qs=_dealQuotesKor(d); if(!qs.length)return '';
+  const col={'수주':'#0f766e','수락':'#0f766e','실주':'#dc2626','거절':'#dc2626'};
+  return `<div style="margin-top:14px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">📄 관련 견적 <span style="color:#64748b;font-weight:400">${d.quoteId?'연결됨':'같은 병원 기준'} · ${qs.length}건</span></div>
+    <div style="border:1px solid #e5e7eb;border-radius:9px;overflow:hidden">`+
+    qs.map(q=>`<div onclick="closeDealDrawer();openQuoteEditor('${esc(q.id).replace(/'/g,"&#39;")}')" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:8px 11px;border-bottom:1px solid #f1f5f9;font-size:12.5px">
+      <span style="color:#64748b;width:96px;flex-shrink:0">${esc(q.id||'')}</span>
+      <span style="flex:1;color:#94a3b8">${esc(q.quoteDate||'')}</span>
+      <b style="white-space:nowrap">${(Number(q.total)||0).toLocaleString('ko-KR')}원</b>
+      <span style="color:${col[q.status]||'#334155'};font-weight:700;width:44px;text-align:right;flex-shrink:0">${esc(q.status||'-')}</span></div>`).join('')+
+    `</div></div>`;
+}
+function _quoteFromDeal(id){
+  const d=(DB.d.pipeline||[]).find(x=>x.id===id); if(!d){ openQuoteEditor(null); return; }
+  _qFromDeal=id;
+  openQuoteEditor(null);
+  setTimeout(()=>{ try{
+    setV('qed-cust',d.custName||''); setV('qed-sales',d.sales||(typeof currentUserName==='function'?currentUserName():''));
+    if(d.model){ const nm=document.querySelector('#qed-rows tr [data-k="name"]'); if(nm){ nm.value=d.model; if(typeof _qedDevPick==='function')_qedDevPick(nm); } }
+  }catch(e){} },80);
 }
 
 // ── 전체 통합검색 ────────────────────────────────────────────────────
@@ -8487,7 +8610,7 @@ function saveQuote(){
 }
 
 // ══ 견적서 편집기(문서 위에서 직접 입력) ══
-let _qed={tmpl:'classic',editId:null};
+let _qed={tmpl:'classic',editId:null}, _qFromDeal=null;
 function _qedFmt(v){ return (Number(v)||0).toLocaleString('ko-KR'); }
 function _qedParse(v){ return Number(String(v==null?'':v).replace(/[^0-9.-]/g,''))||0; }
 function _qedA(s){ return String(s==null?'':s).replace(/"/g,'&quot;'); }
@@ -8676,7 +8799,14 @@ function _qedSave(){
   q.by=(idx>=0?(DB.d.quotes[idx].by||''):'')||((typeof currentUserName==='function'?currentUserName():'')||'').trim();   // 최초 작성자 유지
   try{ if(q.salesRank) localStorage.setItem('wt_qrank', q.salesRank); if(q.salesTeam) localStorage.setItem('wt_qteam', q.salesTeam); if(q.salesPhone) localStorage.setItem('wt_qphone', q.salesPhone); }catch(e){}   // 다음 견적 때 팀명·직급 기억
   if(idx>=0) DB.d.quotes[idx]=q; else DB.d.quotes.push(q);
-  DB.save('quotes').then(()=>{ try{bootstrap.Modal.getInstance(document.getElementById('quoteEditModal')).hide();}catch(e){} renderQuotes(); showToast('견적서 저장 완료', true); });
+  // 딜에서 만든 견적이면 양방향 연결 고정(병원명이 바뀌어도 추적 가능)
+  let _linkP=Promise.resolve();
+  if(idx<0&&_qFromDeal){
+    const di=(DB.d.pipeline||[]).findIndex(x=>x.id===_qFromDeal);
+    if(di>=0){ DB.d.pipeline[di]={...DB.d.pipeline[di],quoteId:q.id}; q.dealId=_qFromDeal; _linkP=DB.save('pipeline'); }
+    _qFromDeal=null;
+  }
+  Promise.all([DB.save('quotes'),_linkP]).then(()=>{ try{bootstrap.Modal.getInstance(document.getElementById('quoteEditModal')).hide();}catch(e){} renderQuotes(); showToast('견적서 저장 완료', true); });
 }
 function _qedPDF(){
   const q=_qedCollect();

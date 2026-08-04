@@ -294,6 +294,68 @@ td[colspan]{text-align:center;color:#9ca3af;padding:16px 10px;white-space:normal
 /* amber 대형 숫자는 가독 위해 한 톤 진하게(의미색 유지) */
 [style*="color:#f59e0b"]{color:#c2760a!important}
 </style>
+<style id="wt-density-v1">
+/* ══════════════════════════════════════════════════════════════════════════
+   WT-DENSITY-V1 (2026-08-04) — 여백 압축 · 정보 밀도 상향 레이어
+   · 간격 전용: margin / padding / gap 만 조정. 배경·색상·테마 선언 없음.
+     다크모드 미디어쿼리(색상 선호도 질의) 미사용 — 라이트 고정.
+   · @media screen 로 감싸 인쇄(@media print) 스타일은 원본 그대로 둔다.
+   · 기존 모바일 규칙(≤820 / ≤640)은 아래에서 동일 취지로 다시 선언해 보존한다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media screen{
+
+/* 1. 페이지 프레임 · 헤더 */
+header{padding:10px 20px}
+.wrap{margin:13px auto;padding:0 20px}
+
+/* 2. 보고서 블록 */
+.rpt{margin-bottom:13px}
+.rpt-head{padding:14px 20px}
+.rpt-head .total{margin-top:9px;padding:6px 13px}
+.sec{padding:13px 20px}
+.sec h3{margin-bottom:10px}
+
+/* 3. 차트 그리드 */
+.chart-grid{gap:12px;padding:13px}
+.chart-cell{padding:11px 13px}
+.chart-title{margin-bottom:8px}
+
+/* 4. 표 행 높이 (9/10px → 6/9px). table.mini(5px)·td[colspan] 은 특이도가 높아 원본 유지 */
+th,td{padding:6px 9px}
+
+/* 5. 빈 상태 블록(70px → 34px) */
+#empty{padding:34px 20px}
+#empty .big{margin-bottom:7px}
+
+/* 6. 인라인 세로 여백 압축(마크업 무수정 · 단일값 속성만) */
+.wrap [style*="margin-bottom:32px"]{margin-bottom:16px!important}
+.wrap [style*="margin-bottom:28px"]{margin-bottom:15px!important}
+.wrap [style*="margin-bottom:24px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:22px"]{margin-bottom:14px!important}
+.wrap [style*="margin-bottom:20px"]{margin-bottom:13px!important}
+.wrap [style*="margin-bottom:18px"]{margin-bottom:12px!important}
+.wrap [style*="margin-bottom:16px"]{margin-bottom:11px!important}
+.wrap [style*="margin-top:32px"]{margin-top:16px!important}
+.wrap [style*="margin-top:28px"]{margin-top:15px!important}
+.wrap [style*="margin-top:24px"]{margin-top:14px!important}
+.wrap [style*="margin-top:20px"]{margin-top:13px!important}
+.wrap [style*="margin-top:18px"]{margin-top:12px!important}
+
+}
+/* 7. 모바일 : 기존 규칙 취지 유지(압축 완화) */
+@media screen and (max-width:820px){
+  header{padding:12px 14px}
+  .wrap{padding:0 12px;margin:12px auto}
+  .rpt-head{padding:14px 15px}
+  .sec{padding:13px 13px}
+  .chart-grid{padding:11px;gap:11px}
+  .chart-cell{padding:11px}
+  #empty{padding:38px 16px}
+}
+@media screen and (max-width:640px){
+  th,td{padding:7px 6px}
+}
+</style>
 </head>
 <body>
 <div id="veil">불러오는 중...</div>
@@ -804,12 +866,18 @@ function renderReport(R){
   // 2. 당월 Progress
   if(p){
     h+=' <div class="sec"><h3><span class="n">2</span> 당월 매출 Progress</h3><div class="scroll"><table>';
-    h+='<tr><th>항목</th><th>당월 누적</th><th>월 목표</th><th>달성률</th><th>목표 진행률</th><th>잔여 매출</th></tr>';
+    h+='<tr><th>항목</th><th>당월 누적</th><th>월 목표</th><th>달성률</th><th>목표 진행률</th><th>잔여 매출</th><th>월말 착지 전망</th></tr>';
     function pRow(o,cls){ if(!o) return '';
       var ach=num(o.achieve); var bar='<div class="bar"><i style="width:'+Math.min(ach*100,100)+'%;background:'+(ach>=num(o.progress)?'#2563eb':'#f59e0b')+'"></i></div>';
-      return '<tr class="'+(cls||'')+'"><td class="lbl">'+esc(o.label||'')+'</td><td>'+fmtWon(o.cum)+'</td><td>'+fmtWon(o.target)+'</td><td>'+fmtPct(o.achieve)+' '+bar+'</td><td>'+fmtPct(o.progress)+'</td><td>'+fmtWon(o.remain)+'</td></tr>'; }
+      // 착지 전망 = 당월 누적 ÷ 영업일 진행률 (현재 페이스가 월말까지 유지된다고 가정)
+      var pg=num(o.progress), land=(pg>0.02?num(o.cum)/pg:null), tg=num(o.target);
+      var gap=(land!=null&&tg>0)?land-tg:null;
+      var lc=(gap==null?'#64748b':gap>=0?'#0f766e':'#dc2626');
+      var lh=(land==null?'<span class="muted">-</span>'
+        :'<b style="color:'+lc+'">'+fmtWon(land)+'</b>'+(gap==null?'':'<div style="font-size:10px;color:'+lc+'">목표 '+(gap>=0?'+':'−')+fmtWon(Math.abs(gap))+'</div>'));
+      return '<tr class="'+(cls||'')+'"><td class="lbl">'+esc(o.label||'')+'</td><td>'+fmtWon(o.cum)+'</td><td>'+fmtWon(o.target)+'</td><td>'+fmtPct(o.achieve)+' '+bar+'</td><td>'+fmtPct(o.progress)+'</td><td>'+fmtWon(o.remain)+'</td><td>'+lh+'</td></tr>'; }
     h+=pRow(p.domestic)+pRow(p.overseas)+pRow(p.total,'sum');
-    h+='</table></div><div class="sub">* 목표 진행률: 당월 경과 영업일 / 당월 총 영업일</div></div>';
+    h+='</table></div><div class="sub">* 목표 진행률: 당월 경과 영업일 / 당월 총 영업일 · 착지 전망: 현재 페이스(누적÷진행률)가 월말까지 유지될 경우</div></div>';
   }
 
   // 3-1 병원별
