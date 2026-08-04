@@ -6605,11 +6605,11 @@ function _dealQuoteBlock(d){
   const col={'수주':'#0f766e','수락':'#0f766e','실주':'#dc2626','거절':'#dc2626'};
   return `<div style="margin-top:14px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">📄 관련 견적 <span style="color:#64748b;font-weight:400">${d.quoteId?'연결됨':'같은 병원 기준'} · ${qs.length}건</span></div>
     <div style="border:1px solid #e5e7eb;border-radius:9px;overflow:hidden">`+
-    qs.map(q=>`<div onclick="closeDealDrawer();openQuoteEditor('${esc(q.id).replace(/'/g,"&#39;")}')" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:8px 11px;border-bottom:1px solid #f1f5f9;font-size:12.5px">
-      <span style="color:#64748b;width:96px;flex-shrink:0">${esc(q.id||'')}</span>
-      <span style="flex:1;color:#94a3b8">${esc(q.quoteDate||'')}</span>
+    qs.map(q=>`<div onclick="closeDealDrawer();openQuoteEditor('${_escH(q.id).replace(/'/g,"&#39;")}')" style="cursor:pointer;display:flex;gap:8px;align-items:center;padding:8px 11px;border-bottom:1px solid #f1f5f9;font-size:12.5px">
+      <span style="color:#64748b;width:96px;flex-shrink:0">${_escH(q.id||'')}</span>
+      <span style="flex:1;color:#94a3b8">${_escH(q.quoteDate||'')}</span>
       <b style="white-space:nowrap">${(Number(q.total)||0).toLocaleString('ko-KR')}원</b>
-      <span style="color:${col[q.status]||'#334155'};font-weight:700;width:44px;text-align:right;flex-shrink:0">${esc(q.status||'-')}</span></div>`).join('')+
+      <span style="color:${col[q.status]||'#334155'};font-weight:700;width:44px;text-align:right;flex-shrink:0">${_escH(q.status||'-')}</span></div>`).join('')+
     `</div></div>`;
 }
 function _quoteFromDeal(id){
