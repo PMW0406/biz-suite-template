@@ -2323,12 +2323,13 @@ function vHQ(){
     if(f.kind==='입금')_in12[m]=(_in12[m]||0)+(+f.amt||0); else _out12[m]=(_out12[m]||0)+(+f.amt||0);});
   var _ms=Object.keys(_out12).sort().slice(-6);
   var burn=_ms.length?_ms.reduce(function(a,m){return a+((_out12[m]||0)-(_in12[m]||0));},0)/_ms.length:0;
-  var runway=(burn>0&&bal>0)?(bal/burn):null;
+  var runway=(burn>0&&bal>0)?(bal/burn):null;   // 순유출일 때만 런웨이가 의미를 가짐
+  var netIn=(burn<0)?-burn:null;                 // 순유입이면 '월 순증'으로 정직하게 표기
   var sc=[
     {ic:'<i class="bi bi-bullseye"></i>',l:jt('목표 달성률','Target Achv.'),v:yTgt?achv.toFixed(0)+'%':'-',s:achv>=100?'g':achv>=70?'y':'r',sub:jt('누적','YTD')+' '+fmS(ySale)+' / '+fmS(yTgt),why:jt('목표 대비 70% 미만','below 70% of target'),go:"setView('report')"},
     {ic:'<i class="bi bi-cash-stack"></i>',l:jt('수금률','Collection'),v:ySale?payRate.toFixed(0)+'%':'-',s:payRate>=90?'g':payRate>=65?'y':'r',sub:jt('수금','collected')+' '+fmS(yPay),why:jt('수금률 90% 미만','collection under 90%'),go:"setView('sales')"},
     {ic:'<i class="bi bi-hourglass-split"></i>',l:jt('미수 건전성','AR Health'),v:fmS(out),s:ar90pct<10?'g':ar90pct<30?'y':'r',sub:'90d+ '+ar90pct.toFixed(0)+'% · '+(dso!=null?'DSO '+dso+jt('일','d'):fmS(ag90)),why:jt('90일+ 장기미수 비중 높음','high 90d+ AR ratio'),go:"setView('ar')"},
-    {ic:'<i class="bi bi-bank"></i>',l:jt('자금 여력','Liquidity'),v:fmS(bal),s:(runway!=null&&runway<3)?'r':(bal>50000?'g':bal>0?'y':'r'),sub:fkrw(bal)+(runway!=null?' · '+jt('런웨이 ','runway ')+runway.toFixed(1)+jt('개월','mo'):''),why:jt('자금 잔액 낮음 / 런웨이 3개월 미만','low cash / runway under 3 months'),go:"setView('funds')"},
+    {ic:'<i class="bi bi-bank"></i>',l:jt('자금 여력','Liquidity'),v:fmS(bal),s:(runway!=null&&runway<3)?'r':(bal>50000?'g':bal>0?'y':'r'),sub:fkrw(bal)+(runway!=null?' · '+jt('런웨이 ','runway ')+runway.toFixed(1)+jt('개월','mo'):(netIn!=null?' · '+jt('월 순증 +','net +')+fmS(netIn):'')),why:jt('자금 잔액 낮음 / 런웨이 3개월 미만','low cash / runway under 3 months'),go:"setView('funds')"},
     {ic:'<i class="bi bi-box-seam"></i>',l:jt('재고 상태','Inventory'),v:low.length?low.length+jt('개 부족',' low'):jt('정상','OK'),s:low.length===0?'g':low.length<=2?'y':'r',sub:jt('전체','of')+' '+(D.items||[]).length+jt('품목',' items'),why:jt('안전재고 미달 품목','items below safety'),go:"setView('inv')"}
   ];
   var reds=sc.filter(function(x){return x.s==='r';}),yels=sc.filter(function(x){return x.s==='y';});
