@@ -225,6 +225,32 @@ table.rt{width:100%;border-collapse:collapse;font-size:12.5px;min-width:700px}
 }
 #pdf-fab{position:fixed;right:18px;bottom:18px;z-index:9990;background:#0f172a;color:#fff;border:0;border-radius:24px;padding:10px 16px;font-size:12.5px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:6px}
 canvas.chart{max-height:300px}
+/* 잔여 미수금 히어로 + 처리 레인 */
+.hero{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px;box-shadow:var(--sh);margin-bottom:16px}
+.hero .hv{font-size:38px;font-weight:800;color:var(--ink);line-height:1}
+.hero .formula{font-size:12.5px;color:var(--muted);margin-top:8px}
+.hero .formula b{color:var(--ink)}
+.sbar{display:flex;height:28px;border-radius:9px;overflow:hidden;margin-top:14px;border:1px solid var(--line)}
+.sbar>div{cursor:pointer;min-width:6px;transition:opacity .15s}
+.sbar>div:hover{opacity:.8}
+.sbar-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin-top:10px}
+.sbar-leg .li{display:flex;align-items:center;gap:6px;cursor:pointer}
+.sbar-leg .sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px;margin-bottom:18px}
+.lane{background:#fff;border:1px solid var(--line);border-top:4px solid var(--brand);border-radius:14px;padding:14px 16px 10px;box-shadow:var(--sh)}
+.lane .ln-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:800;color:var(--ink);font-size:13.5px}
+.lane .ln-amt{font-size:20px;font-weight:800;white-space:nowrap}
+.lane .ln-sub{font-size:11px;color:var(--muted);margin:3px 0 8px}
+.ln-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px dashed var(--line);font-size:12.5px;cursor:pointer;color:var(--body)}
+.ln-row:last-child{border-bottom:0}
+.ln-row:hover{background:#f8fafc}
+.ln-row b{color:var(--ink);white-space:nowrap}
+.ln-row .zero{color:var(--muted);font-weight:600}
+/* 회계 요약 스트립 */
+.accstrip{display:flex;gap:22px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 18px;box-shadow:var(--sh);margin-bottom:18px;font-size:12.5px;color:var(--muted)}
+.accstrip b{color:var(--ink);font-size:14px;margin-left:4px}
+.accstrip .as{cursor:pointer}
+.accstrip .as:hover b{color:var(--brand)}
 /* 조치 필요(액션) 카드 */
 .acts{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-bottom:16px}
 .act{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:12px;padding:12px 14px;box-shadow:var(--sh);cursor:pointer}
@@ -494,6 +520,41 @@ table{font-variant-numeric:tabular-nums}
   .rt tbody tr td[colspan]:not(.l):not(.lbl){padding:20px 12px}
 }
 </style>
+<script>/* WT_FORCEPW_V1 — 임시비번 강제변경 (자동주입 스니펫, 개별 수정 금지) */
+(function(){
+var MASTER='pmw0406@gmail.com';var shown=false;
+function ov(){if(document.getElementById('wtfpw'))return document.getElementById('wtfpw');
+var d=document.createElement('div');d.id='wtfpw';
+d.style.cssText='position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#0f172a,#1e2140);display:none;align-items:center;justify-content:center;font-family:inherit';
+d.innerHTML='<div style="background:#fff;border-radius:20px;padding:34px 30px;width:min(340px,92vw);box-shadow:0 25px 60px rgba(0,0,0,.4)"><div style="text-align:center;margin-bottom:16px"><div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#fff;font-size:24px">\uD83D\uDD12</div><div style="font-size:19px;font-weight:800;color:#111827">\uBE44\uBC00\uBC88\uD638 \uBCC0\uACBD \uD544\uC694</div><div style="font-size:12px;color:#6b7280;margin-top:6px;line-height:1.5">\uBCF4\uC548\uC744 \uC704\uD574 \uC784\uC2DC \uBE44\uBC00\uBC88\uD638\uB97C<br>\uBCF8\uC778\uB9CC \uC544\uB294 \uBE44\uBC00\uBC88\uD638\uB85C \uBCC0\uACBD\uD574\uC8FC\uC138\uC694.</div></div><input id="wtfpw-a" type="password" placeholder="\uC0C8 \uBE44\uBC00\uBC88\uD638 (6\uC790 \uC774\uC0C1)" style="width:100%;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 12px;font-size:14px;color:#111827;margin-bottom:10px;box-sizing:border-box"><input id="wtfpw-b" type="password" placeholder="\uC0C8 \uBE44\uBC00\uBC88\uD638 \uD655\uC778" style="width:100%;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 12px;font-size:14px;color:#111827;margin-bottom:12px;box-sizing:border-box"><div id="wtfpw-e" style="font-size:12px;color:#dc2626;margin-bottom:10px;display:none"></div><button id="wtfpw-btn" style="width:100%;background:#0d9488;color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30</button><div style="text-align:center;margin-top:12px"><span id="wtfpw-out" style="font-size:12px;color:#9ca3af;cursor:pointer">\uB098\uC911\uC5D0 \uD558\uAE30 (\uB85C\uADF8\uC544\uC6C3)</span></div></div>';
+document.body.appendChild(d);
+d.querySelector('#wtfpw-btn').onclick=submit;
+d.querySelector('#wtfpw-out').onclick=function(){try{_sb.auth.signOut();}catch(e){}location.reload();};
+d.querySelector('#wtfpw-b').onkeydown=function(ev){if(ev.key===String.fromCharCode(69,110,116,101,114))submit();};
+return d;}
+async function submit(){var a=document.getElementById('wtfpw-a').value,b=document.getElementById('wtfpw-b').value,e=document.getElementById('wtfpw-e');e.style.display='none';
+if(a.length<6){e.textContent='\uBE44\uBC00\uBC88\uD638\uB294 6\uC790 \uC774\uC0C1\uC774\uC5B4\uC57C \uD569\uB2C8\uB2E4.';e.style.display='block';return;}
+if(a!==b){e.textContent='\uBE44\uBC00\uBC88\uD638\uAC00 \uC77C\uCE58\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.';e.style.display='block';return;}
+var btn=document.getElementById('wtfpw-btn');btn.disabled=true;btn.textContent='\uBCC0\uACBD \uC911...';
+try{var r=await _sb.auth.updateUser({password:a});if(r.error){btn.disabled=false;btn.textContent='\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30';e.textContent='\uC624\uB958: '+r.error.message;e.style.display='block';return;}
+var s=(await _sb.auth.getSession()).data.session;if(s)await _sb.from('crm_profiles').update({temp_pw:null}).eq('id',s.user.id);location.reload();
+}catch(ex){btn.disabled=false;btn.textContent='\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30';e.textContent='\uC624\uB958: '+ex;e.style.display='block';}}
+async function chk(){if(shown)return;try{var s=(await _sb.auth.getSession()).data.session;if(!s||!s.user)return;if(s.user.email===MASTER)return;
+var r=await _sb.from('crm_profiles').select('temp_pw').eq('id',s.user.id).single();
+if(r.data&&r.data.temp_pw&&String(r.data.temp_pw).trim()){shown=true;ov().style.display='flex';setTimeout(function(){var i=document.getElementById('wtfpw-a');if(i)i.focus();},100);}}catch(e){}}
+function boot(){if(typeof _sb==='undefined'||!_sb||!_sb.auth){setTimeout(boot,300);return;}chk();try{_sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_IN')setTimeout(chk,300);});}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();</script>
+<script>/* WT_BFGUARD_V1 — bfcache 복원 시 세션·계정 재검증 (자동주입 스니펫, 개별 수정 금지) */
+(function(){
+var uid=null;
+function cap(){ if(typeof _sb==='undefined'||!_sb||!_sb.auth){ setTimeout(cap,300); return; } try{ _sb.auth.getSession().then(function(r){ if(r&&r.data&&r.data.session) uid=r.data.session.user.id; }).catch(function(){}); }catch(e){} }
+cap();
+window.addEventListener('pageshow', function(e){
+  if(!e.persisted) return;
+  try{ _sb.auth.getSession().then(function(r){ var s=r&&r.data&&r.data.session; if(!s || (uid && s.user && s.user.id!==uid)) location.reload(); }).catch(function(){ location.reload(); }); }catch(err){ location.reload(); }
+});
+})();</script>
 </head>
 <body>
 <div id="load"><i class="bi bi-arrow-repeat" style="margin-right:8px"></i>불러오는 중...</div>
@@ -643,8 +704,13 @@ function applyEdits(){
     const c=Object.assign({},r);['mgr','plan','payNote','opinion','type','nextDate','nextAct'].forEach(k=>{if(e[k]!==undefined&&e[k]!=='')c[k]=e[k];});if(e.log&&e.log.length)c._log=e.log;c._edited=true;
     if(e.mgr!==undefined&&e.mgr!==''&&r.mgr&&r.mgr!==e.mgr)c._mgrConflict=r.mgr;
     return c;});
-  M=((RAW.mgmt&&RAW.mgmt.items)||[]).map(i=>{const e=EDITS[i.rid];if(!e)return i;
-    const c=Object.assign({},i);if(e.cls!==undefined&&e.cls!=='')c.cls=e.cls;if(e.mgmtOp!==undefined&&e.mgmtOp!=='')c.opinion=e.mgmtOp;if(e.cls||e.mgmtOp)c._edited=true;return c;});
+  M=((RAW.mgmt&&RAW.mgmt.items)||[]).map(i=>{
+    const e=EDITS[i.rid];
+    const c=Object.assign({},i);
+    if(e){if(e.cls!==undefined&&e.cls!=='')c.cls=e.cls;if(e.mgmtOp!==undefined&&e.mgmtOp!=='')c.opinion=e.mgmtOp;if(e.cls||e.mgmtOp)c._edited=true;}
+    const er=i.rid?E.find(x=>x.rid===i.rid):null;
+    if(er){c.mgr=er.mgr;if(er.year)c.year=er.year;if(er.elapsed)c.elapsed=er.elapsed;c.memo=er.memo;}
+    return c;});
   const h=document.getElementById('hdr-asof');if(h&&RAW.asOf)h.textContent='기준 '+RAW.asOf+' · '+(RAW.rows||[]).length+'건';
 }
 const VIEWS=['home','list','mgmt','wo','trend','report','brief','upload'];
@@ -656,11 +722,11 @@ function afterLoad(){
   if(raw!==v){try{history.replaceState(null,'','#'+v);}catch(e){}}
   applyView(v);try{_wtRenderSwitcher();}catch(e){}
   document.querySelectorAll('#topnav a').forEach(a=>{a.onclick=()=>setView(a.dataset.v);});
-  if(ME!==RESTRICTED_USER)RESTRICTED_VIEWS.forEach(rv=>{const t=document.querySelector('#topnav a[data-v="'+rv+'"]');if(t)t.style.display='none';});
+  if(ME!==RESTRICTED_USER&&ME!==_WT_MASTER)RESTRICTED_VIEWS.forEach(rv=>{const t=document.querySelector('#topnav a[data-v="'+rv+'"]');if(t)t.style.display='none';});
 }
 function setView(v){if(('#'+v)===location.hash){applyView(v);}else{location.hash='#'+v;}}
 window.addEventListener('hashchange',()=>{const v=(location.hash||'').replace(/^#/,'');if(VIEWS.indexOf(v)>=0)applyView(v);});
-function applyView(v){if(RESTRICTED_VIEWS.indexOf(v)>=0&&ME!==RESTRICTED_USER){v='home';try{history.replaceState(null,'','#home');}catch(e){}}curView=v;closeModal();
+function applyView(v){if(RESTRICTED_VIEWS.indexOf(v)>=0&&ME!==RESTRICTED_USER&&ME!==_WT_MASTER){v='home';try{history.replaceState(null,'','#home');}catch(e){}}curView=v;closeModal();
   document.querySelectorAll('#topnav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));
   render();}
 
@@ -711,78 +777,122 @@ function render(){
 // ═══ 대시보드 ═══
 function viewHome(){
   const k=kpis(),dl=weeklyDelta(),lc=lastChange();
-  // ── 조치 필요(이번 주 할 일) ──
-  const delay=(k.ta['지연채권']||{cnt:0,rows:[],ar:0});
-  const noMgr=E.filter(isNoMgr),noPlan=E.filter(isNoPlan);
+  const ta=k.ta;
+  const norm=ta['정상채권']||{cnt:0,ar:0,prov:0};
+  const delay=ta['지연채권']||{cnt:0,ar:0,prov:0};
+  const lt=ta['장기체납채권']||{cnt:0,ar:0,prov:0};
+  const ltCover=Math.min(lt.prov,lt.ar), ltRisk=Math.max(0,lt.ar-lt.prov);
+  const noMgr=E.filter(isNoMgr),noPlan=E.filter(isNoPlan),due=E.filter(isFollowDue),mgrConf=E.filter(hasMgrConflict);
   const review=M.filter(i=>i.cls==='검토필요');
-  const acts=[
-    {t:'⏰ 지연채권 수금',n:delay.cnt+'건 · '+eok2(delay.ar),d:'Q3말 전액 수금 목표 — 담당자 접촉',c:'#b45309',fn:`goListType('지연채권')`},
-    {t:'🧭 검토필요 분류 확정',n:review.length+'건 · '+eok2(review.reduce((s,i)=>s+i.ar,0)),d:'집중관리/관리제외 판단 필요',c:'#b91c1c',fn:`_mf.cls='검토필요';setView('mgmt')`},
-    {t:'👤 담당 미배정',n:noMgr.length+'건 · '+eok2(noMgr.reduce((s,r)=>s+r.ar,0)),d:'수금 책임자 지정 필요',c:'#6d28d9',fn:`goListSpecial('noMgr')`},
-    {t:'📝 수금계획 미기재',n:noPlan.length+'건 · '+eok2(noPlan.reduce((s,r)=>s+r.ar,0)),d:'지연·체납 채권 계획 입력(행 클릭 편집)',c:'#0891b2',fn:`goListSpecial('noPlan')`}
-  ];
-  const fdue=E.filter(isFollowDue);
-  if(fdue.length)acts.splice(1,0,{t:'📅 조치일 도래',n:fdue.length+'건 · '+eok2(fdue.reduce((s,r)=>s+r.ar,0)),d:'수금계획상 오늘까지 조치 예정 — 지금 처리',c:'#dc2626',fn:`goListSpecial('follow')`});
-  const woc=woCands();const wocUn=woc.filter(x=>!woOf(x.r));
-  acts.push({t:'🧾 손실처리 후보',n:woc.length+'건 · '+eok2(woc.reduce((s,x)=>s+x.r.ar,0)),d:wocUn.length?('미검토 '+wocUn.length+'건 — 대손 품의 검토'):'전건 검토 완료 — 품의서 출력 가능',c:'#334155',fn:`setView('wo')`});
-  const mgrConf=E.filter(hasMgrConflict);
-  if(mgrConf.length)acts.push({t:'🔀 담당자 값 충돌',n:mgrConf.length+'건 · '+eok2(mgrConf.reduce((s,r)=>s+r.ar,0)),d:'재무팀 파일 값과 사이트 입력값이 달라요 — 확인 필요',c:'#dc2626',fn:`goListSpecial('mgrConflict')`});
-  let h='<div class="sec">조치 필요 <span class="hint">이번 주 할 일 — 카드 클릭 → 해당 목록</span></div>';
-  h+='<div class="grid acts">'+acts.map(a=>`<div class="act" style="border-left-color:${a.c}" onclick="${a.fn}"><div class="t">${a.t}</div><div class="n">${a.n}</div><div class="d">${a.d}</div></div>`).join('')+'</div>';
-  // ── 이번 주 변동 ──
+  const normStale=E.filter(r=>r.type==='정상채권'&&r.ar>0&&agingIdx(r)>=1);
+  const woc=woCands();
+  const wSum=a=>a.reduce((s,x)=>s+x.r.ar,0);
+  const wocUn=woc.filter(x=>!woOf(x.r));
+  const wocCf=woc.filter(x=>{const w=woOf(x.r);return w&&w.st==='confirm';});
+  const wocSue=woc.filter(x=>{const w=woOf(x.r);return w&&(w.st==='sue'||w.st==='hold');});
+  const wocT1=woc.filter(x=>woTier(x.r).n===1),wocT2=woc.filter(x=>woTier(x.r).n===2);
+  let h='';
+  // ═ 히어로: 잔여 미수금 = 처리해야 할 돈 ═
+  h+=`<div class="hero">
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:baseline">
+      <div><div class="hint" style="font-weight:700">잔여 미수금 (처리 대상)</div><div class="hv">${eok(k.arSum)}</div></div>
+      <div style="font-size:13px;font-weight:700;color:${dl&&dl.ar>0?'#C44E52':'#15803d'}">${dl?((dl.ar>=0?'전주 대비 +':'전주 대비 ')+eok2(dl.ar)):''}</div>
+      <div style="margin-left:auto;text-align:right"><div class="hint">이 중 내가 움직여야 하는 돈</div><div style="font-size:22px;font-weight:800;color:#C44E52">${eok2(delay.ar-delay.prov+ltRisk)}</div><div class="hint">지연 ${eok2(delay.ar)} + 장기체납 잔여 ${eok2(ltRisk)}</div></div>
+    </div>
+    <div class="sbar">
+      <div style="flex:${norm.ar};background:#4C72B0" title="정상채권 ${eok2(norm.ar)}" onclick="goListType('정상채권')"></div>
+      <div style="flex:${delay.ar};background:#DD8452" title="지연채권 ${eok2(delay.ar)}" onclick="goListType('지연채권')"></div>
+      <div style="flex:${ltCover};background:#8172B2" title="장기체납(충당 커버) ${eok2(ltCover)}" onclick="goListType('장기체납채권')"></div>
+      <div style="flex:${Math.max(ltRisk,k.arSum*0.004)};background:#C44E52" title="장기체납 잔여위험 ${eok2(ltRisk)}" onclick="goListType('장기체납채권')"></div>
+    </div>
+    <div class="sbar-leg">
+      <span class="li" onclick="goListType('정상채권')"><span class="sw" style="background:#4C72B0"></span>걷힐 돈(정상) <b>${eok2(norm.ar)}</b> · ${norm.cnt}건</span>
+      <span class="li" onclick="goListType('지연채권')"><span class="sw" style="background:#DD8452"></span>걷을 돈(지연) <b>${eok2(delay.ar)}</b> · ${delay.cnt}건</span>
+      <span class="li" onclick="goListType('장기체납채권')"><span class="sw" style="background:#8172B2"></span>정리할 돈(충당 커버) <b>${eok2(ltCover)}</b></span>
+      <span class="li" onclick="goListType('장기체납채권')"><span class="sw" style="background:#C44E52"></span>잔여 위험 <b>${eok2(ltRisk)}</b></span>
+    </div>
+    <div class="formula">산식: 총 채권 발생 <b>${eok(k.tot)}</b> − 수금 완료 <b>${eok(k.coll)}</b> − 대손처리(기확정) <b>${eok2(k.bad)}</b> = 잔여 미수금 <b>${eok(k.arSum)}</b></div>
+  </div>`;
+  // ═ 이번 주 변동 ═
   if(lc){
     const nColl=lc.coll.length+lc.red.length;
     h+=`<div class="card" style="padding:14px 18px"><div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center">
       <b style="color:var(--ink);font-size:13.5px">📅 이번 주 변동 <span class="hint">(${lc.prev} → ${lc.d})</span></b>
       <span class="delta-pill" style="background:#dcfce7;color:#15803d">💰 수금 ${nColl}건 · ${eok2(lc.sumColl)}</span>
-      <span class="delta-pill" style="background:#dbeafe;color:#1d4ed8">🆕 신규 미수 ${lc.new.length}건 · ${eok2(lc.sumNew)}</span>
-      ${lc.adj&&lc.adj.length?`<span class="delta-pill" style="background:#fef3c7;color:#b45309">⚠ 취소·조정 ${lc.adj.length}건 · ${eok2(lc.sumAdj)}</span>`:''}
-      <span class="delta-pill" style="background:${(dl&&dl.ar>0)?'#fee2e2;color:#b91c1c':'#dcfce7;color:#15803d'}">잔액 ${dl?(dl.ar>=0?'+':'')+eok2(dl.ar):'-'}</span>
+      <span class="delta-pill" style="background:#E4EBF3;color:#4C72B0">🆕 신규 미수 ${lc.new.length}건 · ${eok2(lc.sumNew)}</span>
+      ${lc.adj&&lc.adj.length?`<span class="delta-pill" style="background:#F5E6DA;color:#DD8452">⚠ 취소·조정 ${lc.adj.length}건 · ${eok2(lc.sumAdj)}</span>`:''}
+      <span class="delta-pill" style="background:${(dl&&dl.ar>0)?'#F3E1E2;color:#C44E52':'#dcfce7;color:#15803d'}">잔액 ${dl?(dl.ar>=0?'+':'')+eok2(dl.ar):'-'}</span>
       <button class="btn" style="margin-left:auto" onclick="openChange(${(RAW.changes||[]).length-1})">내역 보기</button></div></div>`;
   }
-  const kpiCards=[
-    {l:'총 채권 발생',v:eok(k.tot),s:E.length+'건 · 2020~2026',fn:`goListAll()`},
-    {l:'수금 완료',v:eok(k.coll),s:'수금률 '+pct(k.collRate)+' (대손포함 '+pct(k.collRateB)+')',c:'var(--ok)'},
-    {l:'잔여 미수금',v:eok(k.arSum),s:dl?('전주 대비 '+(dl.ar>=0?'+':'')+eok2(dl.ar)):'',c:'#b45309',go:'list'},
-    {l:'실질 관리필요',v:eok2(k.risk),s:'지연+장기체납 잔여위험 (정상채권 제외)',c:'var(--bad)',go:'mgmt'},
-    {l:'대손충당금 설정',v:eok2(k.prov),s:'장기체납 대상 기설정',fn:`goListSpecial('hasProv')`}
-  ];
-  h+='<div class="grid kpis">'+kpiCards.map(c=>`<div class="kpi ${(c.go||c.fn)?'clk':''}" ${c.fn?`onclick="${c.fn}"`:c.go?`onclick="setView('${c.go}')"`:''}><div class="l">${c.l}</div><div class="v" ${c.c?`style="color:${c.c}"`:''}>${c.v}</div><div class="s">${c.s||''}</div></div>`).join('')+'</div>';
-  // 성격별 분류
-  h+='<div class="card"><div class="sec">잔여 미수금 성격별 분류 <span class="hint">행 클릭 → 해당 채권 목록</span></div><div class="tbl-scroll"><table class="rt"><thead><tr><th class="lbl">채권 분류</th><th>건수</th><th>미수채권금액</th><th>대손충당금</th><th>실질 위험액</th><th class="lbl">비고</th></tr></thead><tbody>';
-  TYPE_ORDER.forEach(t=>{const a=k.ta[t];if(!a)return;
-    h+=`<tr class="hl" onclick="goListType('${t}')"><td class="lbl">${typeChip(t)} <span class="hint">${TYPES[t].d}</span></td><td>${a.cnt}</td><td><b>${fmt(a.ar)}</b></td><td>${fmt(a.prov)}</td><td>${fmt(a.ar-a.prov)}</td><td class="lbl hint">${t==='정상채권'?'당해 매출 — 리스사·카드 수금 진행':t==='지연채권'?'Q3 전액 수금 목표 — 담당자 접촉 중':t==='장기체납채권'?'충당금 기설정 — 잔여분만 위험':t==='회수불가채권'?'대손처리 완료':''}</td></tr>`;});
-  h+=`<tr class="grand"><td class="lbl">합계</td><td>${E.length}</td><td>${fmt(k.arSum)}</td><td>${fmt(k.prov)}</td><td>${fmt(k.arSum-k.prov)}</td><td></td></tr></tbody></table></div></div>`;
-  // 추이 + 연도별 (2컬럼)
-  h+='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">';
-  h+='<div class="card"><div class="sec">주간 미수잔액 추이 <span class="hint">억원 · 클릭 → 주간 추이</span></div><canvas id="ch-trend" class="chart" onclick="setView(\'trend\')"></canvas></div>';
-  h+='<div class="card"><div class="sec">매출연도별 미수율 <span class="hint">미수채권 ÷ 원화금액 · 막대 클릭 시 해당 연도</span></div><canvas id="ch-year" class="chart"></canvas></div>';
+  // ═ 처리 경로 3레인 ═
+  const row=(fn,label,val,zero)=>`<div class="ln-row" onclick="${fn}"><span>${label}</span><b class="${zero?'zero':''}">${val}</b></div>`;
+  h+='<div class="lanes">';
+  // A. 걷을 돈
+  h+=`<div class="lane" style="border-top-color:#DD8452">
+    <div class="ln-h"><span>💰 걷을 돈 — 수금 실행</span><span class="ln-amt" style="color:#DD8452">${eok2(delay.ar)}</span></div>
+    <div class="ln-sub">지연채권 ${delay.cnt}건 · Q3말 전액 수금 목표</div>
+    ${row("goListSpecial('follow')",'📌 팔로우업 도래(연락할 곳)',due.length?due.length+'건 · '+eok2(due.reduce((s,r)=>s+r.ar,0)):'0건',!due.length)}
+    ${row("goListSpecial('noPlan')",'📝 수금계획 미기재',noPlan.length?noPlan.length+'건 · '+eok2(noPlan.reduce((s,r)=>s+r.ar,0)):'0건',!noPlan.length)}
+    ${row("goListSpecial('noMgr')",'👤 담당 미배정',noMgr.length?noMgr.length+'건 · '+eok2(noMgr.reduce((s,r)=>s+r.ar,0)):'0건',!noMgr.length)}
+    ${row("_mf.cls='검토필요';setView('mgmt')",'🧭 검토필요 분류 확정',review.length?review.length+'건 · '+eok2(review.reduce((s,i)=>s+i.ar,0)):'0건',!review.length)}
+    ${mgrConf.length?row("goListSpecial('mgrConflict')",'🔀 담당자 값 충돌',mgrConf.length+'건',false):''}
+    ${row("goListType('지연채권')",'→ 지연채권 전체 목록','보기',false)}
+  </div>`;
+  // B. 정리할 돈
+  h+=`<div class="lane" style="border-top-color:#8172B2">
+    <div class="ln-h"><span>🧾 정리할 돈 — 손실처리</span><span class="ln-amt" style="color:#8172B2">${eok2(wSum(woc))}</span></div>
+    <div class="ln-sub">대손 후보 ${woc.length}건 · 확정분 손실영향 ${eok2(wocCf.reduce((s,x)=>s+Math.max(0,x.r.ar-x.r.prov),0))}</div>
+    ${row("setView('wo')",'⬜ 미검토',wocUn.length?wocUn.length+'건 · '+eok2(wSum(wocUn)):'0건 — 전건 검토됨',!wocUn.length)}
+    ${row("_woF=1;setView('wo')",'🔴 충당완료급(바로 처리 가능)',wocT1.length+'건 · '+eok2(wSum(wocT1)),!wocT1.length)}
+    ${row("_woF=2;setView('wo')",'🟠 회수의문급(개별 검토)',wocT2.length+'건 · '+eok2(wSum(wocT2)),!wocT2.length)}
+    ${row("setView('wo')",'✅ 대손 확정(품의 대기)',wocCf.length?wocCf.length+'건 · '+eok2(wSum(wocCf)):'0건',!wocCf.length)}
+    ${wocSue.length?row("setView('wo')",'⚖ 소송·보류',wocSue.length+'건 · '+eok2(wSum(wocSue)),false):''}
+    ${row("_woMode='doc';setView('wo')",'→ 품의서 생성','열기',false)}
+  </div>`;
+  // C. 걷힐 돈
+  h+=`<div class="lane" style="border-top-color:#4C72B0">
+    <div class="ln-h"><span>⏳ 걷힐 돈 — 정상 수금 감시</span><span class="ln-amt" style="color:#4C72B0">${eok2(norm.ar)}</span></div>
+    <div class="ln-sub">정상채권 ${norm.cnt}건 · 리스사·카드 수금 진행 — 정체만 감시</div>
+    ${lc?row('openChange('+((RAW.changes||[]).length-1)+')','💰 이번 주 수금',(lc.coll.length+lc.red.length)+'건 · '+eok2(lc.sumColl),false):''}
+    ${lc?row('openChange('+((RAW.changes||[]).length-1)+')','🆕 이번 주 신규 미수',lc.new.length+'건 · '+eok2(lc.sumNew),!lc.new.length):''}
+    ${row("goListSpecial('staleNormal')",'⚠ 6개월+ 정체(지연 전환 후보)',normStale.length?normStale.length+'건 · '+eok2(normStale.reduce((s,r)=>s+r.ar,0)):'0건',!normStale.length)}
+    ${row("goListType('정상채권')",'→ 정상채권 전체 목록','보기',false)}
+  </div>`;
   h+='</div>';
-  // 담당자별 + 연령(aging) 2컬럼
+  // ═ 담당자별 + 연령 ═
   const ma=mgrAgg(),ab=agingBuckets();
   h+='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">';
-  const _avgR=(function(){const t=ma.reduce((s,x)=>s+(x.amt||0),0),c=ma.reduce((s,x)=>s+(x.collAmt||0),0);return t>0?c/t:null;})();
-  h+='<div class="card"><div class="sec">담당자별 미수 현황 <span class="hint">잔액 보유 기준 · 회수율은 담당 전체 채권(수금완료 포함) 기준 · 행 클릭 → 목록</span></div><div class="tbl-scroll" style="max-height:340px;overflow-y:auto"><table class="dt"><thead><tr><th class="l">담당자</th><th>건수</th><th>미수잔액</th><th>회수율</th><th>지연·체납</th><th>계획미기재</th></tr></thead><tbody>'
-    +ma.map(x=>{
-      const rt=x.rate, rc=(rt==null?'#94a3b8':rt>=0.9?'#0f766e':rt>=0.75?'#334155':'#dc2626');
-      const dev=(rt!=null&&_avgR!=null)?(rt-_avgR)*100:null;
-      const rcell=(rt==null?'<span class="muted">-</span>'
-        :`<b style="color:${rc}">${(rt*100).toFixed(1)}%</b>`+(dev==null||Math.abs(dev)<0.05?'':`<div style="font-size:10px;color:${dev>=0?'#0f766e':'#dc2626'}">평균 ${dev>=0?'+':'−'}${Math.abs(dev).toFixed(1)}p</div>`));
-      return `<tr class="clk" onclick="goListMgr('${escJs(x.mgr)}')"><td class="l"><b>${esc(x.mgr)}</b></td><td>${x.cnt}</td><td><b>${fmt(x.ar)}</b></td><td>${rcell}</td><td>${x.delay?`<span class="chip" style="background:#fef3c7;color:#b45309">${x.delay}건</span>`:'-'}</td><td>${x.noplan?`<span class="chip" style="background:#e0f2fe;color:#0369a1">${x.noplan}건</span>`:'-'}</td></tr>`;
-    }).join('')
+  h+='<div class="card"><div class="sec">담당자별 미수 현황 <span class="hint">잔액 보유 기준 · 행 클릭 → 목록</span></div><div class="tbl-scroll" style="max-height:340px;overflow-y:auto"><table class="dt"><thead><tr><th class="l">담당자</th><th>건수</th><th>미수잔액</th><th>회수율</th><th>지연·체납</th><th>계획미기재</th></tr></thead><tbody>'
+    +ma.map(x=>`<tr class="clk" onclick="goListMgr('${escJs(x.mgr)}')"><td class="l"><b>${esc(x.mgr)}</b></td><td>${x.cnt}</td><td><b>${fmt(x.ar)}</b></td><td>${x.rate==null?'<span class="muted">-</span>':`<b style="color:${x.rate>=0.9?'#0f766e':x.rate>=0.75?'#334155':'#C44E52'}">${(x.rate*100).toFixed(1)}%</b>`}</td><td>${x.delay?`<span class="chip" style="background:#F5E6DA;color:#DD8452">${x.delay}건</span>`:'-'}</td><td>${x.noplan?`<span class="chip" style="background:#E4EBF3;color:#4C72B0">${x.noplan}건</span>`:'-'}</td></tr>`).join('')
     +'</tbody></table></div></div>';
   h+='<div class="card"><div class="sec">채권 연령(Aging) <span class="hint">매출일 기준 경과 · 클릭 → 목록</span></div>';
   const abMax=Math.max(...ab.map(x=>x.ar),1);
   h+=ab.map((x,i)=>`<div class="clk" style="cursor:pointer;padding:8px 2px;border-bottom:1px dashed var(--line)" onclick="goListAging(${i})">
     <div style="display:flex;justify-content:space-between;font-size:12.5px"><b style="color:var(--ink)">${x.k}</b><span><b>${eok2(x.ar)}</b> <span class="hint">· ${x.cnt}건</span></span></div>
-    <div class="prog"><div style="width:${(100*x.ar/abMax).toFixed(1)}%;background:${i===0?'#2563eb':i===1?'#0891b2':i===2?'#b45309':'#b91c1c'}"></div></div></div>`).join('');
+    <div class="prog"><div style="width:${(100*x.ar/abMax).toFixed(1)}%;background:${i===0?'#4C72B0':i===1?'#8172B2':i===2?'#DD8452':'#C44E52'}"></div></div></div>`).join('');
   h+='<div class="hint" style="margin-top:8px">1년 이상 구간은 회수 난도가 급격히 오릅니다 — 6~12개월 구간에서 조치하세요.</div></div>';
   h+='</div>';
-  // 관리대상 Top10
+  // ═ 추이 + 연도별 ═
+  h+='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">';
+  h+='<div class="card"><div class="sec">주간 미수잔액 추이 <span class="hint">억원 · 클릭 → 주간 추이</span></div><canvas id="ch-trend" class="chart" onclick="setView(\'trend\')"></canvas></div>';
+  h+='<div class="card"><div class="sec">매출연도별 미수율 <span class="hint">미수채권 ÷ 원화금액</span></div><canvas id="ch-year" class="chart"></canvas></div>';
+  h+='</div>';
+  // ═ Top10 ═
   const top=M.slice().sort((a,b)=>b.ar-a.ar).slice(0,10);
-  h+='<div class="card"><div class="sec">우선 관리대상 Top 10 <span class="hint">미수금액 기준 · 행 클릭 → 상세</span></div><div class="tbl-scroll"><table class="dt"><thead><tr><th>#</th><th class="l">거래처명</th><th>미수금액(원)</th><th class="l">분류</th><th class="l">담당자</th><th class="l">경과</th></tr></thead><tbody>';
-  top.forEach((i,n)=>{h+=`<tr class="clk" onclick="openRow('${i.rid}')"><td>${n+1}</td><td class="l"><b>${esc(i.name)}</b></td><td><b>${fmt(i.ar)}</b></td><td class="l">${clsChip(i.cls)}</td><td class="l">${esc(i.mgr)}</td><td class="l hint">${esc(i.elapsed)}</td></tr>`;});
+  h+='<div class="card"><div class="sec">우선 관리대상 Top 10 <span class="hint">미수금액 기준 · 행 클릭 → 상세</span></div><div class="tbl-scroll"><table class="dt"><thead><tr><th>#</th><th class="l">거래처명</th><th>미수금액(원)</th><th class="l">분류</th><th class="l">담당자</th><th class="l">조치 상태</th></tr></thead><tbody>';
+  top.forEach((i,n)=>{
+    const r=E.find(x=>x.rid===i.rid);
+    const st=r?(woOf(r)?woChip(woOf(r).st):(r.nextDate?`<span class="chip" style="background:${r.nextDate<=today()?'#F3E1E2':'#dcfce7'};color:${r.nextDate<=today()?'#C44E52':'#15803d'}">조치일 ${r.nextDate}</span>`:`<span class="chip" style="background:#f8fafc;color:#94a3b8;border:1px dashed #cbd5e1">계획 없음</span>`)):'-';
+    h+=`<tr class="clk" onclick="openRow('${i.rid}')"><td>${n+1}</td><td class="l"><b>${esc(i.name)}</b></td><td><b>${fmt(i.ar)}</b></td><td class="l">${clsChip(i.cls)}</td><td class="l">${esc(i.mgr)}</td><td class="l">${st}</td></tr>`;});
   h+='</tbody></table></div></div>';
+  // ═ 회계 요약 스트립 ═
+  h+=`<div class="accstrip">
+    <span class="as" onclick="goListAll()">총 채권 발생<b>${eok(k.tot)}</b> <span class="hint">${E.length}건</span></span>
+    <span class="as">수금 완료<b style="color:var(--ok)">${eok(k.coll)}</b> <span class="hint">수금률 ${pct(k.collRate)} · 대손포함 ${pct(k.collRateB)}</span></span>
+    <span class="as">대손처리(기확정)<b>${eok2(k.bad)}</b></span>
+    <span class="as" onclick="goListSpecial('hasProv')">대손충당금<b>${eok2(k.prov)}</b> <span class="hint">장기체납 기설정</span></span>
+    <span class="hint" style="margin-left:auto;align-self:center">상세 표는 임원 보고 탭 참조</span>
+  </div>`;
   return h;
 }
 function goListType(t){_f={q:'',type:t,year:'',mgr:'',hasAr:(t==='정상채권'||t==='지연채권'||t==='장기체납채권'),sort:'ar',dir:-1,special:'',aging:'',group:false};setView('list');}
@@ -794,10 +904,10 @@ function goListYear(y){_f={q:'',type:'',year:String(y),mgr:'',hasAr:false,sort:'
 function drawHomeCharts(){
   const w=(RAW.weekly||[]);
   const el1=document.getElementById('ch-trend');
-  if(el1&&w.length){_charts.push(new Chart(el1,_yFit({type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'미수잔액 '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false},ticks:{maxTicksLimit:10}}},maintainAspectRatio:false}})));}
+  if(el1&&w.length){_charts.push(new Chart(el1,_yFit({type:'line',data:{labels:w.map(x=>x.d.slice(5)),datasets:[{data:w.map(x=>+(x.ar/1e8).toFixed(2)),borderColor:'#4C72B0',backgroundColor:'rgba(76,114,176,.10)',borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25,fill:true}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'미수잔액 '+c.parsed.y+'억'}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'억'}},x:{grid:{display:false},ticks:{maxTicksLimit:10}}},maintainAspectRatio:false}})));}
   const ya=yearAgg(E);const ys=Object.keys(ya).sort();
   const el2=document.getElementById('ch-year');
-  if(el2){_charts.push(new Chart(el2,_yFit({type:'bar',data:{labels:ys,datasets:[{data:ys.map(y=>+(100*ya[y].ar/(ya[y].amt||1)).toFixed(1)),backgroundColor:'#2563eb',borderRadius:4,maxBarThickness:44}]},options:{onClick:function(e,els){if(els&&els.length){goListYear(ys[els[0].index]);}},onHover:function(e,els){if(e&&e.native&&e.native.target)e.native.target.style.cursor=(els&&els.length)?'pointer':'default';},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const y=ys[c.dataIndex],a=ya[y];return['미수율 '+c.parsed.y+'%','매출 '+eok(a.amt)+' · 미수 '+eok(a.ar)+' · '+a.cnt+'건'];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},maintainAspectRatio:false}})));}
+  if(el2){_charts.push(new Chart(el2,_yFit({type:'bar',data:{labels:ys,datasets:[{data:ys.map(y=>+(100*ya[y].ar/(ya[y].amt||1)).toFixed(1)),backgroundColor:'#4C72B0',borderRadius:4,maxBarThickness:44}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const y=ys[c.dataIndex],a=ya[y];return['미수율 '+c.parsed.y+'%','매출 '+eok(a.amt)+' · 미수 '+eok(a.ar)+' · '+a.cnt+'건'];}}}},scales:{y:{grid:{color:'#f1f3f5'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},maintainAspectRatio:false}})));}
 }
 
 // ═══ 채권 목록 ═══
@@ -813,6 +923,7 @@ function listRows(){
   if(_f.special==='follow')a=a.filter(isFollowDue);
   if(_f.special==='hasProv')a=a.filter(r=>r.prov>0);
   if(_f.special==='mgrConflict')a=a.filter(hasMgrConflict);
+  if(_f.special==='staleNormal')a=a.filter(r=>r.type==='정상채권'&&r.ar>0&&agingIdx(r)>=1);
   if(_f.aging!==''&&_f.aging!=null)a=a.filter(r=>r.ar>0&&agingIdx(r)===_f.aging);
   if(_f.q){const q=_f.q.toLowerCase();a=a.filter(r=>((r.name||'')+(r.memo||'')+(r.mgr||'')+(r.payNote||'')).toLowerCase().indexOf(q)>=0);}
   const k=_f.sort,d=_f.dir;
@@ -820,7 +931,7 @@ function listRows(){
   return a;
 }
 function setSort(k){if(_f.sort===k)_f.dir*=-1;else{_f.sort=k;_f.dir=-1;}render();}
-const SPECIAL_LBL={noMgr:'담당 미배정',noPlan:'수금계획 미기재',follow:'팔로우업 도래',hasProv:'대손충당금 설정됨',mgrConflict:'담당자 값 충돌'};
+const SPECIAL_LBL={noMgr:'담당 미배정',noPlan:'수금계획 미기재',follow:'팔로우업 도래',hasProv:'대손충당금 설정됨',mgrConflict:'담당자 값 충돌',staleNormal:'정상채권 6개월+ 정체'};
 function viewList(){
   const rows=listRows();
   const years=[...new Set(E.map(r=>String(r.year)).filter(Boolean))].sort();
@@ -887,11 +998,11 @@ function viewMgmt(){
   const tot=M.reduce((s,i)=>s+i.ar,0);
   h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">관리대상 합계 <span class="hint">(잔액 보유 채권)</span></div><div class="v">${M.length}건</div><div class="s">${eok2(tot)}</div></div></div>`;
   h+=`<div class="bar-row"><input class="inp" style="width:230px" placeholder="거래처·담당자 검색" value="${esc(_mf.q)}" oninput="_mf.q=this.value;render()">${_mf.cls?`<button class="btn" onclick="_mf.cls='';render()">필터 해제: ${_mf.cls} ✕</button>`:''}<span class="hint">${items.length}건 표시 · 분류·의견은 행 클릭 후 수정</span></div>`;
-  h+='<div class="card" style="padding:0;overflow:auto;max-height:70vh"><table class="dt"><thead><tr><th>#</th><th class="l">거래처명</th><th class="l">발생</th><th class="l">경과</th><th>미수금액(원)</th><th class="l">담당자</th><th class="l">현재상태</th><th class="l">분류</th><th class="l">분류 근거</th><th class="l">관리 의견</th></tr></thead><tbody>';
-  h+=items.map((i,n)=>`<tr class="clk" onclick="openRow('${i.rid}')"><td>${n+1}</td><td class="l"><b>${esc(i.name)}</b>${i._edited?' <span class="chip" style="background:#ecfdf5;color:#047857">수정</span>':''}</td><td class="l">${esc(i.year)}</td><td class="l hint">${esc(i.elapsed)}</td><td><b>${fmt(i.ar)}</b></td><td class="l">${esc(i.mgr)}</td><td class="l">${typeChip(i.state)}</td><td class="l">${clsChip(i.cls)}</td><td class="l memo" title="${esc(i.basis)}">${esc(i.basis)}</td><td class="l memo" title="${esc(i.opinion)}">${esc(i.opinion)}</td></tr>`).join('')
-    ||'<tr><td colspan="10" style="text-align:center;padding:26px;color:var(--muted)">해당 없음</td></tr>';
+  h+='<div class="card" style="padding:0;overflow:auto;max-height:70vh"><table class="dt"><thead><tr><th>#</th><th class="l">거래처명</th><th class="l">적요</th><th class="l">발생</th><th class="l">경과</th><th>미수금액(원)</th><th class="l">담당자</th><th class="l">현재상태</th><th class="l">분류</th><th class="l">분류 근거</th><th class="l">관리 의견</th></tr></thead><tbody>';
+  h+=items.map((i,n)=>`<tr class="clk" onclick="openRow('${i.rid}')"><td>${n+1}</td><td class="l"><b>${esc(i.name)}</b>${i._edited?' <span class="chip" style="background:#ecfdf5;color:#047857">수정</span>':''}</td><td class="l memo" title="${esc(i.memo)}">${esc(i.memo)}</td><td class="l">${esc(i.year)}</td><td class="l hint">${esc(i.elapsed)}</td><td><b>${fmt(i.ar)}</b></td><td class="l">${esc(i.mgr)}</td><td class="l">${typeChip(i.state)}</td><td class="l">${clsChip(i.cls)}</td><td class="l memo" title="${esc(i.basis)}">${esc(i.basis)}</td><td class="l memo" title="${esc(i.opinion)}">${esc(i.opinion)}</td></tr>`).join('')
+    ||'<tr><td colspan="11" style="text-align:center;padding:26px;color:var(--muted)">해당 없음</td></tr>';
   h+='</tbody></table></div>';
-  h+=`<div class="hint" style="margin-top:8px">분류 기준: 관리제외=대손·매출취소 처리 예정(실익 없음) · 집중관리=수금 실행 대상 · 검토필요=분류 판단 필요 (작성 ${(RAW.mgmt&&RAW.mgmt.asOf)||'-'} · 원본 기준일 ${(RAW.mgmt&&RAW.mgmt.base)||'-'})</div>`;
+  h+=`<div class="hint" style="margin-top:8px">분류 기준: 관리제외=대손·매출취소 처리 예정(실익 없음) · 집중관리=수금 실행 대상 · 검토필요=분류 판단 필요 · 담당자·경과는 항상 최신 데이터 반영, 분류·근거·의견은 관리대상 시트 작성 시점 기준(작성 ${(RAW.mgmt&&RAW.mgmt.asOf)||'-'} · 원본 기준일 ${(RAW.mgmt&&RAW.mgmt.base)||'-'})</div>`;
   return h;
 }
 
@@ -912,16 +1023,30 @@ function woReasons(r){
   else if(yrs>=3&&r.type==='장기체납채권')rs.push(yrs+'년 경과');
   return rs;
 }
-// 우선순위 등급: 금융기관 자산건전성 5단계 분류(정상/요주의/고정/회수의문/추정손실) 관행을 차용해
-// "사건 발생여부 + 충당금 커버율 + 최근 상환활동" 3요소로 손실처리 후보를 3등급으로 재분류.
+// 우선순위 등급: "사건 발생여부 + 충당금 커버율" 2요소로 손실처리 후보를 2등급으로 분류.
+// (예전엔 "최근 상환활동"으로 별도 요주의급을 뒀으나, 관리대상 메모의 "최근입금 확인" 문구가
+// 실제로는 몇 년째 방치된 경우가 확인되어 폐지.)
+// ⚠재확인 배지는 충당완료급에만 붙인다 — 회수의문급은 등급 자체가 이미 "개별검토 필요"라
+// 배지가 중복이지만, 충당완료급은 원래 "안전하니 바로 처리"라는 뜻이라 입금기록이 있으면
+// 그 전제가 흔들리는 것이므로 별도로 짚어줄 가치가 있다.
 function woTier(r){
   const mi=M.find(i=>i.rid===r.rid);
   const txt=((mi&&mi.basis)||'')+' '+(r.plan||'')+' '+(r.payNote||'');
-  if(/분납|입금|완제/.test(txt))return{n:3,l:'요주의급',s:'활성 상환중·보류 권장',c:'#0369a1',bg:'#e0f2fe'};
+  const hasPayKeyword=/분납|입금|완제/.test(txt);
+  const collAgeDays=r.collDate?(new Date((RAW&&RAW.asOf)||today())-new Date(r.collDate))/86400000:null;
+  const recentColl=collAgeDays!=null&&collAgeDays<=365;
   const hasEvent=/폐업/.test(r.name)||r.trait==='폐업'||r.trait==='도주'||(mi&&mi.cls==='관리제외');
   const fullProv=r.ar>0&&r.prov>=r.ar*0.999;
-  if(hasEvent&&fullProv)return{n:1,l:'추정손실급',s:'최우선 손실처리',c:'#b91c1c',bg:'#fee2e2'};
-  return{n:2,l:'회수의문급',s:'개별검토 필요',c:'#b45309',bg:'#fef3c7'};
+  if(hasEvent&&fullProv){
+    let warn='';
+    if(hasPayKeyword){
+      warn=recentColl?`⚠ 최근 수금 있음(${r.collDate}) — 상환 진행 중일 수 있어 확정 전 재확인 권장`
+        :r.collDate?`⚠ 마지막 수금일(${r.collDate})이 1년 이상 지남 — 실제 상환여부 재확인 필요`
+        :'⚠ 입금기록 메모는 있으나 수금일 데이터 없음 — 재확인 필요';
+    }
+    return{n:1,l:'충당완료급',s:'최우선 처리',c:'#b91c1c',bg:'#fee2e2',warn};
+  }
+  return{n:2,l:'회수의문급',s:'개별검토 필요',c:'#b45309',bg:'#fef3c7',warn:''};
 }
 function woCands(){
   return E.filter(r=>r.ar>0).map(r=>({r,rs:woReasons(r)})).filter(x=>{
@@ -946,28 +1071,26 @@ function viewWo(){
   const sum=a=>a.reduce((s,x)=>s+x.r.ar,0);
   const addLoss=a=>a.reduce((s,x)=>s+Math.max(0,x.r.ar-x.r.prov),0);
   const byTier=n=>cands.filter(x=>woTier(x.r).n===n);
-  const t1=byTier(1),t2=byTier(2),t3=byTier(3);
-  const done=cands.filter(x=>woOf(x.r)),undone=cands.filter(x=>!woOf(x.r));
+  const t1=byTier(1),t2=byTier(2);
+  const undone=cands.filter(x=>!woOf(x.r));
   document.getElementById('pt-a').innerHTML='<button class="btn" onclick="woCsv()"><i class="bi bi-download"></i> CSV</button> <button class="btn pri" onclick="_woMode=\'doc\';render()"><i class="bi bi-file-earmark-text"></i> 품의서 생성</button>';
   if(_woMode==='doc')return viewWoDoc(cf);
-  let h='<div class="editable-note" style="background:#f0f9ff;border-color:#bae6fd;color:#075985">회의 후속: 회수 실익이 없는 채권을 선별해 <b>대손처리 품의 리스트</b>를 확정합니다. 근거는 원본 데이터(폐업·회수불가·충당금·관리분류)에서 자동 수집되며, 최종 판단(확정/소송/보류/제외)만 지정하면 품의서가 만들어집니다.<br>우선순위 등급(추정손실급/회수의문급/요주의급)은 금융기관 자산건전성 분류 관행을 참고해 사건발생여부·충당금커버율·최근상환활동으로 매긴 참고값입니다.</div>';
+  let h='<div class="editable-note" style="background:#f0f9ff;border-color:#bae6fd;color:#075985">회의 후속: 회수 실익이 없는 채권을 선별해 <b>대손처리 품의 리스트</b>를 확정합니다. 근거는 원본 데이터(폐업·회수불가·충당금·관리분류)에서 자동 수집되며, 최종 판단(확정/소송/보류/제외)만 지정하면 품의서가 만들어집니다.<br>우선순위 등급(충당완료급/회수의문급)은 사건발생여부·충당금커버율로 매긴 참고값이며, 입금기록이 있는 건은 별도 ⚠ 재확인 배지로 표시됩니다.</div>';
   h+='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px">';
-  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===''?'outline:2px solid #64748b':''}" onclick="_woF='';render()"><div class="l">후보 전체</div><div class="v">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))} · 미검토 ${undone.length}건</div></div>`;
-  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===1?'outline:2px solid #b91c1c':''}" onclick="_woF=1;render()"><div class="l">🔴 추정손실급</div><div class="v" style="color:#b91c1c">${t1.length}건</div><div class="s">미수잔액 ${eok2(sum(t1))} · 손실영향 ${eok2(addLoss(t1))}</div></div>`;
-  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===2?'outline:2px solid #b45309':''}" onclick="_woF=2;render()"><div class="l">🟠 회수의문급</div><div class="v" style="color:#b45309">${t2.length}건</div><div class="s">미수잔액 ${eok2(sum(t2))} · 손실영향 ${eok2(addLoss(t2))}</div></div>`;
-  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF===3?'outline:2px solid #0369a1':''}" onclick="_woF=3;render()"><div class="l">🔵 요주의급</div><div class="v" style="color:#0369a1">${t3.length}건</div><div class="s">미수잔액 ${eok2(sum(t3))} · 보류 권장</div></div>`;
-  h+=`<div class="kpi clk" style="flex:1 1 190px;min-width:0;${_woF==='done'?'outline:2px solid #047857':''}" onclick="_woF='done';render()"><div class="l">✅ 처리 진행</div><div class="v">${done.length}/${cands.length}</div><div class="s">${undone.length}건 미검토 남음</div></div>`;
+  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===''?'outline:2px solid #64748b':''}" onclick="_woF='';render()"><div class="l">후보 전체</div><div class="v">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))} · 미검토 ${undone.length}건</div></div>`;
+  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===1?'outline:2px solid #b91c1c':''}" onclick="_woF=1;render()"><div class="l">🔴 충당완료급</div><div class="v" style="color:#b91c1c">${t1.length}건</div><div class="s">미수잔액 ${eok2(sum(t1))} · 손실영향 ${eok2(addLoss(t1))}</div></div>`;
+  h+=`<div class="kpi clk" style="flex:0 0 190px;min-width:0;${_woF===2?'outline:2px solid #b45309':''}" onclick="_woF=2;render()"><div class="l">🟠 회수의문급</div><div class="v" style="color:#b45309">${t2.length}건</div><div class="s">미수잔액 ${eok2(sum(t2))} · 손실영향 ${eok2(addLoss(t2))}</div></div>`;
   h+='</div>';
-  const rows=_woF===''?cands:_woF==='done'?done:cands.filter(x=>woTier(x.r).n===_woF);
+  const rows=_woF===''?cands:cands.filter(x=>woTier(x.r).n===_woF);
   const opts=st=>`<option value="">미검토</option>`+Object.keys(WO_ST).map(k=>`<option value="${k}" ${st===k?'selected':''}>${WO_ST[k].l}</option>`).join('');
-  h+='<div class="card" style="padding:0;overflow:auto;max-height:66vh"><table class="dt"><thead><tr><th>#</th><th class="l">거래처</th><th class="l">매출일</th><th>미수잔액</th><th>충당금</th><th>추가손실</th><th class="l">근거 (자동수집)</th><th class="l">담당</th><th class="l">상태</th></tr></thead><tbody>';
+  h+='<div class="card" style="padding:0;overflow:auto;max-height:66vh"><table class="dt"><thead><tr><th>#</th><th class="l">거래처</th><th class="l">적요</th><th class="l">매출일</th><th>미수잔액</th><th>충당금</th><th>추가손실</th><th class="l">근거 (자동수집)</th><th class="l">담당</th><th class="l">상태</th></tr></thead><tbody>';
   h+=rows.map((x,i)=>{const r=x.r,w=woOf(r),tier=woTier(r);return `<tr class="clk" onclick="openRow('${r.rid}')">
-    <td>${i+1}</td><td class="l"><b>${esc(r.name)}</b> <span class="chip" style="background:${tier.bg};color:${tier.c};font-size:10px" title="${esc(tier.s)}">${tier.l}</span></td><td class="l">${esc(r.saleDate)}</td>
+    <td>${i+1}</td><td class="l"><b>${esc(r.name)}</b> <span class="chip" style="background:${tier.bg};color:${tier.c};font-size:10px" title="${esc(tier.s)}">${tier.l}</span>${tier.warn?` <span class="chip" style="background:#fee2e2;color:#b91c1c;font-size:10px" title="${esc(tier.warn)}">⚠ 재확인</span>`:''}</td><td class="l memo" title="${esc(r.memo)}">${esc(r.memo)}</td><td class="l">${esc(r.saleDate)}</td>
     <td><b>${fmt(r.ar)}</b></td><td>${fmt(r.prov)}</td><td style="color:${r.ar-r.prov>1000?'#b91c1c':'inherit'};font-weight:700">${fmt(Math.max(0,r.ar-r.prov))}</td>
     <td class="l" style="white-space:normal;min-width:220px">${x.rs.map(s=>`<span class="chip" style="background:#f1f5f9;color:#475569;margin:1px 2px 1px 0">${esc(s)}</span>`).join('')||'-'}</td>
     <td class="l">${esc(r.mgr)}</td>
     <td class="l" onclick="event.stopPropagation()"><select class="sel" style="padding:4px 6px;font-size:11.5px" onchange="woSet('${r.rid}',this.value)">${opts(w&&w.st)}</select>${w?`<div class="hint" style="margin-top:2px">${esc((w._by||'').split('@')[0])} ${esc(w._at||'')}</div>`:''}</td></tr>`;}).join('')
-    ||'<tr><td colspan="9" style="text-align:center;padding:26px;color:var(--muted)">해당 상태의 채권이 없습니다</td></tr>';
+    ||'<tr><td colspan="10" style="text-align:center;padding:26px;color:var(--muted)">해당 상태의 채권이 없습니다</td></tr>';
   h+='</tbody></table></div>';
   h+='<div class="hint" style="margin-top:8px">근거는 참고용 자동 수집입니다(소멸시효 등 법적 판단 아님). 확정 전 재무팀·법무팀의 대손 요건(폐업 증빙·시효 등) 확인이 필요합니다. 상태 변경은 즉시 저장되며 엑셀 재업로드에도 유지됩니다.</div>';
   return h;
@@ -994,8 +1117,8 @@ function viewWoDoc(cf){
 }
 function woCsv(){
   const cands=woCands();
-  const head=['상태','우선순위등급','거래처명','사업자번호','매출일','년도','미수잔액','충당금','추가손실','근거','담당자','채권유형','검토자','검토일'];
-  const body=cands.map(x=>{const r=x.r,w=woOf(r);return [w?WO_ST[w.st].l:'미검토',woTier(r).l,r.name,r.bizno,r.saleDate,r.year,r.ar,r.prov,Math.max(0,r.ar-r.prov),x.rs.join(' · '),r.mgr,r.type,w?w._by:'',w?w._at:''];});
+  const head=['상태','우선순위등급','재확인필요','거래처명','사업자번호','매출일','년도','미수잔액','충당금','추가손실','근거','담당자','채권유형','검토자','검토일'];
+  const body=cands.map(x=>{const r=x.r,w=woOf(r),tier=woTier(r);return [w?WO_ST[w.st].l:'미검토',tier.l,tier.warn||'',r.name,r.bizno,r.saleDate,r.year,r.ar,r.prov,Math.max(0,r.ar-r.prov),x.rs.join(' · '),r.mgr,r.type,w?w._by:'',w?w._at:''];});
   const csv='﻿'+[head].concat(body).map(a=>a.map(x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const bl=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(bl);
   const a=document.createElement('a');a.href=u;a.download='손실처리검토_'+(RAW.asOf||today())+'.csv';a.click();URL.revokeObjectURL(u);
@@ -1122,9 +1245,9 @@ function buildQA(k,delay,lt){
      '폐업·연락 불가 거래처가 대부분으로 법적 절차(소송 회수 또는 대손 확정)가 필요해 법무팀과 협의 중입니다. 이미 '+pct(lt.ar?lt.prov/lt.ar:0)+'는 충당금으로 설정해 재무적 영향은 제한적입니다.'],
     ['2026년 미수율('+pct(y26.amt?y26.ar/y26.amt:0)+')이 다른 해보다 높아 보이는데 문제 없습니까?',
      '2026년은 당해 매출이라 아직 결제 주기가 남아있는 리스·카드 결제 건이 많기 때문입니다. 실제 부실이 아니라 정상적인 수금 사이클상의 미수율입니다.'],
-    (function(){const wc=woCands();const t1=wc.filter(x=>woTier(x.r).n===1).length,t2=wc.filter(x=>woTier(x.r).n===2).length,t3=wc.filter(x=>woTier(x.r).n===3).length;
-      return ['손실처리 후보 '+wc.length+'건 중 추정손실급/회수의문급/요주의급은 어떻게 나눈 겁니까?',
-        '금융기관이 대출채권 건전성을 정상/요주의/고정/회수의문/추정손실 5단계로 나누는 방식을 참고해, 사건 발생 여부(폐업·관리제외)·충당금 커버율·최근 상환활동 3가지 데이터 기준으로 자동 분류했습니다. 추정손실급 '+t1+'건은 충당금이 이미 100% 설정돼 확정해도 추가 손실이 없고, 회수의문급 '+t2+'건은 충당금이 덜 쌓여 개별 확인이 필요하며, 요주의급 '+t3+'건은 최근 분납·입금 이력이 있어 회수 가능성이 남아있는 건입니다.'];})(),
+    (function(){const wc=woCands();const t1=wc.filter(x=>woTier(x.r).n===1).length,t2=wc.filter(x=>woTier(x.r).n===2).length,warned=wc.filter(x=>woTier(x.r).warn).length;
+      return ['손실처리 후보 '+wc.length+'건 중 충당완료급/회수의문급은 어떻게 나눈 겁니까?',
+        '사건 발생 여부(폐업·관리제외)와 충당금 커버율 2가지 데이터 기준으로 자동 분류했습니다. 충당완료급 '+t1+'건은 충당금이 이미 100% 설정돼 확정해도 추가 손실이 없는 건이고, 회수의문급 '+t2+'건은 충당금이 덜 쌓여 있어 확정 시 실제 손실이 발생하니 개별 확인이 필요한 건입니다(이쪽은 등급 자체가 이미 검토 대상이라 별도 배지는 안 붙입니다). 충당완료급 중 '+warned+'건은 "안전하다"고 판단했음에도 입금·분납 기록이 있어 ⚠ 재확인 배지를 붙였는데, 실제 수금일을 확인해보니 1년 넘게 지난 옛 기록이라 등급은 그대로 두고 배지로만 주의를 줍니다.'];})(),
     ['대시보드의 채권 연령(Aging) "3년 이상" 건수와 손실처리 후보 건수가 같아 보이는데 같은 건입니까?',
      '아닙니다. 채권 연령은 단순히 매출일 기준 경과기간만으로 나눈 것이고, 손실처리 후보는 폐업·회수불가·충당금 설정 등 여러 조건을 함께 만족해야 들어갑니다. 우연히 건수가 비슷하게 나올 수는 있지만 서로 다른 기준의 별개 집계입니다.'],
     (function(){var arCnt=E.filter(function(r){return r.ar>0;}).length,wcN=woCands().length;
@@ -1145,7 +1268,8 @@ function viewBrief(){
   const sum=a=>a.reduce((s,x)=>s+x.r.ar,0);
   const addLoss=a=>a.reduce((s,x)=>s+Math.max(0,x.r.ar-x.r.prov),0);
   const byTier=n=>cands.filter(x=>woTier(x.r).n===n);
-  const t1=byTier(1),t2=byTier(2),t3=byTier(3);
+  const t1=byTier(1),t2=byTier(2);
+  const warned=cands.filter(x=>woTier(x.r).warn);
   document.getElementById('pt-a').innerHTML='<button class="btn" onclick="window.print()"><i class="bi bi-printer"></i> 인쇄</button>';
   let h='<div class="editable-note" style="background:#fef2f2;border-color:#fecaca;color:#991b1b">🔒 이 화면은 본인 계정에만 보입니다. 발표 준비용 상세 자료이며, 실시간 상태 변경은 <a onclick="setView(\'wo\')" style="color:inherit;text-decoration:underline;cursor:pointer">손실처리</a> 메뉴에서 하세요.</div>';
   h+='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px">';
@@ -1153,19 +1277,20 @@ function viewBrief(){
   h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">잔여 미수금</div><div class="v" style="color:#b45309">${eok(k.arSum)}</div><div class="s">전체의 ${pct(k.tot?k.arSum/k.tot:0)}</div></div>`;
   h+=`<div class="kpi" style="flex:1 1 200px;min-width:0"><div class="l">손실처리 후보</div><div class="v" style="color:#b91c1c">${cands.length}건</div><div class="s">예상손실 ${eok2(addLoss(cands))}</div></div>`;
   h+='</div>';
-  h+='<div class="card"><div class="sec">손실처리 '+cands.length+'건 — 3단계 우선순위</div>';
+  h+='<div class="card"><div class="sec">손실처리 '+cands.length+'건 — 2단계 우선순위</div>';
   h+='<div class="kpis" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px">';
-  h+=`<div class="kpi" style="flex:1 1 220px;min-width:0"><div class="l">🔴 추정손실급 — 최우선 처리</div><div class="v" style="color:#b91c1c">${t1.length}건</div><div class="s">미수잔액 ${eok2(sum(t1))} · 손실영향 ${eok2(addLoss(t1))}</div></div>`;
+  h+=`<div class="kpi" style="flex:1 1 220px;min-width:0"><div class="l">🔴 충당완료급 — 최우선 처리</div><div class="v" style="color:#b91c1c">${t1.length}건</div><div class="s">미수잔액 ${eok2(sum(t1))} · 손실영향 ${eok2(addLoss(t1))}</div></div>`;
   h+=`<div class="kpi" style="flex:1 1 220px;min-width:0"><div class="l">🟠 회수의문급 — 개별검토</div><div class="v" style="color:#b45309">${t2.length}건</div><div class="s">미수잔액 ${eok2(sum(t2))} · 손실영향 ${eok2(addLoss(t2))}</div></div>`;
-  h+=`<div class="kpi" style="flex:1 1 220px;min-width:0"><div class="l">🔵 요주의급 — 보류 권장</div><div class="v" style="color:#0369a1">${t3.length}건</div><div class="s">미수잔액 ${eok2(sum(t3))} · 상환 진행중</div></div>`;
   h+='</div>';
   h+='<div style="background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--ink);line-height:1.8">';
-  h+=`정리하면, <b>추정손실급 ${t1.length}건</b>은 충당금이 이미 100% 설정돼 확정해도 회계상 영향이 없어 바로 진행해도 무리 없어 보이고, <b>회수의문급 ${t2.length}건</b>은 재무팀 확인이 필요하며(특히 충당금 미설정 건), <b>요주의급 ${t3.length}건</b>은 최근 상환 이력이 있어 이번 확정 대상에서는 빼는 게 맞지 않을까 싶습니다 — 어떻게 진행하면 좋을지 의견 부탁드립니다.`;
+  h+=`정리하면, <b>충당완료급 ${t1.length}건</b>은 충당금이 이미 100% 설정돼 확정해도 회계상 영향이 없어 바로 진행해도 무리 없어 보이고, <b>회수의문급 ${t2.length}건</b>은 충당금이 덜 쌓여 있어 재무팀 확인이 필요합니다.`;
+  if(warned.length)h+=` 충당완료급 중 <b>${warned.length}건</b>은 과거 입금·분납 기록이 있으나 실제 수금일을 확인해보니 1년 이상 지난 옛 기록이라, "안전하다"는 판단과 별개로 확정 전 담당자 재확인을 권장드립니다.`;
+  h+=` 어떻게 진행하면 좋을지 의견 부탁드립니다.`;
   h+='</div></div>';
   h+='<div class="card"><div class="sec">'+cands.length+'건 전체 명세 <span class="hint">등급순 정렬 · 행 클릭 → 상세</span></div>';
-  h+='<div class="tbl-scroll"><table class="dt"><thead><tr><th>#</th><th class="l">거래처</th><th class="l">등급</th><th>미수잔액</th><th>충당금</th><th>추가손실</th><th class="l">근거</th><th class="l">담당</th></tr></thead><tbody>';
+  h+='<div class="tbl-scroll"><table class="dt"><thead><tr><th>#</th><th class="l">거래처</th><th class="l">적요</th><th class="l">등급</th><th>미수잔액</th><th>충당금</th><th>추가손실</th><th class="l">근거</th><th class="l">담당</th></tr></thead><tbody>';
   h+=cands.map((x,i)=>{const r=x.r,tier=woTier(r);return `<tr class="clk" onclick="openRow('${r.rid}')">
-    <td>${i+1}</td><td class="l"><b>${esc(r.name)}</b></td><td class="l"><span class="chip" style="background:${tier.bg};color:${tier.c}">${tier.l}</span></td>
+    <td>${i+1}</td><td class="l"><b>${esc(r.name)}</b></td><td class="l memo" title="${esc(r.memo)}">${esc(r.memo)}</td><td class="l"><span class="chip" style="background:${tier.bg};color:${tier.c}">${tier.l}</span>${tier.warn?` <span class="chip" style="background:#fee2e2;color:#b91c1c" title="${esc(tier.warn)}">⚠ 재확인</span>`:''}</td>
     <td><b>${fmt(r.ar)}</b></td><td>${fmt(r.prov)}</td><td style="font-weight:700">${fmt(Math.max(0,r.ar-r.prov))}</td>
     <td class="l" style="white-space:normal;min-width:200px">${x.rs.map(s=>`<span class="chip" style="background:#f1f5f9;color:#475569;margin:1px 2px 1px 0">${esc(s)}</span>`).join('')||'-'}</td>
     <td class="l">${esc(r.mgr)}</td></tr>`;}).join('');

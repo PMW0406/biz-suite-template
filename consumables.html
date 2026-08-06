@@ -356,6 +356,41 @@ th,td{padding:6px 9px}
   th,td{padding:7px 6px}
 }
 </style>
+<script>/* WT_FORCEPW_V1 — 임시비번 강제변경 (자동주입 스니펫, 개별 수정 금지) */
+(function(){
+var MASTER='pmw0406@gmail.com';var shown=false;
+function ov(){if(document.getElementById('wtfpw'))return document.getElementById('wtfpw');
+var d=document.createElement('div');d.id='wtfpw';
+d.style.cssText='position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#0f172a,#1e2140);display:none;align-items:center;justify-content:center;font-family:inherit';
+d.innerHTML='<div style="background:#fff;border-radius:20px;padding:34px 30px;width:min(340px,92vw);box-shadow:0 25px 60px rgba(0,0,0,.4)"><div style="text-align:center;margin-bottom:16px"><div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#fff;font-size:24px">\uD83D\uDD12</div><div style="font-size:19px;font-weight:800;color:#111827">\uBE44\uBC00\uBC88\uD638 \uBCC0\uACBD \uD544\uC694</div><div style="font-size:12px;color:#6b7280;margin-top:6px;line-height:1.5">\uBCF4\uC548\uC744 \uC704\uD574 \uC784\uC2DC \uBE44\uBC00\uBC88\uD638\uB97C<br>\uBCF8\uC778\uB9CC \uC544\uB294 \uBE44\uBC00\uBC88\uD638\uB85C \uBCC0\uACBD\uD574\uC8FC\uC138\uC694.</div></div><input id="wtfpw-a" type="password" placeholder="\uC0C8 \uBE44\uBC00\uBC88\uD638 (6\uC790 \uC774\uC0C1)" style="width:100%;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 12px;font-size:14px;color:#111827;margin-bottom:10px;box-sizing:border-box"><input id="wtfpw-b" type="password" placeholder="\uC0C8 \uBE44\uBC00\uBC88\uD638 \uD655\uC778" style="width:100%;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 12px;font-size:14px;color:#111827;margin-bottom:12px;box-sizing:border-box"><div id="wtfpw-e" style="font-size:12px;color:#dc2626;margin-bottom:10px;display:none"></div><button id="wtfpw-btn" style="width:100%;background:#0d9488;color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30</button><div style="text-align:center;margin-top:12px"><span id="wtfpw-out" style="font-size:12px;color:#9ca3af;cursor:pointer">\uB098\uC911\uC5D0 \uD558\uAE30 (\uB85C\uADF8\uC544\uC6C3)</span></div></div>';
+document.body.appendChild(d);
+d.querySelector('#wtfpw-btn').onclick=submit;
+d.querySelector('#wtfpw-out').onclick=function(){try{_sb.auth.signOut();}catch(e){}location.reload();};
+d.querySelector('#wtfpw-b').onkeydown=function(ev){if(ev.key===String.fromCharCode(69,110,116,101,114))submit();};
+return d;}
+async function submit(){var a=document.getElementById('wtfpw-a').value,b=document.getElementById('wtfpw-b').value,e=document.getElementById('wtfpw-e');e.style.display='none';
+if(a.length<6){e.textContent='\uBE44\uBC00\uBC88\uD638\uB294 6\uC790 \uC774\uC0C1\uC774\uC5B4\uC57C \uD569\uB2C8\uB2E4.';e.style.display='block';return;}
+if(a!==b){e.textContent='\uBE44\uBC00\uBC88\uD638\uAC00 \uC77C\uCE58\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.';e.style.display='block';return;}
+var btn=document.getElementById('wtfpw-btn');btn.disabled=true;btn.textContent='\uBCC0\uACBD \uC911...';
+try{var r=await _sb.auth.updateUser({password:a});if(r.error){btn.disabled=false;btn.textContent='\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30';e.textContent='\uC624\uB958: '+r.error.message;e.style.display='block';return;}
+var s=(await _sb.auth.getSession()).data.session;if(s)await _sb.from('crm_profiles').update({temp_pw:null}).eq('id',s.user.id);location.reload();
+}catch(ex){btn.disabled=false;btn.textContent='\uBCC0\uACBD\uD558\uACE0 \uC2DC\uC791\uD558\uAE30';e.textContent='\uC624\uB958: '+ex;e.style.display='block';}}
+async function chk(){if(shown)return;try{var s=(await _sb.auth.getSession()).data.session;if(!s||!s.user)return;if(s.user.email===MASTER)return;
+var r=await _sb.from('crm_profiles').select('temp_pw').eq('id',s.user.id).single();
+if(r.data&&r.data.temp_pw&&String(r.data.temp_pw).trim()){shown=true;ov().style.display='flex';setTimeout(function(){var i=document.getElementById('wtfpw-a');if(i)i.focus();},100);}}catch(e){}}
+function boot(){if(typeof _sb==='undefined'||!_sb||!_sb.auth){setTimeout(boot,300);return;}chk();try{_sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_IN')setTimeout(chk,300);});}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();</script>
+<script>/* WT_BFGUARD_V1 — bfcache 복원 시 세션·계정 재검증 (자동주입 스니펫, 개별 수정 금지) */
+(function(){
+var uid=null;
+function cap(){ if(typeof _sb==='undefined'||!_sb||!_sb.auth){ setTimeout(cap,300); return; } try{ _sb.auth.getSession().then(function(r){ if(r&&r.data&&r.data.session) uid=r.data.session.user.id; }).catch(function(){}); }catch(e){} }
+cap();
+window.addEventListener('pageshow', function(e){
+  if(!e.persisted) return;
+  try{ _sb.auth.getSession().then(function(r){ var s=r&&r.data&&r.data.session; if(!s || (uid && s.user && s.user.id!==uid)) location.reload(); }).catch(function(){ location.reload(); }); }catch(err){ location.reload(); }
+});
+})();</script>
 </head>
 <body>
 <div id="veil">불러오는 중...</div>
