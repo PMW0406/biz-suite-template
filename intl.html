@@ -1640,13 +1640,13 @@ async function _afterLogin(user) {
 /* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
 var _WT_MASTER='pmw0406@gmail.com';
 var _WT_OWN=["intl"];                 /* 이 사이트 자신의 registry key(들) */
-var _WT_노바진단='https://pmw0406.github.io/novadx/kor.html';
+var _WT_NOVADX='https://pmw0406.github.io/novadx/kor.html';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
 function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!((function(){return false;}))(ac,ad); }catch(e){ return false; } } return false; }
 async function _wtGo(i){
   var s=_wtItems[i]; if(!s) return;
-  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_노바진단:s.url;
+  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_NOVADX:s.url;
   var extra=s.key==='korea'?'&app=korea':(s.key==='admin'?'&app=admin':'');
   var sess=null; try{ sess=(await _sb.auth.getSession()).data.session; }catch(e){}
   if(sess && u.indexOf('#')<0) u+='#at='+encodeURIComponent(sess.access_token)+'&rt='+encodeURIComponent(sess.refresh_token);
@@ -1668,7 +1668,7 @@ async function _wtRenderSwitcher(){
     var dest=(s.key==='korea'||s.url==='LOCAL')?'central':s.url; if(seen[dest]) return false; seen[dest]=1;
     return true;
   }).sort(function(a,b){ return a.key==='total'?-1:(b.key==='total'?1:(a.sort_order-b.sort_order)); });
-  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_노바진단}); }
+  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_NOVADX}); }
   var esc=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var box=document.querySelector("#intl-site-dd"); if(!box) return;
   if("div"==='select'){
@@ -4435,7 +4435,7 @@ renderByRep=function(){
 (function(){
   // ===== Sales Speech 데이터(한국어) =====
   const SPEECH_DATA = [
-    {id:'anigen',name:'노바큐 IF-100',color:'#e8472a',tagline:'현장 즉시진단(POCT) 형광면역분석기 — 8분 정량 결과',competitors:['수입 형광분석기 A','벤치탑 ELISA'],table:{competitor:'수입 형광분석기 A',rows:[
+    {id:'novaq',name:'노바큐 IF-100',color:'#e8472a',tagline:'현장 즉시진단(POCT) 형광면역분석기 — 8분 정량 결과',competitors:['수입 형광분석기 A','벤치탑 ELISA'],table:{competitor:'수입 형광분석기 A',rows:[
       {label:'결과 시간',노바진단:'8분 정량',rival:'수 시간'},{label:'장비 가격',노바진단:'약 500만원대',rival:'2~3천만원'},{label:'A/S',노바진단:'국내 즉시 대응',rival:'수입 지연'},{label:'검사 항목',노바진단:'40종+ 확장',rival:'제한적'}]},speech:[
       {text:'노바큐 IF-100은 **카트리지 한 장으로 8분 내 정량 결과**를 제공하는 현장형 형광면역분석기입니다. 채혈 후 원내에서 바로 판독해 재방문 없이 당일 처방이 가능합니다.'},
       {text:'파보·디스템퍼·심장사상충 등 **40종 이상의 검사 항목을 동일 장비 한 대로 확장**할 수 있어, 항목이 늘어날수록 카트리지 반복 매출이 함께 커집니다.'},

@@ -1679,13 +1679,13 @@ async function goSite(base,extra){
 /* ===== 권한 기반 사이트 이동 (site_registry 공통) — WT_SWITCHER ===== */
 var _WT_MASTER='pmw0406@gmail.com';
 var _WT_OWN=["total"];                 /* 이 사이트 자신의 registry key(들) */
-var _WT_노바진단='https://pmw0406.github.io/novadx/kor.html';
+var _WT_NOVADX='https://pmw0406.github.io/novadx/kor.html';
 var _wtReg=null, _wtItems=[];
 async function _wtLoadReg(){ if(_wtReg) return _wtReg; try{ var r=await _sb.from('site_registry').select('*').order('sort_order'); _wtReg=r.data||[]; }catch(e){ _wtReg=[]; } return _wtReg; }
 function _wtVis(s,ac,ad){ if(ac.indexOf(s.key)>=0) return true; if(s.admin_bypass&&ad) return true; if(s.extra_visible_rule){ try{ return !!((function(){return false;}))(ac,ad); }catch(e){ return false; } } return false; }
 async function _wtGo(i){
   var s=_wtItems[i]; if(!s) return;
-  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_노바진단:s.url;
+  var u=(s.key==='korea'||s.url==='LOCAL')?_WT_NOVADX:s.url;
   var extra=s.key==='korea'?'&app=korea':(s.key==='admin'?'&app=admin':'');
   var sess=null; try{ sess=(await _sb.auth.getSession()).data.session; }catch(e){}
   if(sess && u.indexOf('#')<0) u+='#at='+encodeURIComponent(sess.access_token)+'&rt='+encodeURIComponent(sess.refresh_token);
@@ -1707,7 +1707,7 @@ async function _wtRenderSwitcher(){
     var dest=(s.key==='korea'||s.url==='LOCAL')?'노바진단':s.url; if(seen[dest]) return false; seen[dest]=1;
     return true;
   }).sort(function(a,b){ return a.sort_order-b.sort_order; });
-  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_노바진단}); }
+  if(ad){ _wtItems.push({key:'admin',badge:'ADM',grad_from:'#6b7280',title:'관리자 페이지',url:_WT_NOVADX}); }
   var wesc=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var box=document.getElementById('swdd-dyn'); if(!box) return;
   box.innerHTML=_wtItems.map(function(s,i){
@@ -2536,8 +2536,8 @@ function _drillSite(dept){
 async function _drillGo(key){
   const reg=await _wtLoadReg();
   let url=null;
-  for(const s of reg){ if(s.key===key){ url=(s.url==='LOCAL'||s.key==='korea')?_WT_노바진단:s.url; break; } }
-  if(!url) url=_WT_노바진단;
+  for(const s of reg){ if(s.key===key){ url=(s.url==='LOCAL'||s.key==='korea')?_WT_NOVADX:s.url; break; } }
+  if(!url) url=_WT_NOVADX;
   await goSite(url,key==='korea'?'&app=korea':'');
 }
 function openDrill(dk,_f,_t){
