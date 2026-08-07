@@ -5565,11 +5565,13 @@ async function submitSignupRequest() {
   const btn=document.querySelector('#signup-box .btn-primary');
   if(btn){ btn.disabled=true; btn.textContent='신청 중...'; }
   try {
-    // 중복 신청(같은 이메일 pending) 차단
-    const {data:dup} = await _sb.from('signup_requests').select('id').eq('email',email).eq('status','pending').limit(1);
-    if(dup && dup.length) { show('이미 신청이 접수되어 검토 중입니다. 관리자 승인을 기다려주세요.', false); if(btn){btn.disabled=false;btn.textContent='신청하기';} return; }
+    // 중복 신청(같은 이메일 pending) 차단은 DB 의 부분 유니크 인덱스가 담당한다.
+    // (비로그인은 개인정보 보호를 위해 조회가 막혀 있어 여기서 SELECT 로 검사할 수 없다)
     const {error} = await _sb.from('signup_requests').insert({email, name, dept, reason});
-    if(error) throw error;
+    if(error){
+      if(error.code==='23505'){ show('이미 신청이 접수되어 검토 중입니다. 관리자 승인을 기다려주세요.', false); return; }
+      throw error;
+    }
     show('신청이 접수됐습니다 — 관리자 승인 후 이메일로 안내드립니다.', true);
     setTimeout(()=>{ hideSignup(); }, 2200);
   } catch(err) {
@@ -12303,19 +12305,9 @@ async function saveNewUser() {
 }
 
 // ── 회원가입 신청(관리자 승인형) ──────────────────────────────
-function showSignup(e){ if(e)e.preventDefault(); document.getElementById('login-screen').querySelectorAll(':scope > div').forEach(function(x){ x.style.display='none'; }); var b=document.getElementById('signup-box'); if(b)b.style.display='block'; var em=document.getElementById('su-email'); if(em) em.value=(document.getElementById('login-id')||{}).value||''; var m=document.getElementById('su-msg'); if(m)m.style.display='none'; }
-function hideSignup(e){ if(e)e.preventDefault(); document.getElementById('signup-box').style.display='none'; document.getElementById('login-screen').querySelector('div').style.display='block'; }
-async function submitSignup(){
-  var g=function(id){ var el=document.getElementById(id); return (el&&el.value||'').trim(); };
-  var email=g('su-email'),name=g('su-name'),dept=g('su-dept'),position=g('su-position'),hire=g('su-hire'),phone=g('su-phone');
-  var m=document.getElementById('su-msg'); m.style.display='block';
-  if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ m.style.color='#dc2626'; m.textContent='올바른 이메일을 입력하세요.'; return; }
-  if(!name){ m.style.color='#dc2626'; m.textContent='이름을 입력하세요.'; return; }
-  var btn=document.getElementById('su-btn'); btn.disabled=true; btn.textContent='접수 중...';
-  try{ var r=await _sb.from('signup_requests').insert({ email:email, name:name, dept:dept||null, position:position||null, hire_date:hire||null, phone:phone||null }); if(r.error) throw r.error;
-    m.style.color='#16a34a'; m.textContent='가입 신청이 접수되었습니다. 관리자 승인 후 이용하실 수 있습니다.'; btn.style.display='none';
-  }catch(err){ btn.disabled=false; btn.textContent='가입 신청'; m.style.color='#dc2626'; m.textContent='접수 실패: '+((err&&err.message)||err); }
-}
+// showSignup/hideSignup/submitSignup 은 여기 있던 원본(su-* 입력 id)이 이 사이트의
+// 마크업(signup-* id)과 맞지 않아 제거했다. 실제 동작 함수는 위쪽의
+// showSignup/hideSignup/submitSignupRequest 한 벌뿐이다(중복 정의로 덮이던 문제).
 async function _signupBadge(){ try{ var c=await _sb.from('signup_requests').select('id',{count:'exact',head:true}).eq('status','pending'); var bd=document.getElementById('admtab-signup-badge'); if(bd){ if(c&&c.count){ bd.style.display=''; bd.textContent=c.count; } else bd.style.display='none'; } }catch(e){} }
 async function renderSignupRequests(){
   var box=document.getElementById('admin-signup-list'); if(!box) return;
@@ -12327,7 +12319,7 @@ async function renderSignupRequests(){
   if(!rows.length){ box.innerHTML='<div style="padding:32px;text-align:center;color:#64748b;font-size:13px">대기 중인 가입 신청이 없습니다.</div>'; return; }
   box.innerHTML=rows.map(function(r){
     var perm=_siteRegistry.map(function(s){ return '<label style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:#94a3b8;margin:0 8px 6px 0"><span>'+esc(s.short_label)+'</span><input type="checkbox" data-req="'+r.id+'" data-key="'+s.key+'" style="accent-color:'+s.matrix_color+';cursor:pointer"></label>'; }).join('');
-    return '<div style="border-bottom:1px solid rgba(255,255,255,.08);padding:14px 16px">'+'<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px">'+'<div style="font-size:13px;color:#e2e8f0;font-weight:700">'+esc(r.name||'')+'</div>'+'<div style="font-size:12px;color:#94a3b8">'+esc(r.email)+'</div>'+'<div style="font-size:12px;color:#94a3b8">'+esc(r.dept||'')+(r.position?' · '+esc(r.position):'')+'</div>'+(r.hire_date?'<div style="font-size:11px;color:#64748b">입사 '+esc(r.hire_date)+'</div>':'')+(r.phone?'<div style="font-size:11px;color:#64748b">'+esc(r.phone)+'</div>':'')+'<div style="font-size:11px;color:#475569;margin-left:auto">신청 '+esc((r.created_at||'').replace('T',' ').slice(0,16))+'</div>'+'</div>'+'<div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px">'+'<div><div style="font-size:10px;color:#64748b;margin-bottom:4px;font-weight:700">부여 권한</div><div style="display:flex;flex-wrap:wrap">'+perm+'</div></div>'+'<div style="margin-left:auto;display:flex;gap:8px;align-items:center">'+'<select id="su-role-'+r.id+'" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:5px 8px;font-size:12px;color:#fff"><option value="user">팀원</option><option value="manager">팀/파트장</option><option value="admin">관리자</option></select>'+'<button onclick="approveSignup('+r.id+')" style="background:rgba(16,163,74,.2);border:1px solid rgba(16,163,74,.35);color:#86efac;padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">승인</button>'+'<button onclick="rejectSignup('+r.id+')" style="background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);color:#fca5a5;padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer">거절</button>'+'</div></div></div>';
+    return '<div style="border-bottom:1px solid rgba(255,255,255,.08);padding:14px 16px">'+'<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px">'+'<div style="font-size:13px;color:#e2e8f0;font-weight:700">'+esc(r.name||'')+'</div>'+'<div style="font-size:12px;color:#94a3b8">'+esc(r.email)+'</div>'+'<div style="font-size:12px;color:#94a3b8">'+esc(r.dept||'')+(r.position?' · '+esc(r.position):'')+'</div>'+(r.hire_date?'<div style="font-size:11px;color:#64748b">입사 '+esc(r.hire_date)+'</div>':'')+(r.phone?'<div style="font-size:11px;color:#64748b">'+esc(r.phone)+'</div>':'')+'<div style="font-size:11px;color:#475569;margin-left:auto">신청 '+esc((r.created_at||'').replace('T',' ').slice(0,16))+'</div>'+'</div>'+'<div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px">'+'<div><div style="font-size:10px;color:#64748b;margin-bottom:4px;font-weight:700">부여 권한</div><div style="display:flex;flex-wrap:wrap">'+perm+'</div></div>'+'<div style="margin-left:auto;display:flex;gap:8px;align-items:center">'+'<select id="su-role-'+r.id+'" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:5px 8px;font-size:12px;color:#fff"><option value="user">팀원</option><option value="manager">팀/파트장</option><option value="admin">관리자</option></select>'+'<button onclick="approveSignup(\''+esc(r.id)+'\')" style="background:rgba(16,163,74,.2);border:1px solid rgba(16,163,74,.35);color:#86efac;padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">승인</button>'+'<button onclick="rejectSignup(\''+esc(r.id)+'\')" style="background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);color:#fca5a5;padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer">거절</button>'+'</div></div></div>';
   }).join('');
 }
 async function approveSignup(id){
@@ -12340,14 +12332,22 @@ async function approveSignup(id){
   var pw='wt'+Math.random().toString(36).slice(2,8);
   var s=(await _sb.auth.getSession()).data.session; if(!s){ showToast('세션 없음 — 새로고침 후 재시도', true, true); return; }
   try{
-    var resp=await fetch('https://bdkurlqmfsswgeiujyev.supabase.co/functions/v1/create-user',{method:'POST',headers:{'Authorization':'Bearer '+s.access_token,'Content-Type':'application/json'},body:JSON.stringify({email:req.email,password:pw})});
-    var dj=await resp.json();
-    if(!resp.ok){ showToast('계정 생성 실패: '+(dj.error||dj.message||resp.status), true, true); return; }
-    var uid=(dj.user&&dj.user.id)||dj.id;
+    // 계정 생성은 service_role 이 필요해 Edge Function(create-user)에 위임한다.
+    // 함수가 배포되지 않은 환경에서는 승인 처리까지만 하고 계정 생성 방법을 안내한다
+    // (브라우저에서 계정을 만들려면 공개 가입을 열어야 해서 보안상 하지 않는다).
+    var uid=null, edgeErr='';
+    try{
+      var resp=await fetch('https://bdkurlqmfsswgeiujyev.supabase.co/functions/v1/create-user',{method:'POST',headers:{'Authorization':'Bearer '+s.access_token,'Content-Type':'application/json'},body:JSON.stringify({email:req.email,password:pw})});
+      var dj=null; try{ dj=await resp.json(); }catch(_){}
+      if(resp.ok){ uid=(dj&&dj.user&&dj.user.id)||(dj&&dj.id)||null; }
+      else edgeErr=(dj&&(dj.error||dj.message))||('HTTP '+resp.status);
+    }catch(fe){ edgeErr=(fe&&fe.message)||String(fe); }
+
     if(uid){ await _sb.from('crm_profiles').upsert({id:uid,email:req.email,display_name:req.name||req.email.split('@')[0],dept:req.dept||'',position:req.position||'',role:role,access:access,temp_pw:pw}); }
     await _sb.from('signup_requests').update({status:'approved',reviewed_by:(typeof _meName!=='undefined'?_meName:'관리자'),reviewed_at:new Date().toISOString()}).eq('id',id);
     renderSignupRequests(); _signupBadge();
-    alert(req.name+'('+req.email+') 승인 완료.\n임시 비밀번호: '+pw+'\n\n이 임시비밀번호를 본인에게 전달하세요. 첫 로그인 시 비밀번호를 변경하게 됩니다.');
+    if(uid) alert(req.name+'('+req.email+') 승인 완료.\n임시 비밀번호: '+pw+'\n\n이 임시비밀번호를 본인에게 전달하세요. 첫 로그인 시 비밀번호를 변경하게 됩니다.');
+    else alert(req.name+'('+req.email+') 승인 처리했습니다.\n\n다만 계정 자동생성 기능(create-user)이 이 환경에 없어\n로그인 계정은 아직 만들어지지 않았습니다. ('+edgeErr+')\n\nSupabase → Authentication → Add user 에서\n  이메일: '+req.email+'\n  임시 비밀번호: '+pw+'\n로 계정을 만든 뒤, 관리자 페이지에서 권한('+(access||'없음')+')을 지정하세요.');
   }catch(e){ showToast('오류: '+((e&&e.message)||e), true, true); }
 }
 async function rejectSignup(id){ if(!confirm('이 가입 신청을 거절하시겠습니까?')) return; await _sb.from('signup_requests').update({status:'rejected',reviewed_by:(typeof _meName!=='undefined'?_meName:'관리자'),reviewed_at:new Date().toISOString()}).eq('id',id); renderSignupRequests(); _signupBadge(); }
