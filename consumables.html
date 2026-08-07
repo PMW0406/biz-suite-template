@@ -410,7 +410,7 @@ window.addEventListener('pageshow', function(e){
 <!-- 앱 -->
 <div id="app" class="hidden">
   <header>
-    <span class="logo">📊 애니젠 진단키트 일일매출보고</span>
+    <span class="logo">📊 노바큐 진단키트 일일매출보고</span>
     <span class="who" id="who"></span>
     <span class="sp"></span>
     <select id="wt-site-sel" style="background:#fff;color:#111827;border:1px solid #dbe3ec;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
@@ -595,8 +595,8 @@ function parseGSheet(wb, sheetName){
     else if(s.indexOf('월')>=0 && cur){
       var m=parseInt(s,10);
       if(m>=1 && m<=12){
-        if(typeof row[4]==='number') cur.x[m]=row[4];   // 애니젠X 합계
-        if(typeof row[7]==='number') cur.o[m]=row[7];   // 애니젠 합계
+        if(typeof row[4]==='number') cur.x[m]=row[4];   // 노바큐X 합계
+        if(typeof row[7]==='number') cur.o[m]=row[7];   // 노바큐 합계
       }
     }
   }
@@ -646,9 +646,9 @@ function parseAllCharts(wb){
     if(dom&&intl&&t){
       charts.push(
         {title:'국내 동물·인체 진단키트 월 판매량 (출고기준)', actual:dom.xA, prior:dom.xP, target:t.dX, color:'#f97316'},
-        {title:'국내 애니젠 키트 월 판매량 (출고기준)',        actual:dom.oA, prior:dom.oP, target:t.dO, color:'#f97316'},
+        {title:'국내 노바큐 키트 월 판매량 (출고기준)',        actual:dom.oA, prior:dom.oP, target:t.dO, color:'#f97316'},
         {title:'해외 동물·인체 진단키트 월 판매량 (회계기준)', actual:intl.xA, prior:intl.xP, target:t.iX, color:'#f97316'},
-        {title:'해외 애니젠 키트 월 판매량 (회계기준)',        actual:intl.oA, prior:intl.oP, target:t.iO, color:'#f97316'}
+        {title:'해외 노바큐 키트 월 판매량 (회계기준)',        actual:intl.oA, prior:intl.oP, target:t.iO, color:'#f97316'}
       );
     }
     charts=charts.concat(parseGraphSheet(wb));
@@ -881,7 +881,7 @@ function renderReport(R){
   var h='';
   h+=renderChartsHTML(R.charts);
   h+='<div class="rpt">';
-  h+=' <div class="rpt-head"><h2>애니젠 진단키트 일일 매출 보고</h2>'
+  h+=' <div class="rpt-head"><h2>노바큐 진단키트 일일 매출 보고</h2>'
     +'<div class="date">보고일자 · '+esc(R.date||'-')+'</div>'
     +'<div class="total">국내 '+fmtWonFull(domToday)+' + 해외 '+fmtWonFull(intToday)+' = <b>'+fmtWonFull(domToday+intToday)+'</b></div></div>';
 

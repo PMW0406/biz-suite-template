@@ -469,8 +469,8 @@ function numOrNull(s){ s=String(s||'').replace(/[^0-9.-]/g,''); if(s==='')return
 function chk(v,color){return v?'<i class="bi bi-check-circle-fill" style="color:var(--'+(color||'yellow')+')"></i>':'<i class="bi bi-x-circle" style="color:var(--red)"></i>';}
 function pd(s){ if(!has(s))return null; const d=new Date(String(s).slice(0,10)); return isNaN(d)?null:d; }
 function today0(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
-function isOli(p){ return /^애니젠/.test(p||''); }
-function couponType(p){ p=String(p||''); if(/퀵스캔\s*카트리지/.test(p))return '카트리지 쿠폰'; if(/산업동물\s*Rapid/i.test(p))return '쿠폰'; if(/애니젠\s*Mini/i.test(p))return '쿠폰'; if(/^애니젠/.test(p))return '적립금'; return ''; }
+function isOli(p){ return /^노바큐/.test(p||''); }
+function couponType(p){ p=String(p||''); if(/퀵스캔\s*카트리지/.test(p))return '카트리지 쿠폰'; if(/산업동물\s*Rapid/i.test(p))return '쿠폰'; if(/노바큐\s*Mini/i.test(p))return '쿠폰'; if(/^노바큐/.test(p))return '적립금'; return ''; }
 function _cpChip(p){ var t=couponType(p); if(!t)return ''; var c={'적립금':['#15803d','#ecfdf3'],'쿠폰':['#2455c4','#eef4fd'],'카트리지 쿠폰':['#7c3aed','#f3f0ff']}[t]||['#64748b','#f1f5f9']; return '<span class="badge-st" style="color:'+c[0]+';background:'+c[1]+'">'+t+'</span>'; }
 function isCoupon(p){ return !!couponType(p); }
 function _derCoupon(c){ if(!c.couponDate&&c.mall&&String(c.mall)!=='-'){ const m=String(c.mall); const dm=m.match(/(\d{4})[-.](\d{1,2})[-.](\d{1,2})/); if(dm)c.couponDate=dm[1]+'-'+String(dm[2]).padStart(2,'0')+'-'+String(dm[3]).padStart(2,'0'); const p=m.split('/'); if(p.length>1&&!c.couponQty)c.couponQty=p[p.length-1].trim(); } }

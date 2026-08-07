@@ -2002,7 +2002,7 @@ function opsKpi(){
   if(OPS.kc){ o.kcTot=OPS.kc.length;
     const und=OPS.kc.filter(c=>!_hasv(c.dDelivered));
     o.kcUndel=und.length; o.kcUndelAmt=und.reduce((s,c)=>s+(+c.krw||+c.amount||0),0);
-    o.kcCoup=OPS.kc.filter(c=>/^(애니젠|헤마카운트)/i.test(c.product||'')&&_hasv(c.dDelivered)&&!_hasv(c.couponDate)).length; }
+    o.kcCoup=OPS.kc.filter(c=>/^(노바큐|헤마카운트)/i.test(c.product||'')&&_hasv(c.dDelivered)&&!_hasv(c.couponDate)).length; }
   if(OPS.demo){ const t=new Date(); t.setHours(0,0,0,0);
     o.demoAll=OPS.demo.length;
     o.demoUp=OPS.demo.filter(d=>{ const x=new Date(String(d.date||'').slice(0,10)); return !isNaN(x)&&x>=t; }).length; }
@@ -3143,22 +3143,24 @@ function _goalsTrack(t,pend){
   const mAct=m=>Number((CONS.monthly2026||{})[m]||0)+Number((DEVICE.monthly2026||{})[m]||0)+Number((INTL.monthly||{})[m]||0);
   const mPnd=m=>Number(((pend||{}).consMonthly||{})[m]||0)+Number(((pend||{}).devMonthly||{})[m]||0)+Number(((pend||{}).intlMonthly||{})[m]||0);
   const mTgt={}; (SALEST||[]).forEach(r=>{ if(+r.year===2026) mTgt[+r.month]=(mTgt[+r.month]||0)+Number(r.amount||0); });
-  // 최근 3개월(성숙월 기준) 평균 실행 페이스로 잔여월 연장
-  let r3=0,r3n=0; for(let m=Math.max(1,t-2);m<=t;m++){ r3+=mAct(m); r3n++; }
+  // 페이스는 '완결된 월'만으로 산정 — 진행중인 당월(부분 실적)이 섞이면 전망이 과소평가된다.
+  const done=(t>=_execCalMonth()&&t>1)?t-1:t;
+  let r3=0,r3n=0; for(let m=Math.max(1,done-2);m<=done;m++){ r3+=mAct(m); r3n++; }
   const pace=r3n>0?r3/r3n:0;
   const E=1e8, lb=[], cAct=[], cTgt=[], cFc=[];
   let a=0,g=0,fc=0;
   for(let m=1;m<=12;m++){
     lb.push(m+'월');
     g+=Number(mTgt[m]||0); cTgt.push(+(g/E).toFixed(1));
-    if(m<=t){ a+=mAct(m); fc+=mAct(m)+mPnd(m); cAct.push(+(a/E).toFixed(1)); }
-    else { cAct.push(null); fc+=pace; }
+    if(m<=t) { a+=mAct(m); cAct.push(+(a/E).toFixed(1)); } else cAct.push(null);
+    // 전망: 완결월까지는 실적+예정, 그 이후(진행중 당월 포함)는 완결월 페이스로 연장
+    if(m<=done) fc+=mAct(m)+mPnd(m); else fc+=pace;
     cFc.push(+(fc/E).toFixed(1));
   }
   const endFc=cFc[11], endTg=cTgt[11], gapE=(endFc-endTg);
   const sub=document.getElementById('goals-track-sub');
   if(sub) sub.innerHTML= endTg>0
-    ? ('연말 착지 전망 <b>'+endFc.toFixed(1)+'억</b> · 연간 목표 '+endTg.toFixed(1)+'억 → <b style="color:'+(gapE>=0?'#0f766e':'#c0392b')+'">'+(gapE>=0?'초과 +':'미달 −')+Math.abs(gapE).toFixed(1)+'억</b> <span style="color:#94a3b8">· 확정+예정에 최근 3개월 평균 '+(pace/E).toFixed(1)+'억/월 페이스로 잔여 '+(12-t)+'개월 연장</span>')
+    ? ('연말 착지 전망 <b>'+endFc.toFixed(1)+'억</b> · 연간 목표 '+endTg.toFixed(1)+'억 → <b style="color:'+(gapE>=0?'#0f766e':'#c0392b')+'">'+(gapE>=0?'초과 +':'미달 −')+Math.abs(gapE).toFixed(1)+'억</b> <span style="color:#94a3b8">· 확정('+done+'월까지)+예정에 '+Math.max(1,done-2)+'~'+done+'월 평균 '+(pace/E).toFixed(1)+'억/월로 잔여 '+(12-done)+'개월 연장</span>')
     : '연간 목표 미설정';
   if(_goalTrkChart) _goalTrkChart.destroy();
   _goalTrkChart=new Chart(el,_yFit({data:{labels:lb,datasets:[

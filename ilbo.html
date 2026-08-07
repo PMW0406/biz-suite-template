@@ -669,7 +669,7 @@ function renderDatalists(){
   (ACC.lines||[]).forEach(function(l){ if(cust[l.region]){ if(l.customer)cust[l.region][l.customer]=1; if(l.product)prod[l.region][l.product]=1; } });
   PENDING.forEach(function(p){ if(cust[p.region]){ if(p.customer)cust[p.region][p.customer]=1; if(p.product)prod[p.region][p.product]=1; } });
   function dl(id,o){
-    // 대소문자/공백만 다른 중복 통합 — 혼합표기(애니젠 X)를 전부 대문자(AURA X)보다 우선
+    // 대소문자/공백만 다른 중복 통합 — 혼합표기(노바큐 X)를 전부 대문자(AURA X)보다 우선
     var g={};
     Object.keys(o).forEach(function(v){ var k=String(v).toLowerCase().replace(/\s+/g,' ').trim(); if(!k) return; if(!g[k]) g[k]=[]; g[k].push(v); });
     var canon=Object.keys(g).map(function(k){

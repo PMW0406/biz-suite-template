@@ -1238,7 +1238,7 @@ function _draftFromText(tx,d){
   if(det.rows.length){
     var rowsD=det.rows.slice();
     /* 파일명에만 있는 품목(표 인식 누락분) 보완 — 단, 표가 이미 완전하면(합계=총액) 건너례다.
-       파일명은 약칭(Cassette / 애니젠 plus Kit)이라 표의 정식 품목명(애니젠 PLUS 카세트 F3.0-OGK)과
+       파일명은 약칭(Cassette / 노바큐 plus Kit)이라 표의 정식 품목명(노바큐 PLUS 카세트 F3.0-OGK)과
        글자 단위로는 매칭되지 않아, 같은 품목이 중복 행으로 붙는 문제가 있었다. */
     var _tblSum=rowsD.reduce(function(s,x){return s+(x.amt||0);},0);
     var _tot=+d.amount||0;
