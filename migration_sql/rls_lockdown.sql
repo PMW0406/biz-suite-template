@@ -100,6 +100,27 @@ create policy nvdx_signup_insert on public.signup_requests for insert to anon, a
 create policy nvdx_signup_admin  on public.signup_requests for all to authenticated
   using (public.nvdx_is_admin()) with check (public.nvdx_is_admin());
 
+-- ── 5-4) 미사용 테이블 완전 잠금 ────────────────────────────────────────────
+--   families·test_results·app_profiles·demo_sales·demo_customers 는 노바진단이
+--   전혀 참조하지 않는데(코드 grep 0건) 비로그인 INSERT·UPDATE 가 실제로 통했다.
+--   정책을 하나도 만들지 않으면 RLS 기본 거부 → anon·authenticated 모두 차단된다.
+--   (관리자가 필요할 땐 Supabase 대시보드/서비스키로 접근 가능)
+do $$
+declare t text;
+begin
+  foreach t in array array['families','test_results','app_profiles','demo_sales','demo_customers'] loop
+    if exists (select 1 from information_schema.tables
+                where table_schema='public' and table_name=t) then
+      execute format('alter table public.%I enable row level security', t);
+      -- 기존 허용 정책 전부 제거(이 테이블들엔 남겨둘 이유가 없다)
+      execute (
+        select coalesce(string_agg(format('drop policy if exists %I on public.%I;', policyname, t), ' '), '')
+        from pg_policies where schemaname='public' and tablename=t
+      );
+    end if;
+  end loop;
+end $$;
+
 -- ── 6) 요청·신고함: 로그인자 등록, 관리자 조회 ──────────────────────────────
 alter table public.site_feedback enable row level security;
 drop policy if exists nvdx_fb_insert on public.site_feedback;
