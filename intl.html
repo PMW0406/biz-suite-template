@@ -1574,7 +1574,9 @@ async function doLogin() {
 async function _afterLogin(user) {
   const {data:profile} = await _sb.from('crm_profiles').select('display_name,access,role,position,dept').eq('id',user.id).maybeSingle();
   const access = profile?.access||'';
-  const allowed = access.includes('intl')||profile?.role==='admin'||user.email==='pmw0406@gmail.com';
+  /* 보안: site_registry 키('intl') 정확 매칭(부분문자열 → 토큰 비교) */
+  const _acl = (Array.isArray(access)?access:String(access||'').split(',')).map(function(s){return String(s).trim();});
+  const allowed = _acl.indexOf('intl')>=0||profile?.role==='admin'||user.email==='pmw0406@gmail.com';
   if(!allowed){
     alert('해외영업 접근 권한이 없습니다. (해외 권한 필요)');
     _wtToCentral(false);   // 권한 없음 → ret 없이(무한루프 방지). 세션은 유지(다른 사이트는 쓸 수 있음)

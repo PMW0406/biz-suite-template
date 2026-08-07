@@ -805,7 +805,9 @@ async function _afterAuth(user){
     var liveQ=loadLive().then(function(){return null;}).catch(function(e){return e;});   // 권한조회와 병렬
     var prof=(await _sb.from('crm_profiles').select('access,role,display_name,position,dept').eq('id',user.id).single()).data;
     var access=((prof&&prof.access)||'').split(',').map(function(x){return x.trim();});
-    var ok=(prof&&prof.role==='admin')||access.indexOf('intl')>=0||access.indexOf('korea')>=0||access.indexOf('export')>=0;
+    /* 보안: site_registry 키('export') 정확 매칭 — 런처 표시 조건과 일치시킴 */
+    var _acl=String(access||'').split(',').map(function(s){return s.trim();});
+    var ok=(prof&&prof.role==='admin')||_acl.indexOf('export')>=0;
     if(!ok){await _sb.auth.signOut();_showLogin('❌ 해외수출 시스템 접근 권한이 없습니다');return;}
     ME.uid=user.id;ME.email=(user.email||'').toLowerCase();ME.admin=(prof&&prof.role==='admin');ME.name=(prof&&prof.display_name)||ME.email.split('@')[0];ME.pos=(prof&&prof.position)||'';ME.dept=(prof&&prof.dept)||'';ME.role=(prof&&prof.role)||'general';ME.export=access.indexOf('export')>=0;
     var lerr=await liveQ; if(lerr)throw lerr;

@@ -986,7 +986,9 @@ function enterApp(user){
   // ── 접근 권한 검사: daily 권한(또는 관리자/마스터)만 진입 ──
   _sb.from('crm_profiles').select('dept,role,access').eq('id',user.id).maybeSingle().then(function(r){
     var pf=(r&&r.data)||{};
-    var allowed = user.email==='pmw0406@gmail.com' || pf.role==='admin' || String(pf.access||'').includes('daily');
+    /* 보안: site_registry 키('daily') 정확 매칭(부분문자열 → 토큰 비교) */
+    var _acl = String(pf.access||'').split(',').map(function(s){return s.trim();});
+    var allowed = user.email==='pmw0406@gmail.com' || pf.role==='admin' || _acl.indexOf('daily')>=0;
     if(!allowed){ alert('일매출일보 접근 권한이 없습니다.'); location.replace(CENTRAL); return; }  /* 권한 없음: ret 없이(무한 루프 방지) · signOut 금지(전 사이트 공유 세션 파괴) */
     document.getElementById('login').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
