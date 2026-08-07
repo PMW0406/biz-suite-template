@@ -3621,20 +3621,24 @@ function _buildLauncherCardsHTML(access) {
       : (s.needs_token
           ? `(async()=>{const {data:{session:s}}=await _sb.auth.getSession();let u='${s.url}';if(s)u+='#at='+encodeURIComponent(s.access_token)+'&rt='+encodeURIComponent(s.refresh_token);location.href=u;})()`
           : `location.href='${s.url}'`);
-    return `<div onclick="${onclick.replace(/"/g,'&quot;')}" style="${cardStyle}" onmouseover="${cardHover}" onmouseout="${cardOut}">
-      <div style="height:5px;background:linear-gradient(90deg,${s.grad_from},${s.grad_to})"></div>
-      <div style="padding:17px 19px">
-        <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
-          <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,${s.grad_from},${s.grad_to});display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 16px ${s.grad_from}59">
-            <i class="bi ${s.icon}" style="font-size:18px;color:#fff"></i>
-          </div>
-          <div style="font-size:14.5px;font-weight:800;color:#f1f5f9;letter-spacing:-.3px;line-height:1.2">${s.title}</div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px">
-          <div style="font-size:11.5px;color:#64748b;line-height:1.6;flex:1;min-width:0">${s.body_html}</div>
-          <div style="display:flex;align-items:center;gap:3px;font-size:11px;color:${s.accent_color};font-weight:700;white-space:nowrap;flex-shrink:0">입장하기 <i class="bi bi-arrow-right" style="font-size:10px"></i></div>
-        </div>
-      </div>
+    const ac = s.accent_color || '#64748b';                 // 강조색
+    const gt = s.grad_to || s.grad_from || ac;              // 밝은 강조(텍스트·화살표용)
+    const gf = s.grad_from || ac;
+    const ico = s.icon || '📦';
+    // 아이콘은 이모지 또는 부트스트랩 아이콘 클래스(bi-…) 둘 다 허용
+    const icoHTML = /^bi-[\w-]+$/.test(String(ico)) ? `<i class="bi ${_lcEsc(ico)}"></i>` : _lcEsc(ico);
+    const badge = s.badge || s.short_label || '';
+    // 카드 하단 메타(담당 영역) — badge 와 중복되지 않는 값만 노출
+    const meta = (s.short_label && s.short_label !== badge) ? s.short_label : String(s.key||'').toUpperCase();
+    const plain = (s.title||'')+' '+String(s.body_html||'').replace(/<[^>]*>/g,' ')+' '+(s.short_label||'')+' '+(s.badge||'')+' '+(s.key||'');
+    return `<div class="lc-card" role="button" tabindex="0" aria-label="${_lcEsc(s.title)} 열기" data-s="${_lcEsc(plain.toLowerCase())}"
+      style="--gf:${_lcEsc(gf)};--gt:${_lcEsc(gt)};--ac:${_lcEsc(ac)};--acw:${_lcEsc(ac)}1f;--acs:${_lcEsc(ac)}59"
+      onclick="${onclick.replace(/"/g,'&quot;')}"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <div class="lc-ico">${icoHTML}</div>
+      ${badge?`<span class="lc-badge">${_lcEsc(badge)}</span>`:''}
+      <div class="lc-txt">${cat?`<div class="lc-cat">${_lcEsc(cat)}</div>`:''}<div class="lc-title">${_lcEsc(s.title)}</div><div class="lc-body">${s.body_html||''}</div></div>
+      <div class="lc-foot2"><span class="lb">${_lcEsc(meta)}</span><span class="lc-go"><span class="t">바로가기</span><i class="bi bi-arrow-right" aria-hidden="true"></i></span></div>
     </div>`;
   };
   const vis=_siteRegistry.filter(s=>_siteVisible(s, access, _isAdmin));
