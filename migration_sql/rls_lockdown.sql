@@ -100,15 +100,17 @@ create policy nvdx_signup_insert on public.signup_requests for insert to anon, a
 create policy nvdx_signup_admin  on public.signup_requests for all to authenticated
   using (public.nvdx_is_admin()) with check (public.nvdx_is_admin());
 
--- ── 5-4) 미사용 테이블 완전 잠금 ────────────────────────────────────────────
---   families·test_results·app_profiles·demo_sales·demo_customers 는 노바진단이
---   전혀 참조하지 않는데(코드 grep 0건) 비로그인 INSERT·UPDATE 가 실제로 통했다.
---   정책을 하나도 만들지 않으면 RLS 기본 거부 → anon·authenticated 모두 차단된다.
---   (관리자가 필요할 땐 Supabase 대시보드/서비스키로 접근 가능)
+-- ── 5-4) 노바진단 미사용 잔여 테이블 잠금 ───────────────────────────────────
+--   app_profiles·demo_sales·demo_customers 는 노바진단 초기 시드 잔여물로
+--   현재 어느 화면도 참조하지 않는다(코드 grep 0건). 정책을 두지 않으면
+--   RLS 기본 거부 → anon·authenticated 모두 차단(서비스키·대시보드는 접근 가능).
+--
+--   ※ families·test_results 는 이 프로젝트를 함께 쓰는 '초등 학습 앱' 데이터라
+--     의도적으로 제외한다. 비로그인 접근이 그 앱의 동작 방식이므로 잠그면 앱이 멈춘다.
 do $$
 declare t text;
 begin
-  foreach t in array array['families','test_results','app_profiles','demo_sales','demo_customers'] loop
+  foreach t in array array['app_profiles','demo_sales','demo_customers'] loop
     if exists (select 1 from information_schema.tables
                 where table_schema='public' and table_name=t) then
       execute format('alter table public.%I enable row level security', t);
